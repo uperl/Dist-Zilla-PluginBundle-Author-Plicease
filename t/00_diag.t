@@ -10,8 +10,6 @@ my %modules;
 my $post_diag;
 
 $modules{$_} = $_ for qw(
-  Capture::Tiny
-  Dist::Zilla::App
   Dist::Zilla::MintingProfile::Author::Plicease
   Dist::Zilla::Plugin::MakeMaker
   Dist::Zilla::Plugin::UploadToCPAN
@@ -28,17 +26,11 @@ $modules{$_} = $_ for qw(
   File::Path
   File::ShareDir
   File::ShareDir::Install
-  File::Temp
   File::chdir
   Moose
   Path::Class
   Test::DZil
-  Test::Dir
-  Test::File
-  Test::File::ShareDir
   Test::More
-  YAML
-  YAML::XS
   autodie
   namespace::autoclean
 );
