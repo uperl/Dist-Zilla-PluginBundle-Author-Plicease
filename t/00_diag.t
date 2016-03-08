@@ -10,8 +10,37 @@ my %modules;
 my $post_diag;
 
 $modules{$_} = $_ for qw(
+  Capture::Tiny
+  Dist::Zilla::App
+  Dist::Zilla::MintingProfile::Author::Plicease
+  Dist::Zilla::Plugin::MakeMaker
+  Dist::Zilla::Plugin::UploadToCPAN
+  Dist::Zilla::Role::AfterBuild
+  Dist::Zilla::Role::BeforeBuild
+  Dist::Zilla::Role::BeforeRelease
+  Dist::Zilla::Role::FileFinderUser
+  Dist::Zilla::Role::FileGatherer
+  Dist::Zilla::Role::FileMunger
+  Dist::Zilla::Role::InstallTool
+  Dist::Zilla::Role::PrereqSource
+  Dist::Zilla::Role::TestRunner
   ExtUtils::MakeMaker
+  File::Path
+  File::ShareDir
+  File::ShareDir::Install
+  File::Temp
+  File::chdir
+  Moose
+  Path::Class
+  Test::DZil
+  Test::Dir
+  Test::File
+  Test::File::ShareDir
   Test::More
+  YAML
+  YAML::XS
+  autodie
+  namespace::autoclean
 );
 
 
