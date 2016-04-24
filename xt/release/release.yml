@@ -16,3 +16,4 @@ pod_coverage:
   # for either Class or method.
   private:
     - Dist::Zilla::Plugin::Author::Plicease::.*
+    - Dist::Zilla::MintingProfile::Author::Plicease

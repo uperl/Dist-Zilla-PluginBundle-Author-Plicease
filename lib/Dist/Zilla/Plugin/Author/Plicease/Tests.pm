@@ -4,6 +4,7 @@ use 5.008001;
 use Moose;
 use File::chdir;
 use File::Path qw( make_path );
+use Path::Class qw( dir );
 use Dist::Zilla::MintingProfile::Author::Plicease;
 
 # ABSTRACT: add author only release tests to xt/release
@@ -60,21 +61,21 @@ sub before_build
   
   my $skip = eval 'qr{^' . $self->skip . '$}';
   
-  unless(-d $self->zilla->root->subdir(qw( xt release )))
+  unless(-d dir($self->zilla->root)->subdir(qw( xt release )))
   {
-    $self->log("creating " . $self->zilla->root->subdir(qw( xt release )));
-    make_path($self->zilla->root->subdir(qw( xt release ))->stringify);
+    $self->log("creating " . dir($self->zilla->root)->subdir(qw( xt release )));
+    make_path(dir($self->zilla->root)->subdir(qw( xt release ))->stringify);
   }
   
   my $source = defined $self->source
-  ? $self->zilla->root->subdir($self->source)
+  ? dir($self->zilla->root)->subdir($self->source)
   : Dist::Zilla::MintingProfile::Author::Plicease->profile_dir->subdir(qw( default skel xt release ));
 
   foreach my $t_file (grep { $_->basename =~ /\.t$/ || $_->basename eq 'release.yml' } $source->children(no_hidden => 1))
   {
     next if $t_file->basename =~ $skip;
     my $new  = $t_file->slurp;
-    my $file = $self->zilla->root->file(qw( xt release ), $t_file->basename);
+    my $file = dir($self->zilla->root)->file(qw( xt release ), $t_file->basename);
     if(-e $file)
     {
       next if $t_file->basename eq 'release.yml';
@@ -92,7 +93,7 @@ sub before_build
     }
   }
   
-  my $diag = $self->zilla->root->file(qw( t 00_diag.t ));
+  my $diag = dir($self->zilla->root)->file(qw( t 00_diag.t ));
   my $content = $source->parent->parent->file('t', '00_diag.t')->absolute->slurp;
   $content =~ s{## PREAMBLE ##}{join "\n", map { s/^\| //; $_ } @{ $self->diag_preamble }}e;
   $self->_diag_content($content);
@@ -172,7 +173,7 @@ sub setup_installer
     $self->add_file($file);
   }
 
-  my $diag = $self->zilla->root->file(qw( t 00_diag.t ));
+  my $diag = dir($self->zilla->root)->file(qw( t 00_diag.t ));
   $diag->spew($content);
 }
 

@@ -1,6 +1,7 @@
 package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup;
 
 use 5.008001;
+use Path::Class qw( dir );
 use Moose;
 
 # ABSTRACT: add a travis status button to the README.md file
@@ -31,7 +32,7 @@ has appveyor => (
 sub after_build
 {
   my($self) = @_;
-  my $readme = $self->zilla->root->file("README.md");
+  my $readme = dir($self->zilla->root)->file("README.md");
   if(-r $readme)
   {
     my $name = $self->zilla->root->absolute->basename;
