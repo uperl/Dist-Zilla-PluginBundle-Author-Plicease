@@ -16,6 +16,7 @@ $modules{$_} = $_ for qw(
   File::ShareDir
   File::ShareDir::Install
   File::chdir
+  IPC::System::Simple
   Moose
   Path::Class
   Test::More
