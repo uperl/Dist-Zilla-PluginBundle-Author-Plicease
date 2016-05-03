@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+2.04      2016-05-03 06:05:52 -0400
+  - require IPC::System::Run for autodie ':system';
+
 2.03      2016-04-24 19:04:41 -0400
   - Dist::Zilla 6.x compatability
 
