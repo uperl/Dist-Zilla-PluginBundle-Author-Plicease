@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.05      2016-05-10 10:07:09 -0400
   - These tests are now author tests instead of release tests:
     eol, no_tabs, pod, strict
   - The same tests are not stored in the module repos anymore
