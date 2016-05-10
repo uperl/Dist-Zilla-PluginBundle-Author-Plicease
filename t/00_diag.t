@@ -10,6 +10,7 @@ my %modules;
 my $post_diag;
 
 $modules{$_} = $_ for qw(
+  Data::Section
   Dist::Zilla
   ExtUtils::MakeMaker
   File::Path
@@ -19,6 +20,7 @@ $modules{$_} = $_ for qw(
   IPC::System::Simple
   Moose
   Path::Class
+  Sub::Exporter::ForMethods
   Test::More
   autodie
   namespace::autoclean

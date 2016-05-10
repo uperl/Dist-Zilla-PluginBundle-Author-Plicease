@@ -5,6 +5,8 @@ use Moose;
 use File::chdir;
 use File::Path qw( make_path );
 use Path::Class qw( dir );
+use Sub::Exporter::ForMethods qw( method_installer );
+use Data::Section { installer => method_installer }, -setup;
 use Dist::Zilla::MintingProfile::Author::Plicease;
 
 # ABSTRACT: add author only release tests to xt/release
@@ -22,6 +24,7 @@ use Dist::Zilla::MintingProfile::Author::Plicease;
 
 =cut
 
+with 'Dist::Zilla::Role::FileGatherer';
 with 'Dist::Zilla::Role::BeforeBuild';
 with 'Dist::Zilla::Role::InstallTool';
 with 'Dist::Zilla::Role::TestRunner';
@@ -55,6 +58,23 @@ has _diag_content => (
   default => '',
 );
 
+sub gather_files
+{
+  my($self) = @_;
+  
+  require Dist::Zilla::File::InMemory;
+  
+  $self->add_file(
+    Dist::Zilla::File::InMemory->new(
+      name    => $_,
+      content => ${ $self->section_data($_) },
+    )
+  ) for qw( xt/author/strict.t
+            xt/author/eol.t
+            xt/author/pod.t
+            xt/author/no_tabs.t );
+}
+
 sub before_build
 {
   my($self) = @_;
@@ -73,6 +93,7 @@ sub before_build
 
   foreach my $t_file (grep { $_->basename =~ /\.t$/ || $_->basename eq 'release.yml' } $source->children(no_hidden => 1))
   {
+    next if $t_file->basename =~ /^(strict|eol|pod|no_tabs)\.t$/;
     next if $t_file->basename =~ $skip;
     my $new  = $t_file->slurp;
     my $file = dir($self->zilla->root)->file(qw( xt release ), $t_file->basename);
@@ -197,3 +218,78 @@ __PACKAGE__->meta->make_immutable;
 =item L<Dist::Zilla::PluginBundle::Author::Plicease>
 
 =back
+
+=cut
+
+__DATA__
+
+__[ xt/author/strict.t ]__
+use strict;
+use warnings;
+use Test::More;
+BEGIN { 
+  plan skip_all => 'test requires Test::Strict' 
+    unless eval q{ use Test::Strict; 1 };
+};
+use Test::Strict;
+use FindBin;
+use File::Spec;
+
+chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
+
+unshift @Test::Strict::MODULES_ENABLING_STRICT, 'Test2::Bundle::SIPS';
+note "enabling strict = $_" for @Test::Strict::MODULES_ENABLING_STRICT;
+
+all_perl_files_ok( grep { -e $_ } qw( bin lib t Makefile.PL ));
+
+
+__[ xt/author/eol.t ]__
+use strict;
+use warnings;
+use Test::More;
+BEGIN { 
+  plan skip_all => 'test requires Test::EOL' 
+    unless eval q{ use Test::EOL; 1 };
+};
+use Test::EOL;
+use FindBin;
+use File::Spec;
+
+chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
+
+all_perl_files_ok(grep { -e $_ } qw( bin lib t Makefile.PL ));
+
+
+__[ xt/author/no_tabs.t ]__
+use strict;
+use warnings;
+use Test::More;
+BEGIN { 
+  plan skip_all => 'test requires Test::NoTabs' 
+    unless eval q{ use Test::NoTabs; 1 };
+};
+use Test::NoTabs;
+use FindBin;
+use File::Spec;
+
+chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
+
+all_perl_files_ok( grep { -e $_ } qw( bin lib t Makefile.PL ));
+
+
+__[ xt/author/pod.t ]__
+use strict;
+use warnings;
+use Test::More;
+BEGIN { 
+  plan skip_all => 'test requires Test::Pod' 
+    unless eval q{ use Test::Pod; 1 };
+};
+use Test::Pod;
+use FindBin;
+use File::Spec;
+
+chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
+
+all_pod_files_ok( grep { -e $_ } qw( bin lib ));
+

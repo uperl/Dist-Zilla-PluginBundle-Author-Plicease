@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - These tests are now author tests instead of release tests:
+    eol, no_tabs, pod, strict
+  - The same tests are not stored in the module repos anymore
 
 2.04      2016-05-03 06:05:52 -0400
   - require IPC::System::Run for autodie ':system';
