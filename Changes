@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - These tests are not stored in the modul repos anymore
+    changes fixme
 
 2.05      2016-05-10 10:07:09 -0400
   - These tests are now author tests instead of release tests:

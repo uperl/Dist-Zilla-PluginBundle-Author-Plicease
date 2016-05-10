@@ -63,7 +63,7 @@ sub gather_files
   my($self) = @_;
   
   require Dist::Zilla::File::InMemory;
-  
+
   $self->add_file(
     Dist::Zilla::File::InMemory->new(
       name    => $_,
@@ -72,7 +72,9 @@ sub gather_files
   ) for qw( xt/author/strict.t
             xt/author/eol.t
             xt/author/pod.t
-            xt/author/no_tabs.t );
+            xt/author/no_tabs.t
+            xt/release/changes.t
+            xt/release/fixme.t );
 }
 
 sub before_build
@@ -93,7 +95,7 @@ sub before_build
 
   foreach my $t_file (grep { $_->basename =~ /\.t$/ || $_->basename eq 'release.yml' } $source->children(no_hidden => 1))
   {
-    next if $t_file->basename =~ /^(strict|eol|pod|no_tabs)\.t$/;
+    next if $t_file->basename =~ /^(strict|eol|pod|no_tabs|changes|fixme)\.t$/;
     next if $t_file->basename =~ $skip;
     my $new  = $t_file->slurp;
     my $file = dir($self->zilla->root)->file(qw( xt release ), $t_file->basename);
@@ -294,4 +296,55 @@ use File::Spec;
 chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
 
 all_pod_files_ok( grep { -e $_ } qw( bin lib ));
+
+
+__[ xt/release/changes.t ]__
+use strict;
+use warnings;
+use Test::More;
+BEGIN { 
+  plan skip_all => 'test requires Test::CPAN::Changes' 
+    unless eval q{ use Test::CPAN::Changes; 1 };
+};
+use Test::CPAN::Changes;
+use FindBin;
+use File::Spec;
+
+chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
+
+do {
+  my $old = \&Test::Builder::carp;
+  my $new = sub {
+    my($self, @messages) = @_;
+    return if $messages[0] =~ /^Date ".*" is not in the recommend format/;
+    $old->($self, @messages);
+  };
+  no warnings 'redefine';
+  *Test::Builder::carp = $new;
+};
+
+changes_file_ok;
+
+done_testing;
+
+
+__[ xt/release/fixme.t ]__
+use strict;
+use warnings;
+use Test::More;
+BEGIN { 
+  plan skip_all => 'test requires Test::Fixme' 
+    unless eval q{ use Test::Fixme 0.14; 1 };
+};
+use Test::Fixme 0.07;
+use FindBin;
+use File::Spec;
+
+chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
+
+run_tests(
+  match => qr/FIXME/,
+  where => [ grep { -e $_ } qw( bin lib t Makefile.PL )],
+  warn  => 1,
+);
 
