@@ -211,6 +211,8 @@ sub register_prereqs
     Test::Exit                            0.11
     Test2                                 1.302015
     Test2::Suite                          0.000030
+    Clustericious                         1.20
+    Test::Clustericious::Cluster          0.31
   );
   
   $prereqs = $self->zilla->prereqs->as_string_hash;
