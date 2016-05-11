@@ -1,8 +1,13 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
-  - These tests are not stored in the modul repos anymore
-    changes fixme
+  - These tests are not stored in the modul repos anymore:
+    changes, fixme
+  - These tests are now author tests instead of release tests:
+    pod_coverage, pod_spelling_common, pod_spelling_system, version
+  - The same tests are not stored in the module repos anymore
+  - The config file xt/release/release.yml is now called
+    author.yml
 
 2.05      2016-05-10 10:07:09 -0400
   - These tests are now author tests instead of release tests:

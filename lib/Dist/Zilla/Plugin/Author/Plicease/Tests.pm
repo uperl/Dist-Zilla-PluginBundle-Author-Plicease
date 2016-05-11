@@ -16,7 +16,6 @@ use Dist::Zilla::MintingProfile::Author::Plicease;
 
  [Author::Plicease::Tests]
  source = foo/bar/baz ; source of tests
- skip = pod_.*
  diag = +Acme::Override::INET
  diag = +IO::Socket::INET
  diag = +IO::SOCKET::IP
@@ -34,12 +33,6 @@ sub mvp_multivalue_args { qw( diag diag_preamble ) }
 has source => (
   is      =>'ro',
   isa     => 'Str',
-);
-
-has skip => (
-  is      => 'ro',
-  isa     => 'Str',
-  default => '',
 );
 
 has diag => (
@@ -73,6 +66,10 @@ sub gather_files
             xt/author/eol.t
             xt/author/pod.t
             xt/author/no_tabs.t
+            xt/author/pod_coverage.t
+            xt/author/pod_spelling_common.t
+            xt/author/pod_spelling_system.t
+            xt/author/version.t
             xt/release/changes.t
             xt/release/fixme.t );
 }
@@ -80,42 +77,11 @@ sub gather_files
 sub before_build
 {
   my($self) = @_;
-  
-  my $skip = eval 'qr{^' . $self->skip . '$}';
-  
-  unless(-d dir($self->zilla->root)->subdir(qw( xt release )))
-  {
-    $self->log("creating " . dir($self->zilla->root)->subdir(qw( xt release )));
-    make_path(dir($self->zilla->root)->subdir(qw( xt release ))->stringify);
-  }
-  
+
   my $source = defined $self->source
   ? dir($self->zilla->root)->subdir($self->source)
   : Dist::Zilla::MintingProfile::Author::Plicease->profile_dir->subdir(qw( default skel xt release ));
 
-  foreach my $t_file (grep { $_->basename =~ /\.t$/ || $_->basename eq 'release.yml' } $source->children(no_hidden => 1))
-  {
-    next if $t_file->basename =~ /^(strict|eol|pod|no_tabs|changes|fixme)\.t$/;
-    next if $t_file->basename =~ $skip;
-    my $new  = $t_file->slurp;
-    my $file = dir($self->zilla->root)->file(qw( xt release ), $t_file->basename);
-    if(-e $file)
-    {
-      next if $t_file->basename eq 'release.yml';
-      my $old  = $file->slurp;
-      if($new ne $old)
-      {
-        $self->log("replacing " . $file->stringify);
-        $file->openw->print($t_file->slurp);
-      }
-    }
-    else
-    {
-      $self->log("creating " . $file->stringify); 
-      $file->openw->print($t_file->slurp);
-    }
-  }
-  
   my $diag = dir($self->zilla->root)->file(qw( t 00_diag.t ));
   my $content = $source->parent->parent->file('t', '00_diag.t')->absolute->slurp;
   $content =~ s{## PREAMBLE ##}{join "\n", map { s/^\| //; $_ } @{ $self->diag_preamble }}e;
@@ -347,4 +313,260 @@ run_tests(
   where => [ grep { -e $_ } qw( bin lib t Makefile.PL )],
   warn  => 1,
 );
+
+
+__[ xt/author/pod_coverage.t ]__
+use strict;
+use warnings;
+use Test::More;
+BEGIN { 
+  plan skip_all => 'test requires 5.010 or better'
+    unless $] >= 5.010;
+  plan skip_all => 'test requires Test::Pod::Coverage' 
+    unless eval q{ use Test::Pod::Coverage; 1 };
+  plan skip_all => 'test requires YAML'
+    unless eval q{ use YAML; 1; };
+};
+use Test::Pod::Coverage;
+use YAML qw( LoadFile );
+use FindBin;
+use File::Spec;
+
+my $config_filename = File::Spec->catfile(
+  $FindBin::Bin, File::Spec->updir, File::Spec->updir, 'author.yml'
+);
+
+my $config;
+$config = LoadFile($config_filename)
+  if -r $config_filename;
+
+plan skip_all => 'disabled' if $config->{pod_coverage}->{skip};
+
+chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
+
+my @private_classes;
+my %private_methods;
+
+push @{ $config->{pod_coverage}->{private} },
+  'Alien::.*::Install::Files#Inline';
+
+foreach my $private (@{ $config->{pod_coverage}->{private} })
+{
+  my($class,$method) = split /#/, $private;
+  if(defined $class && $class ne '')
+  {
+    my $regex = eval 'qr{^' . $class . '$}';
+    if(defined $method && $method ne '')
+    {
+      push @private_classes, { regex => $regex, method => $method };
+    }
+    else
+    {
+      push @private_classes, { regex => $regex, all => 1 };
+    }
+  }
+  elsif(defined $method && $method ne '')
+  {
+    $private_methods{$_} = 1 for split /,/, $method;
+  }
+}
+
+my @classes = all_modules;
+
+plan tests => scalar @classes;
+
+foreach my $class (@classes)
+{
+  SKIP: {
+    my($is_private_class) = map { 1 } grep { $class =~ $_->{regex} && $_->{all} } @private_classes;
+    skip "private class: $class", 1 if $is_private_class;
+    
+    my %methods = map {; $_ => 1 } map { split /,/, $_->{method} } grep { $class =~ $_->{regex} } @private_classes;
+    $methods{$_} = 1 for keys %private_methods;
+    
+    my $also_private = eval 'qr{^' . join('|', keys %methods ) . '$}';
+    
+    pod_coverage_ok $class, { also_private => [$also_private] };
+  };
+}
+
+
+__[ xt/author/pod_spelling_common.t ]__
+use strict;
+use warnings;
+use Test::More;
+BEGIN { 
+  plan skip_all => 'test requires Test::Pod::Spelling::CommonMistakes' 
+    unless eval q{ use Test::Pod::Spelling::CommonMistakes; 1 };
+  plan skip_all => 'test requires YAML'
+    unless eval q{ use YAML qw( LoadFile ); 1 };
+};
+use Test::Pod::Spelling::CommonMistakes;
+use FindBin;
+use File::Spec;
+
+my $config_filename = File::Spec->catfile(
+  $FindBin::Bin, File::Spec->updir, File::Spec->updir, 'author.yml'
+);
+
+my $config;
+$config = LoadFile($config_filename)
+  if -r $config_filename;
+
+plan skip_all => 'disabled' if $config->{pod_spelling_common}->{skip};
+
+chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
+
+# FIXME test files in bin too.
+all_pod_files_ok;
+
+
+__[ xt/author/pod_spelling_system.t ]__
+use strict;
+use warnings;
+use Test::More;
+BEGIN { 
+  plan skip_all => 'test requires Test::Spelling' 
+    unless eval q{ use Test::Spelling; 1 };
+  plan skip_all => 'test requires YAML'
+    unless eval q{ use YAML; 1; };
+};
+use Test::Spelling;
+use YAML qw( LoadFile );
+use FindBin;
+use File::Spec;
+
+my $config_filename = File::Spec->catfile(
+  $FindBin::Bin, File::Spec->updir, File::Spec->updir, 'author.yml'
+);
+
+my $config;
+$config = LoadFile($config_filename)
+  if -r $config_filename;
+
+plan skip_all => 'disabled' if $config->{pod_spelling_system}->{skip};
+
+chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
+
+add_stopwords(@{ $config->{pod_spelling_system}->{stopwords} });
+add_stopwords(qw(
+Plicease
+stdout
+stderr
+stdin
+subref
+loopback
+username
+os
+Ollis
+Mojolicious
+plicease
+CPAN
+reinstall
+TODO
+filename
+filenames
+login
+callback
+callbacks
+standalone
+VMS
+hostname
+hostnames
+TCP
+UDP
+IP
+API
+MSWin32
+OpenBSD
+FreeBSD
+NetBSD
+unencrypted
+WebSocket
+WebSockets
+timestamp
+timestamps
+poney
+BackPAN
+portably
+RedHat
+AIX
+BSD
+XS
+FFI
+perlish
+optimizations
+subdirectory
+RESTful
+SQLite
+JavaScript
+dir
+plugins
+munge
+jQuery
+namespace
+PDF
+PDFs
+usernames
+DBI
+pluggable
+APIs
+SSL
+JSON
+YAML
+uncommented
+Solaris
+OpenVMS
+URI
+URL
+CGI
+));
+all_pod_files_spelling_ok;
+
+
+__[ xt/author/version.t ]__
+use strict;
+use warnings;
+use Test::More;
+use FindBin ();
+BEGIN {
+
+  plan skip_all => "test requires Test::Version 2.00"
+    unless eval q{
+      use Test::Version 2.00 qw( version_all_ok ), { 
+        has_version    => 1,
+        filename_match => sub { $_[0] !~ m{/(ConfigData|Install/Files)\.pm$} },
+      }; 
+      1
+    };
+
+  plan skip_all => "test requires Path::Class" 
+    unless eval q{ use Path::Class qw( file dir ); 1 };
+  plan skip_all => 'test requires YAML'
+    unless eval q{ use YAML; 1; };
+}
+
+use YAML qw( LoadFile );
+use FindBin;
+use File::Spec;
+
+plan skip_all => "test not built yet (run dzil test)"
+  unless -e dir( $FindBin::Bin)->parent->parent->file('Makefile.PL')
+  ||     -e dir( $FindBin::Bin)->parent->parent->file('Build.PL');
+
+my $config_filename = File::Spec->catfile(
+  $FindBin::Bin, File::Spec->updir, File::Spec->updir, 'author.yml'
+);
+
+my $config;
+$config = LoadFile($config_filename)
+  if -r $config_filename;
+
+if($config->{version}->{dir})
+{
+  note "using dir " . $config->{version}->{dir}
+}
+
+version_all_ok($config->{version}->{dir} ? ($config->{version}->{dir}) : ());
+done_testing;
 
