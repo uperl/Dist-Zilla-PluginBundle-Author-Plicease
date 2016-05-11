@@ -8,6 +8,8 @@ Revision history for {{$dist->name}}
   - The same tests are not stored in the module repos anymore
   - The config file xt/release/release.yml is now called
     author.yml
+  - Coalesce Test2 and Test2::Suite requirements
+  - No longer recommend YAML::XS when we need YAML
 
 2.05      2016-05-10 10:07:09 -0400
   - These tests are now author tests instead of release tests:

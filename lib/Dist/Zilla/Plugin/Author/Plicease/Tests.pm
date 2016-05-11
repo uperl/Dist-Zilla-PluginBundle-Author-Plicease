@@ -417,7 +417,7 @@ plan skip_all => 'disabled' if $config->{pod_spelling_common}->{skip};
 
 chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
 
-# FIXME test files in bin too.
+# TODO: test files in bin too.
 all_pod_files_ok;
 
 

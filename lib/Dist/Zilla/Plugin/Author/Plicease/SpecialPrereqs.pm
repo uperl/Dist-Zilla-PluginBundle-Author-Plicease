@@ -66,10 +66,6 @@ Require 1.003001.  See rt#83248
 
 Recommended if JSON is required.
 
-=item YAML::XS
-
-Recommended if YAML is required.
-
 =item PerlX::Maybe::XS
 
 Recommended if PerlX::Maybe is required.
@@ -106,6 +102,103 @@ sub register_prereqs
 {
   my($self) = @_;
 
+  my %dist = (
+    (map { $_ => 'Test2' } (
+      (map { "Test2::$_" } qw( API Event Formatter Formatter::TAP Hub IPC Util )),
+      (map { "Test2::API::$_" } qw( Breakage Context Instance Stack )),
+      (map { "Test2::Event::$_" } qw( Bail Diag Exception Note Ok Plan Skp Subtest Waiting )),
+      (map { "Test2::Hub::$_" } qw( Interceptor Interceptor::Terminator Subtest )),      
+      (map { "Test2::IPC::$_" } qw( Driver Driver::Files )),
+      (map { "Test2::Util::$_" } qw( ExternalMeta HashBase Trace )),
+    )),
+    (map { $_ => 'Test2::Suite' } qw( 
+      Test2::Bundle
+      Test2::Bundle::Extended
+      Test2::Bundle::More
+      Test2::Bundle::Simple
+      Test2::Compare
+      Test2::Compare::Array
+      Test2::Compare::Base
+      Test2::Compare::Custom
+      Test2::Compare::Delta
+      Test2::Compare::Event
+      Test2::Compare::EventMeta
+      Test2::Compare::Hash
+      Test2::Compare::Meta
+      Test2::Compare::Number
+      Test2::Compare::Object
+      Test2::Compare::OrderedSubset
+      Test2::Compare::Pattern
+      Test2::Compare::Ref
+      Test2::Compare::Regex
+      Test2::Compare::Scalar
+      Test2::Compare::Set
+      Test2::Compare::String
+      Test2::Compare::Undef
+      Test2::Compare::Wildcard
+      Test2::Mock
+      Test2::Plugin
+      Test2::Plugin::BailOnFail
+      Test2::Plugin::DieOnFail
+      Test2::Plugin::ExitSummary
+      Test2::Plugin::SRand
+      Test2::Plugin::UTF8
+      Test2::Require
+      Test2::Require::AuthorTesting
+      Test2::Require::EnvVar
+      Test2::Require::Fork
+      Test2::Require::Module
+      Test2::Require::Perl
+      Test2::Require::RealFork
+      Test2::Require::Threads
+      Test2::Suite
+      Test2::Todo
+      Test2::Tools
+      Test2::Tools::Basic
+      Test2::Tools::Class
+      Test2::Tools::ClassicCompare
+      Test2::Tools::Compare
+      Test2::Tools::Defer
+      Test2::Tools::Encoding
+      Test2::Tools::Event
+      Test2::Tools::Exception
+      Test2::Tools::Exports
+      Test2::Tools::Grab
+      Test2::Tools::Mock
+      Test2::Tools::Ref
+      Test2::Tools::Subtest
+      Test2::Tools::Target
+      Test2::Tools::Warnings
+      Test2::Util::Grabber
+      Test2::Util::Ref
+      Test2::Util::Stash
+      Test2::Util::Sub
+      Test2::Util::Table
+      Test2::Util::Table::LineBreak
+    )),
+  );
+  
+  my $prereqs = $self->zilla->prereqs->as_string_hash;
+
+  foreach my $phase (keys %$prereqs)
+  {
+    foreach my $type (keys %{ $prereqs->{$phase} })
+    {
+      foreach my $module (sort keys %{ $prereqs->{$phase}->{$type} })
+      {
+        my $prefer = $dist{$module};
+        if($prefer)
+        {
+          $self->zilla->prereqs->requirements_for($phase, $type)->clear_requirement($module);
+          $self->zilla->register_prereqs({
+            type => $type,
+            phase => $phase,
+          }, $prefer => 0 );
+        }
+      }
+    }
+  }
+
   my %upgrades = qw(
     Moo                                   2.0
     PerlX::Maybe                          0.003
@@ -116,8 +209,12 @@ sub register_prereqs
     Role::Tiny                            1.003001
     Test::More                            0.94
     Test::Exit                            0.11
+    Test2                                 1.302015
+    Test2::Suite                          0.000030
   );
   
+  $prereqs = $self->zilla->prereqs->as_string_hash;
+
   foreach my $upgrade (@{ $self->upgrade })
   {
     if($upgrade =~ /^\s*(\S+)\s*=\s*(\S+)\s*$/)
@@ -130,7 +227,6 @@ sub register_prereqs
     }
   }
 
-  my $prereqs = $self->zilla->prereqs->as_string_hash;
   foreach my $phase (keys %$prereqs)
   {
     foreach my $type (keys %{ $prereqs->{$phase} })
@@ -156,7 +252,7 @@ sub register_prereqs
     {
       foreach my $module (keys %{ $prereqs->{$phase}->{$type} })
       {
-        if($module =~ /^(JSON|YAML|PerlX::Maybe)$/)
+        if($module =~ /^(JSON|PerlX::Maybe)$/)
         {
           $self->zilla->register_prereqs({
             type  => 'recommends',
