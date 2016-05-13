@@ -206,7 +206,7 @@ use File::Spec;
 chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
 
 unshift @Test::Strict::MODULES_ENABLING_STRICT,
-  'SIPS',
+  'sips',
   'Test2::Bundle::SIPS';
 note "enabling strict = $_" for @Test::Strict::MODULES_ENABLING_STRICT;
 
