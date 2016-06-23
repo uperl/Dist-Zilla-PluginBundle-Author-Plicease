@@ -218,19 +218,6 @@ sub gather_files_tests
 {
   my($self, $arg) = @_;
   
-  if($self->include_tests)
-  {
-    my $source = Dist::Zilla::MintingProfile::Author::Plicease->profile_dir->subdir(qw( default skel xt release ));
-    foreach my $test ($source->children)
-    {
-      my $file = Dist::Zilla::File::FromCode->new({
-        name => "xt/release/" . $test->basename,
-        code => sub { $test->slurp(iomode => '<:encoding(UTF-8)') },
-      });
-      $self->add_file($file);
-    }
-  }
-  
   my $name = $self->zilla->name;
   $name =~ s{-}{::}g;
 
