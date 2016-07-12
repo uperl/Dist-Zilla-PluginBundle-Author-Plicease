@@ -80,7 +80,7 @@ sub before_build
 
   my $source = defined $self->source
   ? dir($self->zilla->root)->subdir($self->source)
-  : Dist::Zilla::MintingProfile::Author::Plicease->profile_dir->subdir(qw( default skel xt release ));
+  : dir(Dist::Zilla::MintingProfile::Author::Plicease->profile_dir)->subdir(qw( default skel xt release ));
 
   my $diag = dir($self->zilla->root)->file(qw( t 00_diag.t ));
   my $content = $source->parent->parent->file('t', '00_diag.t')->absolute->slurp;
