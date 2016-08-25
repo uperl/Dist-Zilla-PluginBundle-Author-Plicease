@@ -57,7 +57,7 @@ has cpan => (
 
 has scp_dest => (
   is      => 'ro',
-  default => sub { 'ollisg@matrix.wdlabs.com:web/sites/dist' },
+  default => sub { 'ollisg@ratbat.wdlabs.com:web/sites/dist' },
 );
 
 has url => (
