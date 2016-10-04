@@ -29,9 +29,9 @@ around write_makefile_args => sub {
   
   my $h = $self->$orig(@_);  
 
-  # to prevent any non .pm files from being installed in lib
+  # to prevent any non .pm/.pod files from being installed in lib
   # because shit like this is stuff we ought to have to customize.
-  my %PM = map {; "lib/$_" => "\$(INST_LIB)/$_" } map { s/^lib\///; $_ } grep /^lib\/.*\.pm$/, map { $_->name } @{ $self->zilla->files };
+  my %PM = map {; "lib/$_" => "\$(INST_LIB)/$_" } map { s/^lib\///; $_ } grep /^lib\/.*\.p(od|m)$/, map { $_->name } @{ $self->zilla->files };
   $h->{PM} = \%PM;
 
   $h;

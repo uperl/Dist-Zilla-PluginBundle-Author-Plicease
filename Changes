@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Use ratbat for deployment of non-CPAN modules
+  - [Author::Plicease::MakeMaker] includes .pod files along with .pm files
 
 2.09      2016-07-12 08:38:42 -0400
   - Fixed additional Dist::Zilla 6.x compat
