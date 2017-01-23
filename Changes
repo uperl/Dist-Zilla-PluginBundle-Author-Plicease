@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - If Test2::Suite is required, that implies 0.000060 or better
 
 2.10      2016-10-04 12:42:03 -0400
   - Use ratbat for deployment of non-CPAN modules

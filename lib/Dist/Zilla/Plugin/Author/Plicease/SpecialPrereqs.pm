@@ -210,7 +210,7 @@ sub register_prereqs
     Test::More                            0.94
     Test::Exit                            0.11
     Test2                                 1.302015
-    Test2::Suite                          0.000030
+    Test2::Suite                          0.000060
     Clustericious                         1.20
     Test::Clustericious::Cluster          0.31
   );
