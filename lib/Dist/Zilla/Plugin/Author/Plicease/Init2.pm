@@ -101,7 +101,7 @@ sub gather_file_travis_yml
                           q{  - dzil listdeps   --missing | cpanm -n},
                           q{},
                           q{perl:},
-                          (map { "  - \"5.$_\""} qw( 8 10 12 14 16 18 20 22 )),
+                          (map { "  - \"5.$_\""} qw( 14 16 18 20 22 24 )),
                           q{},
                           q{script:},
                           q{  - dzil test -v},
