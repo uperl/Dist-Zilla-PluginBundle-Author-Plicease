@@ -97,7 +97,7 @@ sub gather_file_travis_yml
                           q{},
                           q{install:},
                           q{  - perlbrew list},
-                          q{  - cpanm Dist::Zilla},
+                          q{  - cpanm -n Dist::Zilla},
                           q{  - dzil authordeps --missing | cpanm -n},
                           q{  - dzil listdeps   --missing | cpanm -n},
                           q{},
