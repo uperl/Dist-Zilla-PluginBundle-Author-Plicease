@@ -3,6 +3,7 @@ package Dist::Zilla::Plugin::Author::Plicease::Thanks;
 use 5.008001;
 use Moose;
 
+with 'Dist::Zilla::Role::MetaProvider';
 with 'Dist::Zilla::Role::FileMunger';
 with 'Dist::Zilla::Role::FileFinderUser' => {
   default_finders => [ ':InstallModules', ':ExecFiles' ],
@@ -93,6 +94,17 @@ sub munge_file
   $file->content($content);
   
   return;
+}
+
+sub metadata
+{
+  my ($self) = @_;
+
+  my @contributors = @{$self->contributor};
+  unshift @contributors, $self->current  if $self->current;
+  unshift @contributors, $self->original if $self->original;
+
+  return +{ x_contributors => \@contributors };
 }
 
 __PACKAGE__->meta->make_immutable;
