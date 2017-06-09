@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Thanks to set x_contributors meta
 
 2.12      2017-03-22 11:58:24 -0400
   - Update default .travis.yml
