@@ -116,6 +116,7 @@ sub register_prereqs
     Test::Exit                            0.11
     Clustericious                         1.20
     Test::Clustericious::Cluster          0.31
+    Test2::V0                             0.000071
   );
   
   $upgrades{$_} = '1.302015' for (
