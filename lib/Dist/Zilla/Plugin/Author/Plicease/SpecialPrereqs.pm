@@ -129,6 +129,7 @@ sub register_prereqs
   );
 
   $upgrades{$_} = '0.000060' for qw(
+      Test2::V0
       Test2::Bundle
       Test2::Bundle::Extended
       Test2::Bundle::More
