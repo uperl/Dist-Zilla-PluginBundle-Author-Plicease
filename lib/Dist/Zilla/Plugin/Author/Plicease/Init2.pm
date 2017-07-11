@@ -84,6 +84,33 @@ sub gather_files
   $self->gather_file_gitattributes($arg);
   $self->gather_file_travis_yml($arg);
   $self->gather_file_appveyor_yml($arg);
+  $self->gather_file_author_yml($arg);
+}
+
+sub gather_file_author_yml
+{
+  my($self, $arg) = @_;
+  
+  my $file = Dist::Zilla::File::InMemory->new({
+    name    => 'author.yml',
+    content => join("\n", q{---},
+                          q{pod_spelling_system:},
+                          q{  skip: 0},
+                          q{  # list of words that are spelled correctly},
+                          q{  # (regardless of what spell check thinks)},
+                          q{  # or stuff that I like to spell incorrectly},
+                          q{  # intentionally},
+                          q{  stopwords: []},
+                          q{},
+                          q{pod_coverage:},
+                          q{  skip: 0},
+                          q{  # format is "Class#method" or "Class",regex allowed},
+                          q{  # for either Class or method.},
+                          q{  private: []},
+    ),
+  });
+
+  $self->add_file($file);
 }
 
 sub gather_file_travis_yml
@@ -102,7 +129,7 @@ sub gather_file_travis_yml
                           q{  - dzil listdeps   --missing | cpanm -n},
                           q{},
                           q{perl:},
-                          (map { "  - \"5.$_\""} qw( 14 16 18 20 22 24 )),
+                          (map { "  - \"5.$_\""} qw( 14 16 18 20 22 24 26 )),
                           q{},
                           q{script:},
                           q{  - dzil test -v},

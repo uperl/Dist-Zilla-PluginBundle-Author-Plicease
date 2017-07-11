@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - minting profile includes author.yml file
+  - minting profile travis.yml tests Perl 5.26
 
 2.16      2017-06-22 12:57:51 -0400
   - Fix some test version upgrades
