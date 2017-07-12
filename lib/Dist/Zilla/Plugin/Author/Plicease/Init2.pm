@@ -62,6 +62,7 @@ sub make_module
                           qq{} ,
                           qq{use strict;} ,
                           qq{use warnings;} ,
+                          qq{use 5.008001;} ,
                           qq{} ,
                           qq{# ABSTRACT: $abstract} ,
                           qq{# VERSION} ,
@@ -251,15 +252,48 @@ sub gather_files_tests
 
   my $use_t_file = Dist::Zilla::File::InMemory->new({
     name => 't/01_use.t',
-    content => join("\n", q{use strict;},
-                          q{use warnings;},
-                          q{use Test::More tests => 1;},
+    content => join("\n", q{use Test2::V0;},
+                          q{sub require_ok ($);},
                           q{},
-                          qq{use_ok '$name';},
+                          q{require_ok '} . $name . q{';},
+                          q{},
+                          q{done_testing;},
+                          q{},
+                          q{sub require_ok ($)},
+                          '{',
+                          q{  # special case of when I really do want require_ok.},
+                          q{  # I just want a test that checks that the modules},
+                          q{  # will compile okay.  I won't be trying to use them.},
+                          q{  my($mod) = @_;},
+                          q{  my $ctx = context();},
+                          q{  eval qq{ require $mod };},
+                          q{  my $error = $@;},
+                          q{  my $ok = !$error;},
+                          q{  $ctx->ok($ok, "require $mod");},
+                          q{  $ctx->diag("error: $error") if $error ne '';},
+                          q{  $ctx->release;},
+                          '}',
     ),
   });
   
   $self->add_file($use_t_file);
+
+  my $test_name = lc $name;
+  $test_name =~ s{::}{_}g;
+  $test_name = "t/$test_name.t";
+  
+  my $main_test = Dist::Zilla::File::InMemory->new({
+    name => $test_name,
+    content => join("\n", q{use Test2::V0;},
+                          q{use } . $name . q{;},
+                          q{},
+                          q{ok 1, 'todo';},
+                          q{},
+                          q{done_testing},
+    ),
+  });
+  
+  $self->add_file($main_test);
 }
 
 sub gather_file_gitignore
