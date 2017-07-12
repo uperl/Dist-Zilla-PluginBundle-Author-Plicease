@@ -21,7 +21,6 @@ $modules{$_} = $_ for qw(
   Moose
   Path::Class
   Sub::Exporter::ForMethods
-  Test2::V0
   Test::More
   autodie
   namespace::autoclean
