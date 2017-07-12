@@ -1,7 +1,5 @@
-use strict;
-use warnings;
+use Test2::V0;
 use Config;
-use Test::More tests => 1;
 
 # This .t file is generated.
 # make changes instead to dist.ini
@@ -9,25 +7,8 @@ use Test::More tests => 1;
 my %modules;
 my $post_diag;
 
-$modules{$_} = $_ for qw(
-  Data::Section
-  Dist::Zilla
-  ExtUtils::MakeMaker
-  File::Path
-  File::ShareDir
-  File::ShareDir::Install
-  File::chdir
-  IPC::System::Simple
-  Moose
-  Path::Class
-  Sub::Exporter::ForMethods
-  Test2::V0
-  Test::More
-  autodie
-  namespace::autoclean
-);
-
-
+## GENERATE ##
+## PREAMBLE ##
 
 my @modules = sort keys %modules;
 
@@ -93,3 +74,4 @@ if($post_diag)
 
 spacer;
 
+done_testing;

@@ -51,6 +51,12 @@ has _diag_content => (
   default => '',
 );
 
+has test2_v0 => (
+  is      => 'ro',
+  isa     => 'Int',
+  default => 0,
+);
+
 sub gather_files
 {
   my($self) = @_;
@@ -83,7 +89,7 @@ sub before_build
   : dir(Dist::Zilla::MintingProfile::Author::Plicease->profile_dir)->subdir(qw( default skel xt release ));
 
   my $diag = dir($self->zilla->root)->file(qw( t 00_diag.t ));
-  my $content = $source->parent->parent->file('t', '00_diag.t')->absolute->slurp;
+  my $content = $source->parent->parent->file('t', $self->test2_v0 ? '00_xdiag.t' : '00_diag.t' )->absolute->slurp;
   $content =~ s{## PREAMBLE ##}{join "\n", map { s/^\| //; $_ } @{ $self->diag_preamble }}e;
   $self->_diag_content($content);
 }
