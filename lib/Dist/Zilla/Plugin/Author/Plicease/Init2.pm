@@ -44,7 +44,7 @@ has include_tests => (
   isa     => 'Int',
   lazy    => 1,
   default => sub {
-    shift->chrome->prompt_yn("include release tests?");
+    1,
   },
 );
 

@@ -3,6 +3,8 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
   - Migrate minting template tests to use Test2::V0
   - Minting template require Perl 5.8.1
+  - No longer prompt for incuding release tests
+    This is simply a boolean value in the dist.ini anyway
 
 2.19      2017-07-12 08:17:55 -0400
   - silence annoying warning in diagnostic if using Test::Tester
