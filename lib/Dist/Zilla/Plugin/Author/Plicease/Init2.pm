@@ -318,7 +318,7 @@ sub gather_file_gitattributes
   
   my $file = Dist::Zilla::File::InMemory->new({
     name    => '.gitattributes',
-    content => "*.pm linguist-language=Perl\n*.h linguist-language=C\n",
+    content => "*.pm linguist-language=Perl\n*.t linguist-language=Perl\n*.h linguist-language=C\n",
   });
   
   $self->add_file($file);
