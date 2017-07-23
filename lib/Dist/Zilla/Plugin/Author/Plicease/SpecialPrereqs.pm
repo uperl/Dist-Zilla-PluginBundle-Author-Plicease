@@ -41,10 +41,6 @@ enabled.
 
 Require 0.003
 
-=item File::HomeDir
-
-Require 0.91 for File::HomeDir::Test
-
 =item AnyEvent::Open3::Simple
 
 Require 0.76 for new stdin style
@@ -107,7 +103,6 @@ sub register_prereqs
   my %upgrades = qw(
     Moo                                   2.0
     PerlX::Maybe                          0.003
-    File::HomeDir                         0.91
     AnyEvent::Open3::Simple               0.83
     Path::Class                           0.26
     Mojolicious                           4.31
