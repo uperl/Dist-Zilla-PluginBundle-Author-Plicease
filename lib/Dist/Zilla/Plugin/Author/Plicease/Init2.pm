@@ -252,7 +252,7 @@ sub gather_files_tests
 
   my $use_t_file = Dist::Zilla::File::InMemory->new({
     name => 't/01_use.t',
-    content => join("\n", q{use Test2::V0;},
+    content => join("\n", q{use Test2::V0 -no_srand => 1;},
                           q{sub require_ok ($);},
                           q{},
                           q{require_ok '} . $name . q{';},
@@ -284,7 +284,7 @@ sub gather_files_tests
   
   my $main_test = Dist::Zilla::File::InMemory->new({
     name => $test_name,
-    content => join("\n", q{use Test2::V0;},
+    content => join("\n", q{use Test2::V0 -no_srand => 1;},
                           q{use } . $name . q{;},
                           q{},
                           q{ok 1, 'todo';},
