@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.21      2017-07-31 13:51:38 -0400
   - Add [Author::Plicease::TravisInstall]
   - Default to using -no_srand on Test2::V0
 
