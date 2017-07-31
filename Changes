@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add [Author::Plicease::TravisInstall]
 
 2.20      2017-07-12 16:44:10 -0400
   - Migrate minting template tests to use Test2::V0
