@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::Author::Plicease::Init2;
 
-use 5.008001;
+use 5.014;
 use Moose;
 use Dist::Zilla::File::InMemory;
 use Dist::Zilla::File::FromCode;
@@ -48,27 +48,142 @@ has include_tests => (
   },
 );
 
+has type_dzil => (
+  is      => 'ro',
+  lazy    => 1,
+  default => sub {
+    my $name = shift->zilla->name;
+    $name =~ /^Dist-Zilla/ ? 1 : 0;
+  },
+);
+
+has type_alien => (
+  is      => 'ro',
+  lazy    => 1,
+  default => sub {
+    my $name = shift->zilla->name;
+    $name =~ /^Alien-[A-Za-z0-9]+$/ ? 1 : 0;
+  },
+);
+
+has perl_version => (
+  is      => 'ro',
+  lazy    => 1,
+  default => sub {
+    my($self) = @_;
+    if(defined $ENV{V} && $ENV{V} =~ /^5\.([0-9]+)$/)
+    {
+      return sprintf '5.%03d', $1;
+    }
+    elsif(defined $ENV{V} && $ENV{V} =~ /^5\.([0-9]+)\.([0-9]+)$/)
+    {
+      return sprintf '5.%03d%03d', $1, $2;
+    }
+    else
+    {
+      if($self->type_dzil)
+      {
+        return '5.014';
+      }
+      else
+      {
+        return '5.008001';
+      }
+    }
+  },
+);
+
 sub make_module
 {
   my($self, $arg) = @_;
   (my $filename = $arg->{name}) =~ s{::}{/}g;
   
   my $name = $arg->{name};
-  my $abstract = $self->abstract;
-  
-  my $file = Dist::Zilla::File::InMemory->new({
-    name    => "lib/$filename.pm",
-    content => join("\n", qq{package $name;} ,
+  my $content;
+
+  if($self->type_dzil)
+  {
+    $content = join("\n", qq{use strict;} ,
+                          qq{use warnings;} ,
+                          qq{use @{[ $self->perl_version ]};} ,
+                          qq{},
+                          qq(package $name {),
+                          qq{} ,
+                          qq{  use Moose;},
+                          qq{  use namespace::autoclean;},
+                          qq{},
+                          qq{  # ABSTRACT: @{[ $self->abstract ]}} ,
+                          qq{} ,
+                          qq{  __PACKAGE__->meta->make_immutable;},
+                          qq(}),
+                          qq{},
+                          qq{1;},
+    );
+  }
+  elsif($self->type_alien)
+  {
+    $content = join("\n", qq{package $name;} ,
                           qq{} ,
                           qq{use strict;} ,
                           qq{use warnings;} ,
-                          qq{use 5.008001;} ,
+                          qq{use @{[ $self->perl_version ]};} ,
+                          qq{use base qw( Alien::Base );},
                           qq{} ,
-                          qq{# ABSTRACT: $abstract} ,
+                          qq{# ABSTRACT: @{[ $self->abstract ]}} ,
                           qq{# VERSION} ,
                           qq{} ,
-                          qq{1;}
-    ),
+                          qq{1;},
+    );
+  }
+  elsif($self->perl_version >= 5.020)
+  {
+    $content = join("\n", qq{use strict;} ,
+                          qq{use warnings;} ,
+                          qq{use @{[ $self->perl_version ]};} ,
+                          qq{use experimental qw( postderef signatures );},
+                          qq{},
+                          qq(package $name {),
+                          qq{} ,
+                          qq{  # ABSTRACT: @{[ $self->abstract ]}} ,
+                          qq{} ,
+                          qq(}),
+                          qq{},
+                          qq{1;},
+    );
+  }
+  elsif($self->perl_version >= 5.014)
+  {
+    $content = join("\n", qq{use strict;} ,
+                          qq{use warnings;} ,
+                          qq{use @{[ $self->perl_version ]};} ,
+                          qq{},
+                          qq(package $name {),
+                          qq{} ,
+                          qq{  # ABSTRACT: @{[ $self->abstract ]}} ,
+                          qq{} ,
+                          qq(}),
+                          qq{},
+                          qq{1;},
+    );
+  }
+  else
+  {
+    $content = join("\n", qq{package $name;} ,
+                          qq{} ,
+                          qq{use strict;} ,
+                          qq{use warnings;} ,
+                          qq{use @{[ $self->perl_version ]};} ,
+                          qq{} ,
+                          qq{# ABSTRACT: @{[ $self->abstract ]}} ,
+                          qq{# VERSION} ,
+                          qq{} ,
+                          qq{1;},
+    );
+  }
+
+  my $file = Dist::Zilla::File::InMemory->new({
+    name    => "lib/$filename.pm",
+    content => $content,
   });
   
   $self->add_file($file);
@@ -86,6 +201,30 @@ sub gather_files
   $self->gather_file_travis_yml($arg);
   $self->gather_file_appveyor_yml($arg);
   $self->gather_file_author_yml($arg);
+  $self->gather_file_alienfile($arg) if $self->type_alien;
+}
+
+sub gather_file_alienfile
+{
+  my($self) = @_;
+  
+  my $file = Dist::Zilla::File::InMemory->new({
+    name    => 'alienfile',
+    content => join("\n", q{use alienfile;},
+                          q{plugin 'PkgConfig' => 'libfoo';},
+                          q(share {),
+                          q{  plugin Download => (},
+                          q{    url => 'http://...',},
+                          q{    filter => qr/*\.tar\.gz$/,},
+                          q{    version => qr/([0-9\.]+)/,},
+                          q{  );},
+                          q{  plugin Extract => 'tar.gz';},
+                          q{  plugin 'Build::Autoconf';},
+                          q(}),
+    ),
+  });
+
+  $self->add_file($file);
 }
 
 sub gather_file_author_yml
@@ -196,11 +335,15 @@ sub gather_file_dist_ini
     $content .= "\n";
     
     $content .= "[\@Author::Plicease]\n"
-             .  (__PACKAGE__->VERSION ? ":version      = @{[ __PACKAGE__->VERSION ]}\n" : '')
-             .  "travis_status = 1\n"
-             .  "release_tests = @{[ $self->include_tests ]}\n"
-             .  "installer     = Author::Plicease::MakeMaker\n"
-             .  "\n";
+             .  (__PACKAGE__->VERSION ? ":version       = @{[ __PACKAGE__->VERSION ]}\n" : '')
+             .  "travis_status  = 1\n"
+             .  "release_tests  = @{[ $self->include_tests ]}\n"
+             .  "installer      = Author::Plicease::MakeMaker\n"
+             .  "test2_v0       = 1\n";
+
+    $content .= "version_plugin = PkgVersion::Block\n" if $self->perl_version >= 5.014;
+    
+    $content .= "\n";
     
     $content .= "[RemovePrereqs]\n"
              .  "remove = strict\n"
