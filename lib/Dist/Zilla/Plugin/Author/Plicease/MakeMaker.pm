@@ -1,10 +1,10 @@
-package Dist::Zilla::Plugin::Author::Plicease::MakeMaker;
+package Dist::Zilla::Plugin::Author::Plicease::MakeMaker {
 
-use Moose;
-use namespace::autoclean;
+  use 5.014;
+  use Moose;
+  use namespace::autoclean;
 
-# ABSTRACT: munge the AUTHOR section
-# VERSION
+  # ABSTRACT: munge the AUTHOR section
 
 =head1 SYNOPSIS
 
@@ -21,22 +21,23 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
 
 =cut
 
-extends 'Dist::Zilla::Plugin::MakeMaker';
+  extends 'Dist::Zilla::Plugin::MakeMaker';
 
-around write_makefile_args => sub {
-  my $orig = shift;
-  my $self = shift;
+  around write_makefile_args => sub {
+    my $orig = shift;
+    my $self = shift;
   
-  my $h = $self->$orig(@_);  
+    my $h = $self->$orig(@_);  
 
-  # to prevent any non .pm/.pod files from being installed in lib
-  # because shit like this is stuff we ought to have to customize.
-  my %PM = map {; "lib/$_" => "\$(INST_LIB)/$_" } map { s/^lib\///; $_ } grep /^lib\/.*\.p(od|m)$/, map { $_->name } @{ $self->zilla->files };
-  $h->{PM} = \%PM;
+    # to prevent any non .pm/.pod files from being installed in lib
+    # because shit like this is stuff we ought to have to customize.
+    my %PM = map {; "lib/$_" => "\$(INST_LIB)/$_" } map { s/^lib\///; $_ } grep /^lib\/.*\.p(od|m)$/, map { $_->name } @{ $self->zilla->files };
+    $h->{PM} = \%PM;
 
-  $h;
-};
+    $h;
+  };
 
-__PACKAGE__->meta->make_immutable;
+  __PACKAGE__->meta->make_immutable;
+}
 
 1;

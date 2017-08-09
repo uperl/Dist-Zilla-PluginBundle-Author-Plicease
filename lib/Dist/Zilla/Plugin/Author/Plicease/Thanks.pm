@@ -1,16 +1,15 @@
-package Dist::Zilla::Plugin::Author::Plicease::Thanks;
+package Dist::Zilla::Plugin::Author::Plicease::Thanks {
 
-use 5.008001;
-use Moose;
+  use 5.014;
+  use Moose;
 
-with 'Dist::Zilla::Role::MetaProvider';
-with 'Dist::Zilla::Role::FileMunger';
-with 'Dist::Zilla::Role::FileFinderUser' => {
-  default_finders => [ ':InstallModules', ':ExecFiles' ],
-};
+  with 'Dist::Zilla::Role::MetaProvider';
+  with 'Dist::Zilla::Role::FileMunger';
+  with 'Dist::Zilla::Role::FileFinderUser' => {
+    default_finders => [ ':InstallModules', ':ExecFiles' ],
+  };
 
-# ABSTRACT: munge the AUTHOR section
-# VERSION
+  # ABSTRACT: munge the AUTHOR section
 
 =head1 SYNOPSIS
 
@@ -22,92 +21,94 @@ with 'Dist::Zilla::Role::FileFinderUser' => {
 
 =cut
 
-has original => (
-  is  => 'ro',
-  isa => 'Str',
-);
-
-has current => (
-  is  => 'ro',
-  isa => 'Str',
-);
-
-has contributor => (
-  is      => 'ro',
-  isa     => 'ArrayRef[Str]',
-  default => sub { [] },
-);
-
-sub mvp_multivalue_args { qw( contributor ) }
-
-sub munge_files
-{
-  my($self) = @_;
-  $self->munge_file($_) for @{ $self->found_files };
-}
-
-sub _escape ($)
-{
-  my($txt) = @_;
-  my %map = qw(
-    < lt
-    > gt
+  has original => (
+    is  => 'ro',
+    isa => 'Str',
   );
-  $txt =~ s{([<>])}{E<$map{$1}>}g;
-  $txt;
-}
-
-sub munge_file
-{
-  my($self, $file) = @_;
   
-  $self->log_fatal('requires at least current')
-    unless $self->current;
+  has current => (
+    is  => 'ro',
+    isa => 'Str',
+  );
   
-  my $replacer = sub {
-    my @list;
-    push @list, '=head1 AUTHOR', '';
-    if($self->original)
-    {
-      push @list, 'Original author: ' . _escape $self->original,
-                  '',
-                  'Current maintainer: ' . _escape $self->current,
-                  '';
-    }
-    else
-    {
-      push @list, 'Author: ' . _escape $self->current,
-                  '';
-    }
-    if(@{ $self->contributor } > 0)
-    {
-      push @list, 'Contributors:', '', map { (_escape $_, '') } @{ $self->contributor }; 
-    }
-    return join "\n", @list, '';
-  };
+  has contributor => (
+    is      => 'ro',
+    isa     => 'ArrayRef[Str]',
+    default => sub { [] },
+  );
   
-  my $content = $file->content;
-  unless($content =~ s{^=head1 AUTHOR.*(=head1 COPYRIGHT)}{$replacer->() . $1}sem)
+  sub mvp_multivalue_args { qw( contributor ) }
+  
+  sub munge_files
   {
-    $self->log_fatal('could not replace AUTHOR section');
+    my($self) = @_;
+    $self->munge_file($_) for @{ $self->found_files };
   }
-  $file->content($content);
   
-  return;
+  sub _escape ($)
+  {
+    my($txt) = @_;
+    my %map = qw(
+      < lt
+      > gt
+    );
+    $txt =~ s{([<>])}{E<$map{$1}>}g;
+    $txt;
+  }
+  
+  sub munge_file
+  {
+    my($self, $file) = @_;
+    
+    $self->log_fatal('requires at least current')
+      unless $self->current;
+    
+    my $replacer = sub {
+      my @list;
+      push @list, '=head1 AUTHOR', '';
+      if($self->original)
+      {
+        push @list, 'Original author: ' . _escape $self->original,
+                    '',
+                    'Current maintainer: ' . _escape $self->current,
+                    '';
+      }
+      else
+      {
+        push @list, 'Author: ' . _escape $self->current,
+                    '';
+      }
+      if(@{ $self->contributor } > 0)
+      {
+        push @list, 'Contributors:', '', map { (_escape $_, '') } @{ $self->contributor }; 
+      }
+      return join "\n", @list, '';
+    };
+    
+    my $content = $file->content;
+    unless($content =~ s{^=head1 AUTHOR.*(=head1 COPYRIGHT)}{$replacer->() . $1}sem)
+    {
+      $self->log_fatal('could not replace AUTHOR section');
+    }
+    $file->content($content);
+    
+    return;
+  }
+  
+  sub metadata
+  {
+    my ($self) = @_;
+  
+    my @contributors = @{$self->contributor};
+    unshift @contributors, $self->current  if $self->current;
+    unshift @contributors, $self->original if $self->original;
+  
+    return +{ x_contributors => \@contributors };
+  }
+  
+  __PACKAGE__->meta->make_immutable;
+
 }
-
-sub metadata
-{
-  my ($self) = @_;
-
-  my @contributors = @{$self->contributor};
-  unshift @contributors, $self->current  if $self->current;
-  unshift @contributors, $self->original if $self->original;
-
-  return +{ x_contributors => \@contributors };
-}
-
-__PACKAGE__->meta->make_immutable;
 
 1;
 

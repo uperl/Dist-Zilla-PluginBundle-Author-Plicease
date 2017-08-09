@@ -1,10 +1,9 @@
-package Dist::Zilla::Plugin::Author::Plicease::Upload;
+package Dist::Zilla::Plugin::Author::Plicease::Upload {
 
-use 5.008001;
-use Moose;
+  use 5.014;
+  use Moose;
 
-# ABSTRACT: Upload a dist to CPAN
-# VERSION
+  # ABSTRACT: Upload a dist to CPAN
 
 =head1 SYNOPSIS
 
@@ -48,70 +47,72 @@ Base web URL if CPAN upload is disabled.
 
 =cut
 
-extends 'Dist::Zilla::Plugin::UploadToCPAN';
-
-has cpan => (
-  is      => 'ro',
-  default => sub { 1 },
-);
-
-has scp_dest => (
-  is      => 'ro',
-  default => sub { 'ollisg@ratbat.wdlabs.com:web/sites/dist' },
-);
-
-has url => (
-  is      => 'ro',
-  default => sub { 'http://dist.wdlabs.com/' },
-);
-
-around before_release => sub {
-  my $orig = shift;
-  my $self = shift;
+  extends 'Dist::Zilla::Plugin::UploadToCPAN';
   
-  # don't check username / password here
-  # do it during release
-};
-
-around release => sub {
-  my $orig = shift;
-  my $self = shift;
+  has cpan => (
+    is      => 'ro',
+    default => sub { 1 },
+  );
   
-  if($self->cpan && $self->zilla->chrome->prompt_yn("upload to CPAN?"))
-  {
-    eval {
-      die "no username" unless length $self->username;
-      die "no password" unless length $self->password;
-      $self->$orig(@_);
-    };
-    if(my $error = $@)
+  has scp_dest => (
+    is      => 'ro',
+    default => sub { 'ollisg@ratbat.wdlabs.com:web/sites/dist' },
+  );
+  
+  has url => (
+    is      => 'ro',
+    default => sub { 'http://dist.wdlabs.com/' },
+  );
+  
+  around before_release => sub {
+    my $orig = shift;
+    my $self = shift;
+    
+    # don't check username / password here
+    # do it during release
+  };
+  
+  around release => sub {
+    my $orig = shift;
+    my $self = shift;
+    
+    if($self->cpan && $self->zilla->chrome->prompt_yn("upload to CPAN?"))
     {
-      $self->zilla->log("error uploading to cpan: $error");
-      $self->zilla->log("you will have to manually upload the dist");
-    }
-  }
-  else
-  {
-    my($archive) = @_;
-    use autodie qw( :system );
-    my @cmd = ('scp', '-q', $archive, $self->scp_dest);
-    $self->zilla->log("% @cmd");
-    eval { system @cmd };
-    if(my $error = $@)
-    {
-      $self->zilla->log("NOTE SCP FAILED: $error");
-      $self->zilla->log("manual upload will be required");
+      eval {
+        die "no username" unless length $self->username;
+        die "no password" unless length $self->password;
+        $self->$orig(@_);
+      };
+      if(my $error = $@)
+      {
+        $self->zilla->log("error uploading to cpan: $error");
+        $self->zilla->log("you will have to manually upload the dist");
+      }
     }
     else
     {
-      $self->zilla->log("download URL: " . $self->url . "$archive");
+      my($archive) = @_;
+      use autodie qw( :system );
+      my @cmd = ('scp', '-q', $archive, $self->scp_dest);
+      $self->zilla->log("% @cmd");
+      eval { system @cmd };
+      if(my $error = $@)
+      {
+        $self->zilla->log("NOTE SCP FAILED: $error");
+        $self->zilla->log("manual upload will be required");
+      }
+      else
+      {
+        $self->zilla->log("download URL: " . $self->url . "$archive");
+      }
     }
-  }
+    
+    return;
+  };
   
-  return;
-};
+  __PACKAGE__->meta->make_immutable;
 
-__PACKAGE__->meta->make_immutable;
+}
 
 1;
 

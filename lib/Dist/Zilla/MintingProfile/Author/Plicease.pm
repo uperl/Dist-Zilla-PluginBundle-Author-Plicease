@@ -1,15 +1,14 @@
-package Dist::Zilla::MintingProfile::Author::Plicease;
+package Dist::Zilla::MintingProfile::Author::Plicease {
 
-use 5.008001;
-use Moose;
-with qw( Dist::Zilla::Role::MintingProfile );
-use namespace::autoclean;
-use File::ShareDir ();
-use Path::Class    qw( dir );
-use Carp           qw( confess );
+  use 5.014;
+  use Moose;
+  with qw( Dist::Zilla::Role::MintingProfile );
+  use namespace::autoclean;
+  use File::ShareDir ();
+  use Path::Class    qw( dir );
+  use Carp           qw( confess );
 
-# ABSTRACT: Minting profile for Plicease
-# VERSION
+  # ABSTRACT: Minting profile for Plicease
 
 =head1 SYNOPSIS
 
@@ -21,23 +20,24 @@ This is the normal minting profile used by Plicease.
 
 =cut
 
-# this is basically the 5.x version of profile_dir from
-# Dist::Zilla::Role::MintingProfile::ShareDir.
-# for 5.x / 6.x compatability
+  # this is basically the 5.x version of profile_dir from
+  # Dist::Zilla::Role::MintingProfile::ShareDir.
+  # for 5.x / 6.x compatability
 
-sub profile_dir
-{
-  my($self, $profile_name) = @_;
+  sub profile_dir
+  {
+    my($self, $profile_name) = @_;
   
-  my $profile_dir = dir( File::ShareDir::module_dir( $self->meta->name ) )
-    ->subdir( $profile_name );
+    my $profile_dir = dir( File::ShareDir::module_dir( $self->meta->name ) )
+      ->subdir( $profile_name );
   
-  return $profile_dir if -d $profile_dir;
+    return $profile_dir if -d $profile_dir;
   
-  confess "Can't find profile $profile_name via $self";
+    confess "Can't find profile $profile_name via $self";
+  }
+
+  __PACKAGE__->meta->make_immutable;
 }
-
-__PACKAGE__->meta->make_immutable;
 
 1;
 

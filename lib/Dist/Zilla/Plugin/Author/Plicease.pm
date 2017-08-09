@@ -1,12 +1,11 @@
-package Dist::Zilla::Plugin::Author::Plicease;
+package Dist::Zilla::Plugin::Author::Plicease {
 
-use strict;
-use warnings;
-use Path::Class ();
-use File::ShareDir ();
+  use strict;
+  use warnings;
+  use Path::Class ();
+  use File::ShareDir ();
 
-# ABSTRACT: Dist::Zilla plugins used by Plicease
-# VERSION
+  # ABSTRACT: Dist::Zilla plugins used by Plicease
 
 =head1 DESCRIPTION
 
@@ -26,11 +25,12 @@ Returns this distributions share directory.
 
 =cut
 
-sub dist_dir
-{
-  Path::Class::Dir->new(
-    File::ShareDir::dist_dir('Dist-Zilla-Plugin-Author-Plicease')
-  );
+  sub dist_dir
+  {
+    Path::Class::Dir->new(
+      File::ShareDir::dist_dir('Dist-Zilla-Plugin-Author-Plicease')
+    );
+  }
 }
 
 1;
