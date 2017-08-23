@@ -5,6 +5,7 @@ Revision history for {{$dist->name}}
   - Add templates for specific versios of Perl
   - Require Perl 5.14
   - Require Dist::Zilla 6.00
+  - Remove dependency on File::ShareDir
 
 2.21      2017-07-31 13:51:38 -0400
   - Add [Author::Plicease::TravisInstall]

@@ -14,19 +14,23 @@ $modules{$_} = $_ for qw(
   Dist::Zilla
   ExtUtils::MakeMaker
   File::Path
-  File::ShareDir
+  File::ShareDir::Dist
   File::ShareDir::Install
   File::chdir
   IPC::System::Simple
   Moose
   Path::Class
+  Path::Tiny
   Sub::Exporter::ForMethods
   Test::More
   autodie
   namespace::autoclean
 );
 
-
+$post_diag = sub {
+  use Dist::Zilla::Plugin::Author::Plicease;
+  diag 'share dir = ', Dist::Zilla::Plugin::Author::Plicease->dist_dir;
+};
 
 my @modules = sort keys %modules;
 

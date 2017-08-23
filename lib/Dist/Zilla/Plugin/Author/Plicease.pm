@@ -2,8 +2,8 @@ package Dist::Zilla::Plugin::Author::Plicease {
 
   use strict;
   use warnings;
-  use Path::Class ();
-  use File::ShareDir ();
+  use Path::Tiny ();
+  use File::ShareDir::Dist ();
 
   # ABSTRACT: Dist::Zilla plugins used by Plicease
 
@@ -27,8 +27,8 @@ Returns this distributions share directory.
 
   sub dist_dir
   {
-    Path::Class::Dir->new(
-      File::ShareDir::dist_dir('Dist-Zilla-Plugin-Author-Plicease')
+    Path::Tiny->new(
+      File::ShareDir::Dist::dist_share('Dist-Zilla-Plugin-Author-Plicease')
     );
   }
 }
