@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.22      2017-08-23 15:08:45 -0400
   - Add templates for specific types of modules
   - Add templates for specific versios of Perl
   - Require Perl 5.14
