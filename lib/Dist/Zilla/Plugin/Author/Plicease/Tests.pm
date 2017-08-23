@@ -4,7 +4,7 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
   use Moose;
   use File::chdir;
   use File::Path qw( make_path );
-  use Path::Class qw( dir );
+  use Path::Tiny qw( path );
   use Sub::Exporter::ForMethods qw( method_installer );
   use Data::Section { installer => method_installer }, -setup;
   use Dist::Zilla::MintingProfile::Author::Plicease;
@@ -84,11 +84,11 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
     my($self) = @_;
   
     my $source = defined $self->source
-    ? dir($self->zilla->root)->subdir($self->source)
-    : dir(Dist::Zilla::MintingProfile::Author::Plicease->profile_dir)->subdir(qw( default skel xt release ));
+    ? $self->zilla->root->child($self->source)
+    : Dist::Zilla::MintingProfile::Author::Plicease->profile_dir->child("default/skel/xt/release");
   
-    my $diag = dir($self->zilla->root)->file(qw( t 00_diag.t ));
-    my $content = $source->parent->parent->file('t', $self->test2_v0 ? '00_xdiag.t' : '00_diag.t' )->absolute->slurp;
+    my $diag = $self->zilla->root->child("t/00_diag.t");
+    my $content = $source->parent->parent->child('t', $self->test2_v0 ? '00_xdiag.t' : '00_diag.t' )->absolute->slurp;
     $content =~ s{## PREAMBLE ##}{join "\n", map { s/^\| //; $_ } @{ $self->diag_preamble }}e;
     $self->_diag_content($content);
   }
@@ -168,7 +168,7 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
       $self->add_file($file);
     }
   
-    my $diag = dir($self->zilla->root)->file(qw( t 00_diag.t ));
+    my $diag = $self->zilla->root->file(qw( t 00_diag.t ));
     $diag->spew($content);
   }
   

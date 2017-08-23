@@ -19,7 +19,6 @@ $modules{$_} = $_ for qw(
   File::chdir
   IPC::System::Simple
   Moose
-  Path::Class
   Path::Tiny
   Sub::Exporter::ForMethods
   Test2::V0

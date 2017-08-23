@@ -2,7 +2,7 @@ package Dist::Zilla::Plugin::Author::Plicease::DevShare {
 
   use 5.014;
   use Moose;
-  use Path::Class qw( dir );
+  use Path::Tiny ();
   use namespace::autoclean;
 
   # ABSTRACT: Plugin to deal with dev/project share directory
@@ -28,7 +28,7 @@ package Dist::Zilla::Plugin::Author::Plicease::DevShare {
   
     $self->add_file($file);
   
-    dir->file($filename)->spew($content);
+    Path::Tiny->($filename)->spew($content);
   }
 
   __PACKAGE__->meta->make_immutable;
