@@ -260,6 +260,7 @@ Create a dist in plicease style.
       name    => '.travis.yml',
       content => join("\n", q{language: perl},
                             q{sudo: false},
+                            q{dist: trusty},
                             q{},
                             q{install:},
                             q{  - perlbrew list},
