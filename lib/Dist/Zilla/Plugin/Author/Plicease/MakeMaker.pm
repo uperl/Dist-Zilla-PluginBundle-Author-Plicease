@@ -109,7 +109,11 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
         my @new;
         while(defined $content[0] && $content[0] !~ /\%FallbackPrereqs/)
         {
-          push @new, shift @content;
+          my $line = shift @content;
+        
+          $line =~ s/use ExtUtils::MakeMaker;/use ExtUtils::MakeMaker 6.64;/;
+        
+          push @new, $line;
         }
         
         if((eval $mod->content) && mymm->can('myWriteMakefile'))
