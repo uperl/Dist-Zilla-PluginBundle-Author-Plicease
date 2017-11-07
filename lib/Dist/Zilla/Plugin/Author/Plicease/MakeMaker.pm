@@ -3,6 +3,7 @@ package Dist::Zilla::Plugin::Author::Plicease::MakeMaker {
   use 5.014;
   use Moose;
   use namespace::autoclean;
+  use Perl::Tidy ();
   use List::Util qw( first );
 
   # ABSTRACT: munge the AUTHOR section
@@ -45,8 +46,23 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
     
     my $file = first { $_->name eq 'Makefile.PL' } @{ $self->zilla->files };
     my $mod  = first { $_->name eq 'inc/mymm.pl' } @{ $self->zilla->files };
-    
-    my @content = split /\n/, $file->content;
+
+    $DB::single = 1;
+    my @content = do {
+      my $in  = $file->content;
+      my $out = '';
+      my $err = '';
+      local @ARGV = ();
+      my $error = Perl::Tidy::perltidy(
+        source      => \$in,
+        destination => \$out,
+        stderr      => \$err,
+        perltidyrc  => Dist::Zilla::Plugin::Author::Plicease->dist_dir->child('perltidyrc')->stringify,
+      );
+      $self->log("perltidy: $_") for split /\n/, $err;
+      $self->log_fatal("perltidy failed!") if $error;
+      split /\n/, $out;
+    };
 
     # pet-peve1: remove blank lines between use
     {
@@ -75,7 +91,7 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
         }
       }
     }
-    
+
     # pet-peve2: squeeze multiple blank lines
     {
       my @new;
@@ -100,7 +116,7 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
       }
       @content = @new;
     }
-    
+
     if($mod)
     {
       my $last = pop @content;
@@ -128,9 +144,9 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
         $self->log_fatal("unable to find WriteMakefile in Makefile.PL");
       }
     }
-    
+
     $file->content(join "\n", @content);
-    
+
     return;
   };
 
