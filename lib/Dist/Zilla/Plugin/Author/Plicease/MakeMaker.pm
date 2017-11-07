@@ -4,6 +4,7 @@ package Dist::Zilla::Plugin::Author::Plicease::MakeMaker {
   use Moose;
   use namespace::autoclean;
   use Perl::Tidy ();
+  use Dist::Zilla::Plugin::Author::Plicease ();
   use List::Util qw( first );
 
   # ABSTRACT: munge the AUTHOR section
