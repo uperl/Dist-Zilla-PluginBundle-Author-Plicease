@@ -22,6 +22,8 @@ Use C<[UseUnsafeInc]> with dot_in_INC set to 0 instead.
 
   with 'Dist::Zilla::Role::MetaProvider',
        'Dist::Zilla::Role::AfterBuild';
+  
+  use namespace::autoclean;
 
   sub metadata
   {
@@ -34,6 +36,8 @@ Use C<[UseUnsafeInc]> with dot_in_INC set to 0 instead.
     my($self) = @_;
     $ENV{PERL_USE_UNSAFE_INC} = 0;
   }
+  
+  __PACKAGE__->meta->make_immutable;
 
 };
 
