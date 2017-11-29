@@ -20,4 +20,5 @@ script:
   - dzil test -v
 
 env:
-  - PERL_USE_UNSAFE_INC=0
+  global:
+    - PERL_USE_UNSAFE_INC=0

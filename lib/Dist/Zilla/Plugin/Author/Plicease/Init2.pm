@@ -275,7 +275,8 @@ Create a dist in plicease style.
                             q{  - dzil test -v},
                             q{},
                             q{env:},
-                            q{  - PERL_USE_UNSAFE_INC=0},
+                            q{  global:},
+                            q{    - PERL_USE_UNSAFE_INC=0},
       ),
     });
   
