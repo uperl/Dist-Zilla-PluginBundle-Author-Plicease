@@ -8,7 +8,7 @@ package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup {
 
 =head1 SYNOPSIS
 
- [Author::Plicease::TravisStatus]
+ [Author::Plicease::MarkDownCleanup]
 
 =cut
 

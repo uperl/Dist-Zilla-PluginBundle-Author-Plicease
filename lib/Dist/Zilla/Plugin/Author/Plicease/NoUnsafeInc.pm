@@ -16,7 +16,7 @@ Use C<[UseUnsafeInc]> with dot_in_INC set to 0 instead.
 =cut
 
   # Similar to [UseUnsafeInc], except, we don't require a recent Perl
-  # for releases without a environment variable.  Risky!  By not at
+  # for releases without a environment variable.  Risky!  But at
   # least not annoying.  We also don't provide an interface to setting
   # to 1.  Code should instead be fixed.
 
