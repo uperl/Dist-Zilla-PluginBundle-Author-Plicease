@@ -48,7 +48,6 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
     my $file = first { $_->name eq 'Makefile.PL' } @{ $self->zilla->files };
     my $mod  = first { $_->name eq 'inc/mymm.pl' } @{ $self->zilla->files };
 
-    $DB::single = 1;
     my @content = do {
       my $in  = $file->content;
       my $out = '';
