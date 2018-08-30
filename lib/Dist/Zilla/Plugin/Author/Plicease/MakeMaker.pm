@@ -45,8 +45,9 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
     
     $self->$orig(@args);
     
-    my $file = first { $_->name eq 'Makefile.PL' } @{ $self->zilla->files };
-    my $mod  = first { $_->name eq 'inc/mymm.pl' } @{ $self->zilla->files };
+    my $file  = first { $_->name eq 'Makefile.PL' }  @{ $self->zilla->files };
+    my $mod   = first { $_->name eq 'inc/mymm.pl' }  @{ $self->zilla->files };
+    my $build = first { $_->name eq 'inc/mymm-build.pl' } @{ $self->zilla->files };
 
     my @content = do {
       my $in  = $file->content;
@@ -143,6 +144,16 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
       {
         $self->log_fatal("unable to find WriteMakefile in Makefile.PL");
       }
+    }
+
+
+    if($build)
+    {
+      push @content, "sub MY::postamble {";
+      push @content, "  \"pure_all :: mymm_build\\n\" .";
+      push @content, "  \"mymm_build :\\n\" .";
+      push @content, "  \"\\t\\\$(FULLPERL) inc/mymm-build.pl\\n\"";
+      push @content, "}";
     }
 
     $file->content(join "\n", @content);
