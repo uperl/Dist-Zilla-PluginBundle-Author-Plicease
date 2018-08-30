@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - inc/mymm-test.pl runs just before test if present.
 
 2.27      2018-08-30 10:00:16 -0400
   - inc/mymm-build.pl runs at build time if present.

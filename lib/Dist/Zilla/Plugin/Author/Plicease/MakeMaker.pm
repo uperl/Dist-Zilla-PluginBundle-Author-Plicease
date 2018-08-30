@@ -45,9 +45,10 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
     
     $self->$orig(@args);
     
-    my $file  = first { $_->name eq 'Makefile.PL' }  @{ $self->zilla->files };
-    my $mod   = first { $_->name eq 'inc/mymm.pl' }  @{ $self->zilla->files };
+    my $file  = first { $_->name eq 'Makefile.PL' }       @{ $self->zilla->files };
+    my $mod   = first { $_->name eq 'inc/mymm.pl' }       @{ $self->zilla->files };
     my $build = first { $_->name eq 'inc/mymm-build.pl' } @{ $self->zilla->files };
+    my $test  = first { $_->name eq 'inc/mymm-test.pl' }  @{ $self->zilla->files };
 
     my @content = do {
       my $in  = $file->content;
@@ -118,7 +119,7 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
       @content = @new;
     }
 
-    if($mod)
+    if($mod || $test)
     {
       my $last = pop @content;
       if($last =~ /^WriteMakefile\(/)
@@ -127,8 +128,17 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
         while(defined $content[0] && $content[0] !~ /\%FallbackPrereqs/)
         {
           my $line = shift @content;
-        
-          $line =~ s/use ExtUtils::MakeMaker;/use ExtUtils::MakeMaker 6.64;/;
+
+          if($test)
+          {
+            # TODO: not exactly sure when the test order was fixed in EUMM.
+            #       research and correct.
+            $line =~ s/use ExtUtils::MakeMaker;/use ExtUtils::MakeMaker 7.1001;/;
+          }
+          else
+          {
+            $line =~ s/use ExtUtils::MakeMaker;/use ExtUtils::MakeMaker 6.64;/;
+          }
         
           push @new, $line;
         }
@@ -147,12 +157,28 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
     }
 
 
-    if($build)
+    if($build || $test)
     {
       push @content, "sub MY::postamble {";
-      push @content, "  \"pure_all :: mymm_build\\n\" .";
-      push @content, "  \"mymm_build :\\n\" .";
-      push @content, "  \"\\t\\\$(FULLPERL) inc/mymm-build.pl\\n\"";
+      push @content, "  my \$postamble = '';";
+      push @content, '';
+      if($build)
+      {
+        push @content, "  \$postamble .=";
+        push @content, "    \"pure_all :: mymm_build\\n\" .";
+        push @content, "    \"mymm_build :\\n\" .";
+        push @content, "    \"\\t\\\$(FULLPERL) inc/mymm-build.pl\\n\\n\";";
+        push @content, '';
+      }
+      if($test)
+      {
+        push @content, "  \$postamble .=";
+        push @content, "    \"subdirs-test_dynamic subdirs-test_static subdirs-test :: mymm_test\\n\" .";
+        push @content, "    \"mymm_test :\\n\" .";
+        push @content, "    \"\\t\\\$(FULLPERL) inc/mymm-test.pl\\n\\n\";";
+        push @content, '';
+      }
+      push @content, "  \$postamble;";
       push @content, "}";
     }
 
@@ -171,6 +197,15 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
       $self->zilla->register_prereqs(
         { phase => 'configure' },
         'ExtUtils::MakeMaker' => '6.64'
+      );
+    }
+
+    my $test = first { $_->name eq 'inc/mymm-test.pl' } @{ $self->zilla->files };
+    if($test)
+    {
+      $self->zilla->register_prereqs(
+        { phase => 'configure' },
+        'ExtUtils::MakeMaker' => '7.1001'
       );
     }
     
