@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add support for PLICEASE_DZIL_NO_GIT
 
 2.28      2018-08-30 14:49:58 -0400
   - inc/mymm-test.pl runs just before test if present.

@@ -260,6 +260,7 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
     my $self = shift;
     $self->log_fatal('release requires Perl 5.10 or better') if $] < 5.010000;
     $self->log_fatal('don\'t release via MSWin32')           if $^O eq 'MSWin32';
+    $self->log_fatal('don\'t release without Git plugins')   if $ENV{PLICEASE_DZIL_NO_GIT};
   }
 
   sub setup_installer
