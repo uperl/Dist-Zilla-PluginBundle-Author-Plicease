@@ -106,7 +106,7 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
       Path::Class                           0.26
       Mojolicious                           4.31
       Role::Tiny                            1.003001
-      Test::More                            0.94
+      Test::More                            0.98
       Test::Exit                            0.11
       Clustericious                         1.20
       Test::Clustericious::Cluster          0.31
