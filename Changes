@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.30      2019-01-01 09:47:44 -0500
   - bump minimum version of Test::More to 0.98
   - New dists get new cip for CI instead of raw travis
 
