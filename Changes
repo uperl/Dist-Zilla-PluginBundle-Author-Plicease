@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - bump minimum version of Test::More to 0.98
+  - New dists get new cip for CI instead of raw travis
 
 2.29      2018-12-05 16:30:28 -0500
   - Add support for PLICEASE_DZIL_NO_GIT
