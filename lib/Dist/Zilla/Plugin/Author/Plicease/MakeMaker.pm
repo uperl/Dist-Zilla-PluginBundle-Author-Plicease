@@ -45,10 +45,12 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
     
     $self->$orig(@args);
     
-    my $file  = first { $_->name eq 'Makefile.PL' }       @{ $self->zilla->files };
-    my $mod   = first { $_->name eq 'inc/mymm.pl' }       @{ $self->zilla->files };
-    my $build = first { $_->name eq 'inc/mymm-build.pl' } @{ $self->zilla->files };
-    my $test  = first { $_->name eq 'inc/mymm-test.pl' }  @{ $self->zilla->files };
+    my $file   = first { $_->name eq 'Makefile.PL' }        @{ $self->zilla->files };
+    my $mod    = first { $_->name eq 'inc/mymm.pl' }        @{ $self->zilla->files };
+    my $config = first { $_->name eq 'inc/mymm-config.pl' } @{ $self->zilla->files };
+    my $build  = first { $_->name eq 'inc/mymm-build.pl' }  @{ $self->zilla->files };
+    my $test   = first { $_->name eq 'inc/mymm-test.pl' }   @{ $self->zilla->files };
+    my $clean  = first { $_->name eq 'inc/mymm-clean.pl' }  @{ $self->zilla->files };
 
     my @content = do {
       my $in  = $file->content;
@@ -142,8 +144,11 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
         
           push @new, $line;
         }
+
+        eval $mod->content;
+        $self->log_fatal("unable to eval inc/mymm.pl: $@") if $@;
         
-        if((eval $mod->content) && mymm->can('myWriteMakefile'))
+        if(mymm->can('myWriteMakefile'))
         {
           $last = "mymm::my$last";
         }
@@ -157,11 +162,19 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
     }
 
 
-    if($build || $test)
+    if($config || $build || $test || $clean)
     {
       push @content, "sub MY::postamble {";
       push @content, "  my \$postamble = '';";
       push @content, '';
+      if($config)
+      {
+        push @content, "  \$postamble .=";
+        push @content, "    \"config :: mymm_config\\n\" .";
+        push @content, "    \"mymm_config :\\n\" .";
+        push @content, "    \"\\t\\\$(FULLPERL) inc/mymm-config.pl\\n\\n\";";
+        push @content, '';
+      }
       if($build)
       {
         push @content, "  \$postamble .=";
@@ -176,6 +189,14 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
         push @content, "    \"subdirs-test_dynamic subdirs-test_static subdirs-test :: mymm_test\\n\" .";
         push @content, "    \"mymm_test :\\n\" .";
         push @content, "    \"\\t\\\$(FULLPERL) inc/mymm-test.pl\\n\\n\";";
+        push @content, '';
+      }
+      if($clean)
+      {
+        push @content, "  \$postamble .=";
+        push @content, "    \"clean :: mymm_clean\\n\" .";
+        push @content, "    \"mymm_clean : \\n\" . ";
+        push @content, "    \"\\t\\\$(FULLPERL) inc/mymm-clean.pl\\n\\n\";";
         push @content, '';
       }
       push @content, "  \$postamble;";

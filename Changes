@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add support for inc/mymm-clean.pl
+  - Add support for inc/mymm-config.pl
 
 2.30      2019-01-01 09:47:44 -0500
   - bump minimum version of Test::More to 0.98
