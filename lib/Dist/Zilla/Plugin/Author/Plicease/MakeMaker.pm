@@ -171,33 +171,36 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
       if($config)
       {
         push @content, "    \$postamble .=";
-        push @content, "      \"config :: mymm_config\\n\" .";
-        push @content, "      \"mymm_config :\\n\" .";
-        push @content, "      \"\\t\\\$(FULLPERL) inc/mymm-config.pl\\n\\n\";";
+        push @content, "      \"config :: _mm/config\\n\" .";
+        push @content, "      \"mymm-config _mm/config:\\n\" .";
+        push @content, "      \"\\t\\\$(FULLPERL) inc/mymm-config.pl\\n\" .";
+        push @content, "      \"\\t\\\$(NOECHO)\\\$(MKPATH) _mm\\n\" .";
+        push @content, "      \"\\t\\\$(NOECHO)\\\$(TOUCH) _mm/config\\n\\n\";";
         push @content, '';
       }
       if($build)
       {
         push @content, "    \$postamble .=";
-        push @content, "      \"pure_all :: mymm_build\\n\" .";
-        push @content, "      \"mymm_build :\\n\" .";
+        push @content, "      \"pure_all :: mymm-build\\n\" .";
+        push @content, "      \"mymm-build :@{[ $config ? ' _mm/config' : '' ]}\\n\" .";
         push @content, "      \"\\t\\\$(FULLPERL) inc/mymm-build.pl\\n\\n\";";
         push @content, '';
       }
       if($test)
       {
         push @content, "    \$postamble .=";
-        push @content, "      \"subdirs-test_dynamic subdirs-test_static subdirs-test :: mymm_test\\n\" .";
-        push @content, "      \"mymm_test :\\n\" .";
+        push @content, "      \"subdirs-test_dynamic subdirs-test_static subdirs-test :: mymm-test\\n\" .";
+        push @content, "      \"mymm-test :\\n\" .";
         push @content, "      \"\\t\\\$(FULLPERL) inc/mymm-test.pl\\n\\n\";";
         push @content, '';
       }
       if($clean)
       {
         push @content, "    \$postamble .=";
-        push @content, "      \"clean :: mymm_clean\\n\" .";
-        push @content, "      \"mymm_clean : \\n\" . ";
-        push @content, "      \"\\t\\\$(FULLPERL) inc/mymm-clean.pl\\n\\n\";";
+        push @content, "      \"clean :: mymm-clean\\n\" .";
+        push @content, "      \"mymm-clean :\\n\" .";
+        push @content, "      \"\\t\\\$(FULLPERL) inc/mymm-clean.pl\\n\" .";
+        push @content, "      \"\\t\\\$(RM_RF) _mm\\n\\n\";";
         push @content, '';
       }
       push @content, "    \$postamble;";
@@ -207,10 +210,10 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
       push @content, "    my(\$self, \@therest) = \@_;";
       push @content, "    my \$st = \$self->SUPER::special_targets(\@therest);";
       push @content, "    \$st .= \"\\n.PHONY:";
-      $content[-1] .= " mymm_config" if $config;
-      $content[-1] .= " mymm_build" if $build;
-      $content[-1] .= " mymm_test" if $test;
-      $content[-1] .= " mymm_clean" if $clean;
+      $content[-1] .= " mymm-config" if $config;
+      $content[-1] .= " mymm-build" if $build;
+      $content[-1] .= " mymm-test" if $test;
+      $content[-1] .= " mymm-clean" if $clean;
       $content[-1] .= "\\n\";";
       push @content, "    \$st;";
       push @content, "  }";
