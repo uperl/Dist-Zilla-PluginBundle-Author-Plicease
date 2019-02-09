@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - bump reqs for generated dists for Test2::V0 and ExtUtils::ParseXS
 
 2.32      2019-01-21 00:06:45 -0500
   - Add [Author::Plicease::Core]

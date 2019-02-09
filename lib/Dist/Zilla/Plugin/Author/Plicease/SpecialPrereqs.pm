@@ -110,7 +110,8 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
       Test::Exit                            0.11
       Clustericious                         1.20
       Test::Clustericious::Cluster          0.31
-      Test2::V0                             0.000071
+      Test2::V0                             0.000092
+      ExtUtils::ParseXS                     3.30
     );
     
     $upgrades{$_} = '1.302015' for (
