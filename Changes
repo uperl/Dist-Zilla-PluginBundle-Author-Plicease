@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - add [Author::Plicease::Core] to newly minted dists
 
 2.33      2019-02-09 06:41:52 -0500
   - bump reqs for generated dists for Test2::V0 and ExtUtils::ParseXS

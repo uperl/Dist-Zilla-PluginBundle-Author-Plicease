@@ -359,12 +359,8 @@ Create a dist in plicease style.
       $content .= "version_plugin = PkgVersion::Block\n" if $self->perl_version >= 5.014;
       
       $content .= "\n";
-      
-      $content .= "[RemovePrereqs]\n"
-               .  "remove = strict\n"
-               .  "remove = warnings\n"
-               .  "remove = base\n"
-               .  "\n";
+
+      $content .= "[Author::Plicease::Core]\n";
       
       $content .= ";[Prereqs]\n"
                .  ";Foo::Bar = 0\n"
