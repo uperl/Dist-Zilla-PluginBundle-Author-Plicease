@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.34      2019-02-22 03:58:42 -0500
   - add [Author::Plicease::Core] to newly minted dists
   - Add appveyor_user to [Author::Plicease::MarkDownCleanup]
 
