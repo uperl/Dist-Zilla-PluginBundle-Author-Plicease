@@ -23,6 +23,15 @@ package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup {
     default => 'plicease',
   );
 
+  has cirrus_user => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub {
+      my($self) = @_;
+      $self->travis_user;
+    },
+  );
+
   has appveyor_user => (
     is      => 'ro',
     default => 'plicease',
@@ -32,7 +41,7 @@ package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup {
     is  => 'ro',
     isa => 'Str',
   );
-  
+
   sub after_build
   {
     my($self) = @_;
@@ -41,8 +50,11 @@ package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup {
     {
       my $name = $self->zilla->name;
       my $user = $self->travis_user;
-      
+
+      my $cirrus_status = -f $self->zilla->root->child('.cirrus.yml');
+
       my $status = '';
+      $status .= " [![Build Status](https://api.cirrus-ci.com/github/@{[ $self->cirrus_user ]}/$name.svg)](https://cirrus-ci.com/github/@{[ $self->cirrus_user ]}/$name)" if $cirrus_status;
       $status .= " [![Build Status](https://secure.travis-ci.org/$user/$name.png)](http://travis-ci.org/$user/$name)" if $self->travis_status;
       $status .= " [![Build status](https://ci.appveyor.com/api/projects/status/@{[ $self->appveyor ]}/branch/master?svg=true)](https://ci.appveyor.com/project/@{[ $self->appveyor_user ]}/$name/branch/master)" if $self->appveyor;
       

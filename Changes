@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add some hooks for cirrus-ci badge in the README a la appveyor and travis
 
 2.34      2019-02-22 03:58:42 -0500
   - add [Author::Plicease::Core] to newly minted dists
