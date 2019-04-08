@@ -510,8 +510,9 @@ Create a dist in plicease style.
     
     my $git = Git::Wrapper->new($opts->{mint_root});
     $git->init;
+    $git->commit({ 'allow-empty' => 1, message => "Start with a blank" });
     $git->add($opts->{mint_root});
-    $git->commit({ message => "Initial commit" });
+    $git->commit({ message => "Initial structure" });
     
     unless(eval q{ use LWP::UserAgent; use HTTP::Request; 1; })
     {
