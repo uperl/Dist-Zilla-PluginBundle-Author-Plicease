@@ -22,7 +22,6 @@ $modules{$_} = $_ for qw(
   Perl::Tidy
   Sub::Exporter::ForMethods
   Test2::V0
-  Test::More
   namespace::autoclean
 );
 

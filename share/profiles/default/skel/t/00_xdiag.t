@@ -1,8 +1,6 @@
 use Test2::V0 -no_srand => 1;
 use Config;
 
-eval { require Test::More };
-
 # This .t file is generated.
 # make changes instead to dist.ini
 
