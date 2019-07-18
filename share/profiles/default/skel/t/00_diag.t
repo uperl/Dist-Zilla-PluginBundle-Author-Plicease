@@ -56,9 +56,11 @@ diag sprintf $format, 'perl ', $];
 
 foreach my $module (@modules)
 {
-  if(eval qq{ require $module; 1 })
+  my $pm = "$module.pm";
+  $pm =~ s{::}{/}g;
+  if(eval { require $pm; 1 })
   {
-    my $ver = eval qq{ \$$module\::VERSION };
+    my $ver = eval { $module->VERSION };
     $ver = 'undef' unless defined $ver;
     diag sprintf $format, $module, $ver;
   }
