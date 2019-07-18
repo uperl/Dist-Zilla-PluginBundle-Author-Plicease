@@ -1,7 +1,7 @@
 use Test2::V0 -no_srand => 1;
 use Config;
 
-eval { require Test::More };
+eval { require 'Test/More.pm' };
 
 # This .t file is generated.
 # make changes instead to dist.ini
@@ -76,7 +76,7 @@ foreach my $module (sort @modules)
 {
   my $pm = "$module.pm";
   $pm =~ s{::}{/}g;
-  if(eval qq{ require $pm; 1 })
+  if(eval { require $pm; 1 })
   {
     my $ver = eval { $module->VERSION };
     $ver = 'undef' unless defined $ver;
