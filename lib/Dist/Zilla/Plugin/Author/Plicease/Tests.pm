@@ -174,6 +174,7 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
   sub test
   {
     my($self, $target) = @_;
+    return if defined $ENV{CI} && $ENV{CI} =~ /^true$/i;
     system 'prove', '-br', 'xt';
     $self->log_fatal('release test failure') unless $? == 0;
   }
