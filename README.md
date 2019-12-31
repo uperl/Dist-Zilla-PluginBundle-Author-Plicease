@@ -14,7 +14,9 @@ installed without the the full set of prereqs required by the bundle.
 
 ## dist\_dir
 
-    my $dir = Dist::Zilla::Plugin::Author::Plicease->dist_dir;
+```perl
+my $dir = Dist::Zilla::Plugin::Author::Plicease->dist_dir;
+```
 
 Returns this distributions share directory.
 
