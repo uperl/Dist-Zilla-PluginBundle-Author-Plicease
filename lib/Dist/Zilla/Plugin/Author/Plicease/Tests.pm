@@ -168,7 +168,7 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
       $self->add_file($file);
     }
   
-    $self->zilla->root->child(qw( t 00_diag.t ))->spew($content);
+    $self->zilla->root->child(qw( t 00_diag.t ))->spew_raw($content);
   }
   
   sub test

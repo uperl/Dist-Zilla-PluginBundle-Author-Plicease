@@ -61,7 +61,7 @@ package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup {
       my $content = $readme->slurp;
       $content =~ s{# NAME\s+(.*?) - (.*?#)}{# $1$status\n\n$2}s;
       $content =~ s{# VERSION\s+version (\d+\.|)\d+\.\d+(\\_\d+|)\s+#}{#};
-      $readme->spew($content);
+      $readme->spew_raw($content);
     }
     else
     {

@@ -38,7 +38,7 @@ package Dist::Zilla::Plugin::Author::Plicease::DevShare {
     $self->log("DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED");
     $self->log("Please use File::ShareDir::Dist instead");
   
-    Path::Tiny->($filename)->spew($content);
+    Path::Tiny->($filename)->spew_raw($content);
   }
 
   __PACKAGE__->meta->make_immutable;
