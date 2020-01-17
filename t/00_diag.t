@@ -14,7 +14,6 @@ $modules{$_} = $_ for qw(
   Dist::Zilla
   Dist::Zilla::App::Command::aliendeps
   Dist::Zilla::Plugin::Alien
-  Dist::Zilla::Plugin::Author::Plicease
   Dist::Zilla::Plugin::AutoMetaResources
   Dist::Zilla::Plugin::CopyFilesFromBuild
   Dist::Zilla::Plugin::Git

@@ -192,25 +192,6 @@ Specify a minimum Perl version.  If not specified it will be detected.
     diag
     allow_dirty ) }
 
-  my %plugin_versions = qw(
-    Alien                0.023
-    Author::Plicease.*   2.41
-    OurPkgVersion        0.21
-    MinimumPerl          1.006
-    InstallGuide         1.200006
-    Run::.*              0.035
-    PodWeaver            4.006
-    ReadmeAnyFromPod     0.150250
-    AutoMetaResources    1.20
-    CopyFilesFromBuild   0.150250
-  );
-
-  require Dist::Zilla::Plugin::Author::Plicease;
-  unless(Dist::Zilla::Plugin::Author::Plicease->VERSION)
-  {
-    delete $plugin_versions{'Author::Plicease.*'};
-  }
-
   sub _my_add_plugin {
     my($self, @specs) = @_;
 
@@ -218,14 +199,6 @@ Specify a minimum Perl version.  If not specified it will be detected.
     {
       my $plugin = $spec->[0];
       my %args = ref $spec->[-1] ? %{ pop @$spec } : ();
-
-      foreach my $key (keys %plugin_versions)
-      {
-        if($plugin =~ /^$key$/)
-        {
-          $args{':version'} = $plugin_versions{$key};
-        }
-      }
       $self->add_plugins([@$spec, \%args]);
     }
   };
