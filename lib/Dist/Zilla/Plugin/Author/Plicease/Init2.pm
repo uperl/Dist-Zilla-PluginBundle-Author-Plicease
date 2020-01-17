@@ -21,6 +21,7 @@ Create a dist in plicease style.
   with 'Dist::Zilla::Role::AfterMint';
   with 'Dist::Zilla::Role::ModuleMaker';
   with 'Dist::Zilla::Role::FileGatherer';
+  with 'Dist::Zilla::Role::TextTemplate';
 
   our $chrome;
 
@@ -237,36 +238,16 @@ Create a dist in plicease style.
 
     my $zilla = $self->zilla;
 
+    my $template = ${ $self->section_data("template/dist.ini") };
     my $code = sub {
-      my $content = '';
-
-      $content .= sprintf "name             = %s\n", $zilla->name;
-      $content .= sprintf "author           = Graham Ollis <plicease\@cpan.org>\n";
-      $content .= sprintf "license          = Perl_5\n";
-      $content .= sprintf "copyright_holder = Graham Ollis\n";
-      $content .= sprintf "copyright_year   = %s\n", (localtime)[5]+1900;
-      $content .= sprintf "version          = 0.01\n";
-      $content .= "\n";
-
-      $content .= "[\@Author::Plicease]\n"
-               .  (__PACKAGE__->VERSION ? ":version       = @{[ __PACKAGE__->VERSION ]}\n" : '')
-               .  "travis_status  = 1\n"
-               .  "release_tests  = @{[ $self->include_tests ]}\n"
-               .  "installer      = Author::Plicease::MakeMaker\n"
-               .  "github_user    = @{[ $self->github_user ]}\n"
-               .  "test2_v0       = 1\n";
-
-      $content .= "version_plugin = PkgVersion::Block\n" if $self->perl_version >= 5.014;
-
-      $content .= "\n";
-
-      $content .= "[Author::Plicease::Core]\n";
-
-      $content .= "[Author::Plicease::Upload]\n"
-               .  "cpan = 0\n"
-               .  "\n";
-
-      $content;
+      $self->fill_in_string($template, {
+        name           => $zilla->name,
+        copyright_year => (localtime)[5]+1900,
+        version        => __PACKAGE__->VERSION // '2.41',
+        release_tests  => $self->include_tests,
+        github_user    => $self->github_user,
+        version_plugin => $self->perl_version >= 5.014 ? 'PkgVersion::Block' : 0,
+      }, {});
     };
 
     my $file = Dist::Zilla::File::FromCode->new({
@@ -639,5 +620,27 @@ Revision history for {{$dist->name}}},
 
 {{$NEXT}}
   - initial version
+
+
+__[ template/dist.ini ]__
+name             = {{$name}}
+author           = Graham Ollis <plicease@cpan.org>
+license          = Perl_5
+copyright_holder = Graham Ollis
+copyright_year   = {{$copyright_year}}
+version          = 0.01
+
+[@Author::Plicease]
+:version       = {{$version}}
+travis_status  = 1
+release_tests  = {{$release_tests}}
+installer      = Author::Plicease::MakeMaker
+github_user    = {{$github_user}}
+test2_v0       = 1
+{{ $version_plugin ? "version_plugin = $version_plugin\n" : '' }}
+[Author::Plicease::Core]
+
+[Author::Plicease::Upload]
+cpan = 0
 
 
