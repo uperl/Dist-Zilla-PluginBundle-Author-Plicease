@@ -64,7 +64,9 @@ Create a dist in plicease style.
     lazy    => 1,
     default => sub {
       my $name = shift->zilla->name;
-      $name =~ /^Alien-[A-Za-z0-9]+$/ ? 1 : 0;
+      my $alien = $name =~ /^Alien-[A-Za-z0-9]+$/ ? 1 : 0;
+      $alien = 0 if $name =~ /^Alien-(Build|Base|Role)-/;
+      $alien;
     },
   );
 
@@ -98,97 +100,32 @@ Create a dist in plicease style.
   sub make_module
   {
     my($self, $arg) = @_;
-    (my $filename = $arg->{name}) =~ s{::}{/}g;
 
-    my $name = $arg->{name};
-    my $content;
+    my $template_name;
 
     if($self->type_dzil)
     {
-      $content = join("\n", qq{use strict;} ,
-                            qq{use warnings;} ,
-                            qq{use @{[ $self->perl_version ]};} ,
-                            qq{},
-                            qq(package $name {),
-                            qq{} ,
-                            qq{  use Moose;},
-                            qq{  use namespace::autoclean;},
-                            qq{},
-                            qq{  # ABSTRACT: @{[ $self->abstract ]}} ,
-                            qq{} ,
-                            qq{  __PACKAGE__->meta->make_immutable;},
-                            qq(}),
-                            qq{},
-                            qq{1;},
-      );
+      $template_name = 'Dzil.pm';
     }
     elsif($self->type_alien)
     {
-      $content = join("\n", qq{package $name;} ,
-                            qq{} ,
-                            qq{use strict;} ,
-                            qq{use warnings;} ,
-                            qq{use @{[ $self->perl_version ]};} ,
-                            qq{use base qw( Alien::Base );},
-                            qq{} ,
-                            qq{# ABSTRACT: @{[ $self->abstract ]}} ,
-                            qq{# VERSION} ,
-                            qq{} ,
-                            qq{1;},
-      );
+      $template_name = 'Alien.pm';
     }
     elsif($self->perl_version >= 5.020)
     {
-      $content = join("\n", qq{use strict;} ,
-                            qq{use warnings;} ,
-                            qq{use @{[ $self->perl_version ]};} ,
-                            qq{use experimental qw( postderef signatures );},
-                            qq{},
-                            qq(package $name {),
-                            qq{} ,
-                            qq{  # ABSTRACT: @{[ $self->abstract ]}} ,
-                            qq{} ,
-                            qq(}),
-                            qq{},
-                            qq{1;},
-      );
+      $template_name = 'P5020.pm';
     }
     elsif($self->perl_version >= 5.014)
     {
-      $content = join("\n", qq{use strict;} ,
-                            qq{use warnings;} ,
-                            qq{use @{[ $self->perl_version ]};} ,
-                            qq{},
-                            qq(package $name {),
-                            qq{} ,
-                            qq{  # ABSTRACT: @{[ $self->abstract ]}} ,
-                            qq{} ,
-                            qq(}),
-                            qq{},
-                            qq{1;},
-      );
+      $template_name = 'P5014.pm';
     }
     else
     {
-      $content = join("\n", qq{package $name;} ,
-                            qq{} ,
-                            qq{use strict;} ,
-                            qq{use warnings;} ,
-                            qq{use @{[ $self->perl_version ]};} ,
-                            qq{} ,
-                            qq{# ABSTRACT: @{[ $self->abstract ]}} ,
-                            qq{# VERSION} ,
-                            qq{} ,
-                            qq{1;},
-      );
+      $template_name = 'Default.pm';
     }
 
-    my $file = Dist::Zilla::File::InMemory->new({
-      name    => "lib/$filename.pm",
-      content => $content,
-    });
-
-    $self->add_file($file);
+    (my $filename = $arg->{name}) =~ s{::}{/}g;
+    $self->gather_file_template($template_name => "lib/$filename.pm");
   }
 
   sub gather_files
@@ -196,16 +133,16 @@ Create a dist in plicease style.
     my($self, $arg) = @_;
 
     $self->gather_file_dist_ini($arg);
-    $self->gather_files_tests($arg);
 
     $self->gather_file_simple  ('.appveyor.yml');
     $self->gather_file_simple  ('.gitattributes');
-    $self->gather_file_template('.gitignore', { name => $self->zilla->name });
+    $self->gather_file_template('.gitignore');
     $self->gather_file_simple  ('.travis.yml');
     $self->gather_file_simple  ('alienfile') if $self->type_alien;
     $self->gather_file_simple  ('author.yml');
     $self->gather_file_simple  ('Changes');
     $self->gather_file_simple  ('perlcriticrc');
+    $self->gather_file_template('t/main_class.t' => 't/' . lc($self->zilla->name =~ s/-/_/gr) . ".t" );
     $self->gather_file_simple  ('xt/author/critic.t');
   }
 
@@ -221,14 +158,19 @@ Create a dist in plicease style.
 
   sub gather_file_template
   {
-    my($self, $filename, $stash) = @_;
-    my $template = ${ $self->section_data("template/$filename") };
-    my $content = $self->fill_in_string($template, $stash, {});
+    my($self, $template_name, $filename) = @_;
+    $filename //= $template_name;
+    my $template = ${ $self->section_data("template/$template_name") };
+    my $content = $self->fill_in_string($template, {
+      name         => $self->zilla->name,
+      abstract     => $self->abstract,
+      perl_version => $self->perl_version,
+    }, {});
     my $file = Dist::Zilla::File::InMemory->new({
       name    => $filename,
       content => $content,
     });
-    $self->add_file($file);    
+    $self->add_file($file);
   }
 
   sub gather_file_dist_ini
@@ -255,31 +197,6 @@ Create a dist in plicease style.
     });
 
     $self->add_file($file);
-  }
-
-  sub gather_files_tests
-  {
-    my($self, $arg) = @_;
-
-    my $name = $self->zilla->name;
-    $name =~ s{-}{::}g;
-
-    my $test_name = lc $name;
-    $test_name =~ s{::}{_}g;
-    $test_name = "t/$test_name.t";
-
-    my $main_test = Dist::Zilla::File::InMemory->new({
-      name => $test_name,
-      content => join("\n", q{use Test2::V0 -no_srand => 1;},
-                            q{use } . $name . q{;},
-                            q{},
-                            q{ok 1, 'todo';},
-                            q{},
-                            q{done_testing},
-      ),
-    });
-
-    $self->add_file($main_test);
   }
 
   has github => (
@@ -630,8 +547,88 @@ cpan = 0
 
 
 __[ template/.gitignore ]__
-{{$name}}-*
+{{ $name }}-*
 /.build/
 *.swp
 
+
+__[ template/t/main_class.t ]__
+use Test2::V0 -no_srand => 1;
+use {{ $name =~ s/-/::/gr }};
+
+ok 1, 'todo';
+
+done_testing;
+
+
+__[ template/Default.pm ]__
+package {{ $name =~ s/-/::/gr }};
+
+use strict;
+use warnings;
+use {{ $perl_version }};
+
+# ABSTRACT: {{ $abstract }}
+# VERSION
+
+1;
+
+
+__[ template/Alien.pm ]__
+package {{ $name =~ s/-/::/gr }};
+
+use strict;
+use warnings;
+use {{ $perl_version }};
+use base qw( Alien::Base );
+
+# ABSTRACT: {{ $abstract }}
+# VERSION
+
+1;
+
+
+__[ template/Dzil.pm ]__
+use strict;
+use warnings;
+use {{ $perl_version }}
+
+package {{ $name =~ s/-/::/gr }} {
+
+  use Moose;
+  use namespace::autoclean;
+
+  # ABSTRACT: {{ $abstract }}
+
+  __PACKAGE__->meta->make_immutable;
+}
+
+1;
+
+
+__[ template/P5014.pm ]__
+use strict;
+use warnings;
+use {{ $perl_version }};
+
+package {{ $name =~ s/-/::/gr }} {
+
+  # ABSTRACT: {{ $abstract }}
+}
+
+1;
+
+
+__[ template/P5020.pm ]__
+use strict;
+use warnings;
+use {{ $perl_version }};
+use experimental qw( postderef );
+
+package {{ $name =~ s/-/::/gr }} {
+
+  # ABSTRACT: {{ $abstract }}
+}
+
+1;
 
