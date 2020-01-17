@@ -195,14 +195,17 @@ Create a dist in plicease style.
     my($self, $arg) = @_;
 
     $self->gather_file_dist_ini($arg);
-    $self->gather_file_changes($arg);
     $self->gather_files_tests($arg);
     $self->gather_file_gitignore($arg);
-    $self->gather_file_gitattributes($arg);
-    $self->gather_file_simple('.travis.yml');
+
     $self->gather_file_simple('.appveyor.yml');
-    $self->gather_file_simple('author.yml');
+    $self->gather_file_simple('.gitattributes');
+    $self->gather_file_simple('.travis.yml');
     $self->gather_file_simple('alienfile') if $self->type_alien;
+    $self->gather_file_simple('author.yml');
+    $self->gather_file_simple('Changes');
+    $self->gather_file_simple('perlcriticrc');
+    $self->gather_file_simple('xt/author/critic.t');
   }
 
   sub gather_file_simple
@@ -259,10 +262,6 @@ Create a dist in plicease style.
 
       $content .= "[Author::Plicease::Core]\n";
 
-      $content .= ";[Prereqs]\n"
-               .  ";Foo::Bar = 0\n"
-               .  "\n";
-
       $content .= "[Author::Plicease::Upload]\n"
                .  "cpan = 0\n"
                .  "\n";
@@ -278,56 +277,12 @@ Create a dist in plicease style.
     $self->add_file($file);
   }
 
-  sub gather_file_changes
-  {
-    my($self, $arg) = @_;
-
-    my $file = Dist::Zilla::File::InMemory->new({
-      name    => 'Changes',
-      content => join("\n", q{Revision history for {{$dist->name}}},
-                            q{},
-                            q{{{$NEXT}}},
-                            q{  - initial version},
-      ),
-    });
-
-    $self->add_file($file);
-  }
-
   sub gather_files_tests
   {
     my($self, $arg) = @_;
 
     my $name = $self->zilla->name;
     $name =~ s{-}{::}g;
-
-    my $use_t_file = Dist::Zilla::File::InMemory->new({
-      name => 't/01_use.t',
-      content => join("\n", q{use Test2::V0 -no_srand => 1;},
-                            q{sub require_ok ($);},
-                            q{},
-                            q{require_ok '} . $name . q{';},
-                            q{},
-                            q{done_testing;},
-                            q{},
-                            q{sub require_ok ($)},
-                            '{',
-                            q{  # special case of when I really do want require_ok.},
-                            q{  # I just want a test that checks that the modules},
-                            q{  # will compile okay.  I won't be trying to use them.},
-                            q{  my($mod) = @_;},
-                            q{  my $ctx = context();},
-                            q{  eval qq{ require $mod };},
-                            q{  my $error = $@;},
-                            q{  my $ok = !$error;},
-                            q{  $ctx->ok($ok, "require $mod");},
-                            q{  $ctx->diag("error: $error") if $error ne '';},
-                            q{  $ctx->release;},
-                            '}',
-      ),
-    });
-
-    $self->add_file($use_t_file);
 
     my $test_name = lc $name;
     $test_name =~ s{::}{_}g;
@@ -356,20 +311,6 @@ Create a dist in plicease style.
     my $file = Dist::Zilla::File::InMemory->new({
       name    => '.gitignore',
       content => "/$name-*\n/.build\n",
-    });
-
-    $self->add_file($file);
-  }
-
-  sub gather_file_gitattributes
-  {
-    my($self, $arg) = @_;
-
-    my $name = $self->zilla->name;
-
-    my $file = Dist::Zilla::File::InMemory->new({
-      name    => '.gitattributes',
-      content => "*.pm linguist-language=Perl\n*.t linguist-language=Perl\n*.h linguist-language=C\n",
     });
 
     $self->add_file($file);
@@ -606,4 +547,97 @@ cache:
   - C:\\Perl5
 
 shallow_clone: true
+
+
+__[ dist/perlcriticrc ]__
+severity = 1
+only = 1
+
+[Freenode::ArrayAssignAref]
+[Freenode::BarewordFilehandles]
+[Freenode::ConditionalDeclarations]
+[Freenode::ConditionalImplicitReturn]
+[Freenode::DeprecatedFeatures]
+[Freenode::DiscouragedModules]
+[Freenode::DollarAB]
+[Freenode::Each]
+[Freenode::EmptyReturn]
+[Freenode::IndirectObjectNotation]
+[Freenode::LexicalForeachIterator]
+[Freenode::LoopOnHash]
+[Freenode::ModPerl]
+[Freenode::OpenArgs]
+[Freenode::OverloadOptions]
+[Freenode::POSIXImports]
+[Freenode::PackageMatchesFilename]
+[Freenode::PreferredAlternatives]
+[Freenode::StrictWarnings]
+extra_importers = Test2::V0
+[Freenode::Threads]
+[Freenode::Wantarray]
+[Freenode::WarningsSwitch]
+[Freenode::WhileDiamondDefaultAssignment]
+
+[BuiltinFunctions::ProhibitBooleanGrep]
+[BuiltinFunctions::ProhibitStringyEval]
+[BuiltinFunctions::ProhibitStringySplit]
+[BuiltinFunctions::ProhibitVoidGrep]
+[BuiltinFunctions::ProhibitVoidMap]
+[ClassHierarchies::ProhibitExplicitISA]
+[ClassHierarchies::ProhibitOneArgBless]
+[CodeLayout::ProhibitHardTabs]
+allow_leading_tabs = 0
+[CodeLayout::ProhibitTrailingWhitespace]
+[CodeLayout::RequireConsistentNewlines]
+[ControlStructures::ProhibitLabelsWithSpecialBlockNames]
+[ControlStructures::ProhibitMutatingListFunctions]
+[ControlStructures::ProhibitUnreachableCode]
+[InputOutput::ProhibitBarewordFileHandles]
+[InputOutput::ProhibitJoinedReadline]
+[InputOutput::ProhibitTwoArgOpen]
+[Miscellanea::ProhibitFormats]
+[Miscellanea::ProhibitUselessNoCritic]
+[Modules::ProhibitConditionalUseStatements]
+;[Modules::RequireEndWithOne]
+[Modules::RequireNoMatchVarsWithUseEnglish]
+[Objects::ProhibitIndirectSyntax]
+[RegularExpressions::ProhibitUselessTopic]
+[Subroutines::ProhibitNestedSubs]
+[ValuesAndExpressions::ProhibitLeadingZeros]
+[ValuesAndExpressions::ProhibitMixedBooleanOperators]
+[ValuesAndExpressions::ProhibitSpecialLiteralHeredocTerminator]
+[ValuesAndExpressions::RequireUpperCaseHeredocTerminator]
+[Variables::ProhibitPerl4PackageNames]
+[Variables::ProhibitUnusedVariables]
+
+
+__[ dist/xt/author/critic.t ]__
+use Test2::Require::Module 'Test2::Tools::PerlCritic';
+use Test2::Require::Module 'Perl::Critic';
+use Test2::Require::Module 'Perl::Critic::Freenode';
+use Test2::V0;
+use Perl::Critic;
+use Test2::Tools::PerlCritic;
+
+my $critic = Perl::Critic->new(
+  -profile => 'perlcriticrc',
+);
+
+perl_critic_ok ['lib','t'], $critic;
+
+done_testing;
+
+
+__[ dist/.gitattributes ]__
+*.pm linguist-language=Perl
+*.t linguist-language=Perl
+*.h linguist-language=C
+
+
+__[ dist/Changes ]__
+Revision history for {{$dist->name}}},
+
+{{$NEXT}}
+  - initial version
+
 
