@@ -14,7 +14,6 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
 =head1 SYNOPSIS
 
  [Author::Plicease::Tests]
- source = foo/bar/baz ; source of tests
  diag = +Acme::Override::INET
  diag = +IO::Socket::INET
  diag = +IO::SOCKET::IP
@@ -28,11 +27,6 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
   with 'Dist::Zilla::Role::TestRunner';
 
   sub mvp_multivalue_args { qw( diag diag_preamble ) }
-
-  has source => (
-    is      =>'ro',
-    isa     => 'Str',
-  );
 
   has diag => (
     is      => 'ro',
@@ -82,13 +76,8 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
   sub before_build
   {
     my($self) = @_;
-
-    my $source = defined $self->source
-    ? $self->zilla->root->child($self->source)
-    : Dist::Zilla::MintingProfile::Author::Plicease->profile_dir->child("default/skel/xt/release");
-
-    my $diag = $self->zilla->root->child("t/00_diag.t");
-    my $content = $source->parent->parent->child('t', $self->test2_v0 ? '00_xdiag.t' : '00_diag.t' )->absolute->slurp;
+    $DB::single = 1;
+    my $content = ${ $self->section_data( $self->test2_v0 ? 't/00_xdiag.t' : 't/00_diag.t' ) };
     $content =~ s{## PREAMBLE ##}{join "\n", map { s/^\| //; $_ } @{ $self->diag_preamble }}e;
     $self->_diag_content($content);
   }
@@ -200,6 +189,170 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
 package Dist::Zilla::Plugin::Author::Plicease::Tests;
 
 __DATA__
+
+__[ t/00_diag.t ]__
+use strict;
+use warnings;
+use Config;
+use Test::More tests => 1;
+
+# This .t file is generated.
+# make changes instead to dist.ini
+
+my %modules;
+my $post_diag;
+
+## GENERATE ##
+## PREAMBLE ##
+
+my @modules = sort keys %modules;
+
+sub spacer ()
+{
+  diag '';
+  diag '';
+  diag '';
+}
+
+pass 'okay';
+
+my $max = 1;
+$max = $_ > $max ? $_ : $max for map { length $_ } @modules;
+our $format = "%-${max}s %s";
+
+spacer;
+
+my @keys = sort grep /(MOJO|PERL|\A(LC|HARNESS)_|\A(SHELL|LANG)\Z)/i, keys %ENV;
+
+if(@keys > 0)
+{
+  diag "$_=$ENV{$_}" for @keys;
+
+  if($ENV{PERL5LIB})
+  {
+    spacer;
+    diag "PERL5LIB path";
+    diag $_ for split $Config{path_sep}, $ENV{PERL5LIB};
+
+  }
+  elsif($ENV{PERLLIB})
+  {
+    spacer;
+    diag "PERLLIB path";
+    diag $_ for split $Config{path_sep}, $ENV{PERLLIB};
+  }
+
+  spacer;
+}
+
+diag sprintf $format, 'perl ', $];
+
+foreach my $module (@modules)
+{
+  my $pm = "$module.pm";
+  $pm =~ s{::}{/}g;
+  if(eval { require $pm; 1 })
+  {
+    my $ver = eval { $module->VERSION };
+    $ver = 'undef' unless defined $ver;
+    diag sprintf $format, $module, $ver;
+  }
+  else
+  {
+    diag sprintf $format, $module, '-';
+  }
+}
+
+if($post_diag)
+{
+  spacer;
+  $post_diag->();
+}
+
+spacer;
+
+__[ t/00_xdiag.t ]__
+use Test2::V0 -no_srand => 1;
+use Config;
+
+eval { require 'Test/More.pm' };
+
+# This .t file is generated.
+# make changes instead to dist.ini
+
+my %modules;
+my $post_diag;
+
+## GENERATE ##
+## PREAMBLE ##
+
+my @modules = sort keys %modules;
+
+sub spacer ()
+{
+  diag '';
+  diag '';
+  diag '';
+}
+
+pass 'okay';
+
+my $max = 1;
+$max = $_ > $max ? $_ : $max for map { length $_ } @modules;
+our $format = "%-${max}s %s";
+
+spacer;
+
+my @keys = sort grep /(MOJO|PERL|\A(LC|HARNESS)_|\A(SHELL|LANG)\Z)/i, keys %ENV;
+
+if(@keys > 0)
+{
+  diag "$_=$ENV{$_}" for @keys;
+
+  if($ENV{PERL5LIB})
+  {
+    spacer;
+    diag "PERL5LIB path";
+    diag $_ for split $Config{path_sep}, $ENV{PERL5LIB};
+
+  }
+  elsif($ENV{PERLLIB})
+  {
+    spacer;
+    diag "PERLLIB path";
+    diag $_ for split $Config{path_sep}, $ENV{PERLLIB};
+  }
+
+  spacer;
+}
+
+diag sprintf $format, 'perl ', $];
+
+foreach my $module (sort @modules)
+{
+  my $pm = "$module.pm";
+  $pm =~ s{::}{/}g;
+  if(eval { require $pm; 1 })
+  {
+    my $ver = eval { $module->VERSION };
+    $ver = 'undef' unless defined $ver;
+    diag sprintf $format, $module, $ver;
+  }
+  else
+  {
+    diag sprintf $format, $module, '-';
+  }
+}
+
+if($post_diag)
+{
+  spacer;
+  $post_diag->();
+}
+
+spacer;
+
+done_testing;
 
 __[ xt/author/strict.t ]__
 use strict;
