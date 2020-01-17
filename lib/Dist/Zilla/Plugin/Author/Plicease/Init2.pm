@@ -4,6 +4,8 @@ package Dist::Zilla::Plugin::Author::Plicease::Init2 {
   use Moose;
   use Dist::Zilla::File::InMemory;
   use Dist::Zilla::File::FromCode;
+  use Sub::Exporter::ForMethods qw( method_installer );
+  use Data::Section { installer => method_installer }, -setup;
   use Dist::Zilla::MintingProfile::Author::Plicease;
   use JSON::PP qw( encode_json );
   use Encode qw( encode_utf8 );
@@ -197,103 +199,20 @@ Create a dist in plicease style.
     $self->gather_files_tests($arg);
     $self->gather_file_gitignore($arg);
     $self->gather_file_gitattributes($arg);
-    $self->gather_file_travis_yml($arg);
-    $self->gather_file_appveyor_yml($arg);
-    $self->gather_file_author_yml($arg);
-    $self->gather_file_alienfile($arg) if $self->type_alien;
+    $self->gather_file_simple('.travis.yml');
+    $self->gather_file_simple('.appveyor.yml');
+    $self->gather_file_simple('author.yml');
+    $self->gather_file_simple('alienfile') if $self->type_alien;
   }
 
-  sub gather_file_alienfile
+  sub gather_file_simple
   {
-    my($self) = @_;
-
+    my($self, $filename) = @_;
     my $file = Dist::Zilla::File::InMemory->new({
-      name    => 'alienfile',
-      content => join("\n", q{use alienfile;},
-                            q{plugin 'PkgConfig' => 'libfoo';},
-                            q(share {),
-                            q{  plugin Download => (},
-                            q{    url => 'http://...',},
-                            q{    filter => qr/*\.tar\.gz$/,},
-                            q{    version => qr/([0-9\.]+)/,},
-                            q{  );},
-                            q{  plugin Extract => 'tar.gz';},
-                            q{  plugin 'Build::Autoconf';},
-                            q(}),
-      ),
+      name    => $filename,
+      content => ${ $self->section_data("dist/$filename") },
     });
-
     $self->add_file($file);
-  }
-
-  sub gather_file_author_yml
-  {
-    my($self, $arg) = @_;
-
-    my $file = Dist::Zilla::File::InMemory->new({
-      name    => 'author.yml',
-      content => join("\n", q{---},
-                            q{pod_spelling_system:},
-                            q{  skip: 0},
-                            q{  # list of words that are spelled correctly},
-                            q{  # (regardless of what spell check thinks)},
-                            q{  # or stuff that I like to spell incorrectly},
-                            q{  # intentionally},
-                            q{  stopwords: []},
-                            q{},
-                            q{pod_coverage:},
-                            q{  skip: 0},
-                            q{  # format is "Class#method" or "Class",regex allowed},
-                            q{  # for either Class or method.},
-                            q{  private: []},
-      ),
-    });
-
-    $self->add_file($file);
-  }
-
-  sub gather_file_travis_yml
-  {
-    my($self, $arg) = @_;
-
-    my $file = Dist::Zilla::File::InMemory->new({
-      name    => '.travis.yml',
-      content => join("\n",
-        q{language: minimal},
-        q{dist: xenial},
-        q{services:},
-        q{  - docker},
-        q{before_install:},
-        q{  - curl https://raw.githubusercontent.com/plicease/cip/master/bin/travis-bootstrap | bash},
-        q{  - cip before-install},
-        q{install:},
-        q{  - cip diag},
-        q{  - cip install},
-        q{script:},
-        q{  - cip script},
-        q{jobs:},
-        q{  include:},
-        q{    - env: CIP_TAG=5.31},
-        q{    - env: CIP_TAG=5.30},
-        q{    - env: CIP_TAG=5.28},
-        q{    - env: CIP_TAG=5.26},
-        q{    - env: CIP_TAG=5.24},
-        q{    - env: CIP_TAG=5.22},
-        q{    - env: CIP_TAG=5.20},
-        q{    - env: CIP_TAG=5.18},
-        q{    - env: CIP_TAG=5.16},
-        q{    - env: CIP_TAG=5.14},
-        q{    - env: CIP_TAG=5.12},
-        q{    - env: CIP_TAG=5.10},
-        q{    - env: CIP_TAG=5.8},
-        q{cache:},
-        q{  directories:},
-        q{    - "$HOME/.cip"},
-      ),
-    });
-
-    $self->add_file($file);
-
   }
 
   sub gather_file_appveyor_yml
@@ -303,30 +222,6 @@ Create a dist in plicease style.
     my $file = Dist::Zilla::File::InMemory->new({
       name    => '.appveyor.yml',
       content => join("\n",
-        q{---},
-        q{},
-        q{install:},
-        q{  - choco install strawberryperl},
-        q{  - SET PATH=C:\Perl5\bin;C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%},
-        q{  - perl -v},
-        q{  - if not exist C:\\Perl5 mkdir C:\\Perl5},
-        q{  - SET PERL5LIB=C:/Perl5/lib/perl5},
-        q{  - SET PERL_LOCAL_LIB_ROOT=C:/Perl5},
-        q{  - SET PERL_MB_OPT=--install_base C:/Perl5},
-        q{  - SET PERL_MM_OPT=INSTALL_BASE=C:/Perl5},
-        q{  - cpanm -n Dist::Zilla},
-        q{  - dzil authordeps --missing | cpanm -n},
-        q{  - dzil listdeps --missing | cpanm -n},
-        q{},
-        q{build: off},
-        q{},
-        q{test_script:},
-        q{  - dzil test -v},
-        q{},
-        q{cache:},
-        q{  - C:\\Perl5},
-        q{},
-        q{shallow_clone: true},
       ),
     });
 
@@ -480,6 +375,16 @@ Create a dist in plicease style.
     $self->add_file($file);
   }
 
+  has github => (
+    is      => 'ro',
+    isa     => 'Str',
+    lazy    => 1,
+    default => sub {
+      my($self) = @_;
+      $self->chrome->prompt_yn("create github repo", { default => 1 });
+    },
+  );
+
   has github_login => (
     is      => 'ro',
     isa     => 'Str',
@@ -552,7 +457,7 @@ Create a dist in plicease style.
 
     my $no_github = 1;
 
-    unless($ENV{DIST_ZILLA_PLUGIN_AUTHOR_PLICEASE_INIT2_NO_GITHUB})
+    if($self->github && !$ENV{DIST_ZILLA_PLUGIN_AUTHOR_PLICEASE_INIT2_NO_GITHUB})
     {
       my $ua = LWP::UserAgent->new;
       my $org = $self->github_user ne $self->github_login
@@ -566,7 +471,7 @@ Create a dist in plicease style.
       my $data = encode_json({
         name               => $self->zilla->name,
         description        => $self->abstract,
-        private            => (!$org and $self->github_private) ? JSON::PP::true : JSON::PP::false,
+        private            => (!$org && $self->github_private) ? JSON::PP::true : JSON::PP::false,
         has_projects       => JSON::PP::false,
         has_wiki           => JSON::PP::false,
         allow_squash_merge => JSON::PP::false,
@@ -606,4 +511,99 @@ Create a dist in plicease style.
 }
 
 1;
+
+package Dist::Zilla::Plugin::Author::Plicease::Init2;
+
+__DATA__
+
+
+__[ dist/alienfile ]__
+use alienfile;
+plugin 'PkgConfig' => 'libfoo';
+share {
+  plugin Download => (
+    url => 'http://...',
+    filter => qr/*\.tar\.gz$/,
+    version => qr/([0-9\.]+)/,
+  );
+  plugin Extract => 'tar.gz';
+  plugin 'Build::Autoconf';
+};
+
+
+__[ dist/author.yml ]__
+---
+pod_spelling_system:
+  skip: 0
+  # list of words that are spelled correctly
+  # (regardless of what spell check thinks)
+  # or stuff that I like to spell incorrectly
+  # intentionally
+  stopwords: []
+
+pod_coverage:
+  skip: 0
+  # format is "Class#method" or "Class",regex allowed
+  # for either Class or method.
+  private: []
+
+
+__[ dist/.travis.yml ]__
+language: minimal
+dist: xenial
+services:
+  - docker
+before_install:
+  - curl https://raw.githubusercontent.com/plicease/cip/master/bin/travis-bootstrap | bash
+  - cip before-install
+install:
+  - cip diag
+  - cip install
+script:
+  - cip script
+jobs:
+  include:
+    - env: CIP_TAG=5.31
+    - env: CIP_TAG=5.30
+    - env: CIP_TAG=5.28
+    - env: CIP_TAG=5.26
+    - env: CIP_TAG=5.24
+    - env: CIP_TAG=5.22
+    - env: CIP_TAG=5.20
+    - env: CIP_TAG=5.18
+    - env: CIP_TAG=5.16
+    - env: CIP_TAG=5.14
+    - env: CIP_TAG=5.12
+    - env: CIP_TAG=5.10
+    - env: CIP_TAG=5.8
+cache:
+  directories:
+    - "$HOME/.cip"
+
+
+__[ dist/.appveyor.yml ]__
+---
+
+install:
+  - choco install strawberryperl
+  - SET PATH=C:\Perl5\bin;C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%
+  - perl -v
+  - if not exist C:\\Perl5 mkdir C:\\Perl5
+  - SET PERL5LIB=C:/Perl5/lib/perl5
+  - SET PERL_LOCAL_LIB_ROOT=C:/Perl5
+  - SET PERL_MB_OPT=--install_base C:/Perl5
+  - SET PERL_MM_OPT=INSTALL_BASE=C:/Perl5
+  - cpanm -n Dist::Zilla
+  - dzil authordeps --missing | cpanm -n
+  - dzil listdeps --missing | cpanm -n
+
+build: off
+
+test_script:
+  - dzil test -v
+
+cache:
+  - C:\\Perl5
+
+shallow_clone: true
 

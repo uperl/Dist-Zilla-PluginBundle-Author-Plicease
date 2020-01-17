@@ -7,7 +7,6 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
   use Path::Tiny qw( path );
   use Sub::Exporter::ForMethods qw( method_installer );
   use Data::Section { installer => method_installer }, -setup;
-  use Dist::Zilla::MintingProfile::Author::Plicease;
 
   # ABSTRACT: add author only release tests to xt/release
 
