@@ -76,7 +76,6 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
   sub before_build
   {
     my($self) = @_;
-    $DB::single = 1;
     my $content = ${ $self->section_data( $self->test2_v0 ? 't/00_xdiag.t' : 't/00_diag.t' ) };
     $content =~ s{## PREAMBLE ##}{join "\n", map { s/^\| //; $_ } @{ $self->diag_preamble }}e;
     $self->_diag_content($content);
