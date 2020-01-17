@@ -13,11 +13,11 @@ package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup {
 =cut
 
   with 'Dist::Zilla::Role::AfterBuild';
-  
+
   has travis_status => (
     is => 'ro',
   );
-  
+
   has travis_user => (
     is      => 'ro',
     default => 'plicease',
@@ -36,7 +36,7 @@ package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup {
     is      => 'ro',
     default => 'plicease',
   );
-  
+
   has appveyor => (
     is  => 'ro',
     isa => 'Str',
@@ -57,7 +57,7 @@ package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup {
       $status .= " [![Build Status](https://api.cirrus-ci.com/github/@{[ $self->cirrus_user ]}/$name.svg)](https://cirrus-ci.com/github/@{[ $self->cirrus_user ]}/$name)" if $cirrus_status;
       $status .= " [![Build Status](https://secure.travis-ci.org/$user/$name.png)](http://travis-ci.org/$user/$name)" if $self->travis_status;
       $status .= " [![Build status](https://ci.appveyor.com/api/projects/status/@{[ $self->appveyor ]}/branch/master?svg=true)](https://ci.appveyor.com/project/@{[ $self->appveyor_user ]}/$name/branch/master)" if $self->appveyor;
-      
+
       my $content = $readme->slurp;
       $content =~ s{# NAME\s+(.*?) - (.*?#)}{# $1$status\n\n$2}s;
       $content =~ s{# VERSION\s+version (\d+\.|)\d+\.\d+(\\_\d+|)\s+#}{#};
@@ -68,7 +68,7 @@ package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup {
       $self->log("no README.md found");
     }
   }
-  
+
   __PACKAGE__->meta->make_immutable;
 }
 

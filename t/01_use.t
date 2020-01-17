@@ -2,7 +2,6 @@ use Test2::V0 -no_srand => 1;
 
 sub require_ok ($);
 
-use_ok("Dist::Zilla::PluginBundle::Author::Plicease");
 require_ok 'Dist::Zilla::MintingProfile::Author::Plicease';
 require_ok 'Dist::Zilla::Plugin::Author::Plicease';
 require_ok 'Dist::Zilla::Plugin::Author::Plicease::Core';
@@ -16,6 +15,7 @@ require_ok 'Dist::Zilla::Plugin::Author::Plicease::Tests';
 require_ok 'Dist::Zilla::Plugin::Author::Plicease::Thanks';
 require_ok 'Dist::Zilla::Plugin::Author::Plicease::TravisInstall';
 require_ok 'Dist::Zilla::Plugin::Author::Plicease::Upload';
+require_ok 'Dist::Zilla::PluginBundle::Author::Plicease';
 done_testing;
 
 sub require_ok ($)

@@ -8,8 +8,8 @@ exit if $ENV{APPVEYOR};
 
 my($out ) = capture_stdout {
   system(
-    $^X, 
-      '-Ilib', 
+    $^X,
+      '-Ilib',
       'example/unbundle.pl', '--default',
     );
   die "failed" unless $? == 0;

@@ -80,25 +80,25 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
   with 'Dist::Zilla::Role::BeforeRelease';
   with 'Dist::Zilla::Role::PrereqSource';
   with 'Dist::Zilla::Role::InstallTool';
-  
+
   sub mvp_multivalue_args { qw( upgrade preamble ) }
-  
+
   has preamble => (
     is      => 'ro',
     default => sub { [] },
   );
-  
+
   has upgrade => (
     is      => 'ro',
     default => sub { [] },
   );
-  
+
   sub register_prereqs
   {
     my($self) = @_;
-  
+
     my $prereqs = $self->zilla->prereqs->as_string_hash;
-  
+
     my %upgrades = qw(
       Moo                                   2.0
       PerlX::Maybe                          0.003
@@ -113,17 +113,17 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
       Test2::V0                             0.000092
       ExtUtils::ParseXS                     3.30
     );
-    
+
     $upgrades{$_} = '1.302015' for (
         (map { "Test2::$_" } qw( API Event Formatter Formatter::TAP Hub IPC Util )),
         (map { "Test2::API::$_" } qw( Breakage Context Instance Stack )),
         (map { "Test2::Event::$_" } qw( Bail Diag Exception Note Ok Plan Skp Subtest Waiting )),
-        (map { "Test2::Hub::$_" } qw( Interceptor Interceptor::Terminator Subtest )),      
+        (map { "Test2::Hub::$_" } qw( Interceptor Interceptor::Terminator Subtest )),
         (map { "Test2::IPC::$_" } qw( Driver Driver::Files )),
         (map { "Test2::Util::$_" } qw( ExternalMeta HashBase Trace )),
         'Test2',
     );
-  
+
     $upgrades{$_} = '0.000060' for qw(
         Test2::V0
         Test2::Bundle
@@ -190,7 +190,7 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
         Test2::Util::Table
         Test2::Util::Table::LineBreak
     );
-    
+
     foreach my $upgrade (@{ $self->upgrade })
     {
       if($upgrade =~ /^\s*(\S+)\s*=\s*(\S+)\s*$/)
@@ -202,7 +202,7 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
         $self->log_fatal("upgrade failed: $upgrade");
       }
     }
-  
+
     foreach my $phase (keys %$prereqs)
     {
       foreach my $type (keys %{ $prereqs->{$phase} })
@@ -221,7 +221,7 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
         }
       }
     }
-  
+
     foreach my $phase (keys %$prereqs)
     {
       foreach my $type (keys %{ $prereqs->{$phase} })
@@ -253,9 +253,9 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
         }
       }
     }
-  
+
   }
-  
+
   sub before_release
   {
     my $self = shift;
@@ -266,17 +266,17 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
   sub setup_installer
   {
     my($self) = @_;
-    
+
     my $prereqs = $self->zilla->prereqs->as_string_hash;
-    
+
     my $perl_version = $prereqs->{runtime}->{requires}->{perl};
-    
+
     $self->log("perl version required = $perl_version");
-    
+
     foreach my $file (grep { $_->name =~ /^(Makefile\.PL|Build\.PL)$/ } @{ $self->zilla->files })
     {
       my $content = $file->content;
-      $content = join "\n", 
+      $content = join "\n",
         "BEGIN {",
         "  use strict; use warnings;",
         (map { s/^\| /  /; $_ } @{ $self->preamble }),
@@ -289,7 +289,7 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
       $file->content($content);
     }
   }
-  
+
   __PACKAGE__->meta->make_immutable;
 }
 

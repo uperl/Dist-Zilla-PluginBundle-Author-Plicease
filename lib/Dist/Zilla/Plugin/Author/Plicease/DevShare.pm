@@ -15,19 +15,19 @@ package Dist::Zilla::Plugin::Author::Plicease::DevShare {
 
     my $filename = $self->zilla->main_module->name;
     $filename =~ s{^(.*)/(.*?)\.pm$}{$1/.$2.devshare};
-  
+
     my $count = $filename;
     $count =~ s/[^\/]//g;
     $count = length $count;
     my $content = ('../' x $count) . 'share';
-  
+
     my $file = Dist::Zilla::File::InMemory->new({
       name    => $filename,
       content => $content,
     });
-  
+
     $self->add_file($file);
-    
+
     $self->log("DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED");
     $self->log("DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED");
     $self->log("DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED");
@@ -37,7 +37,7 @@ package Dist::Zilla::Plugin::Author::Plicease::DevShare {
     $self->log("DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED");
     $self->log("DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED");
     $self->log("Please use File::ShareDir::Dist instead");
-  
+
     Path::Tiny->($filename)->spew_raw($content);
   }
 

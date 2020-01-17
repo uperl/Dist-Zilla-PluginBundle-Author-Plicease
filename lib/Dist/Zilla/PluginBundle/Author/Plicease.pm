@@ -40,12 +40,12 @@ unbundled version.
 
 =item Want to submit a patch for one of my modules?
 
-Consider using C<prove -l> on the test suite or adding the lib directory 
-to C<PERL5LIB>.  Save yourself the hassle of dealing with L<Dist::Zilla> 
-at all.  If there is something wrong with one of the generated files 
-(such as C<Makefile.PL> or C<Build.PL>) consider opening a support 
-ticket instead.  Most other activities relating to the use of 
-L<Dist::Zilla> have to do with release testing and uploading to CPAN 
+Consider using C<prove -l> on the test suite or adding the lib directory
+to C<PERL5LIB>.  Save yourself the hassle of dealing with L<Dist::Zilla>
+at all.  If there is something wrong with one of the generated files
+(such as C<Makefile.PL> or C<Build.PL>) consider opening a support
+ticket instead.  Most other activities relating to the use of
+L<Dist::Zilla> have to do with release testing and uploading to CPAN
 which is more my responsibility than yours.
 
 =item Really need to fix some aspect of the build process?
@@ -54,7 +54,7 @@ Or perhaps the module in question is using XS (hint: convert it to FFI
 instead!).  If you really do need to fix some aspect of the build process
 then you probably do need to install L<Dist::Zilla> and this bundle.
 If you are having trouble figuring out how it works, then try extracting
-the bundle using the C<example/unbundle.pl> script or 
+the bundle using the C<example/unbundle.pl> script or
 L<dzil bakeini technique|Dist::Zilla::App::Command::bakeini>
 mentioned above.
 
@@ -88,7 +88,7 @@ Specify an alternative to L<[MakeMaker]|Dist::Zilla::Plugin::MakeMaker>
 L<[ModuleBuildTiny]|Dist::Zilla::Plugin::ModuleBuildTiny>, or
 L<[ModuleBuildDatabase]|Dist::Zilla::Plugin::ModuleBuildDatabase> for example).
 
-If installer is L<Alien|Dist::Zilla::Plugin::Alien>, then any options 
+If installer is L<Alien|Dist::Zilla::Plugin::Alien>, then any options
 with the alien_ prefix will be passed to L<Alien|Dist::Zilla::Plugin::Alien>
 (minus the alien_ prefix).
 
@@ -101,7 +101,7 @@ will assume C<installer> is C<ModuleBuild> and C<mb_class> = C<My::ModuleBuild>.
 
 =head2 readme_from
 
-Which file to pull from for the Readme (must be POD format).  If not 
+Which file to pull from for the Readme (must be POD format).  If not
 specified, then the main module will be used.
 
 =head2 release_tests
@@ -179,7 +179,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
 
   with 'Dist::Zilla::Role::PluginBundle::Easy';
 
-  sub mvp_multivalue_args { qw( 
+  sub mvp_multivalue_args { qw(
     alien_build_command
     alien_install_command
     alien_auto_include
@@ -188,7 +188,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
     upgrade
     preamble
     diag_preamble
-  
+
     diag
     allow_dirty ) }
 
@@ -210,7 +210,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
   {
     delete $plugin_versions{'Author::Plicease.*'};
   }
-    
+
   sub _my_add_plugin {
     my($self, @specs) = @_;
 
@@ -218,7 +218,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
     {
       my $plugin = $spec->[0];
       my %args = ref $spec->[-1] ? %{ pop @$spec } : ();
-    
+
       foreach my $key (keys %plugin_versions)
       {
         if($plugin =~ /^$key$/)
@@ -284,9 +284,9 @@ Specify a minimum Perl version.  If not specified it will be detected.
       }
       if(defined $installer && $installer eq 'Alien')
       {
-        my %args = 
+        my %args =
           map { $_ => $self->payload->{"alien_$_"} }
-          map { s/^alien_//; $_ } 
+          map { s/^alien_//; $_ }
           grep /^alien_/, keys %{ $self->payload };
         $self->_my_add_plugin([ Alien => { %args, %mb } ]);
       }
@@ -300,15 +300,15 @@ Specify a minimum Perl version.  If not specified it will be detected.
         $self->_my_add_plugin([$installer]);
       }
     };
-  
+
     $self->_my_add_plugin(map { [$_] } qw(
       Manifest
       TestRelease
       PodWeaver
     ));
-  
+
     $self->_my_add_plugin([ NextRelease => { format => '%-9v %{yyyy-MM-dd HH:mm:ss Z}d' }]);
-      
+
     $self->_my_add_plugin(['AutoPrereqs']);
     $self->_my_add_plugin([$self->payload->{version_plugin} || (
       'OurPkgVersion', {
@@ -328,12 +328,12 @@ Specify a minimum Perl version.  If not specified it will be detected.
         $self->_my_add_plugin([$plugin, \%args])
       }
     }
-  
+
     do {
       my $name = path(".")->absolute->basename;
       my $user = $self->payload->{github_user} || 'plicease';
       my $repo = $self->payload->{github_repo} || $name;
-    
+
       $self->_my_add_plugin([
         'MetaResources' => {
           'homepage' => $self->payload->{homepage}                 || "https://metacpan.org/pod/@{[ do { my $foo = $name; $foo =~ s/-/::/g; $foo }]}",
@@ -345,7 +345,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
         },
       ]);
     };
-  
+
     if($self->payload->{release_tests})
     {
       $self->_my_add_plugin([
@@ -357,14 +357,14 @@ Specify a minimum Perl version.  If not specified it will be detected.
         }
       ]);
     }
-    
+
     $self->_my_add_plugin(map { [$_] } qw(
 
       InstallGuide
       ConfirmRelease
 
     ));
-  
+
     $self->_my_add_plugin([
       MinimumPerl => {
         maybe perl => $self->payload->{perl},
@@ -377,11 +377,11 @@ Specify a minimum Perl version.  If not specified it will be detected.
         'ReadmeAnyFromPod' => {
                 type            => 'text',
                 filename        => 'README',
-                location        => 'build', 
+                location        => 'build',
           maybe source_filename => $self->payload->{readme_from},
         },
       ]);
-    
+
       $self->_my_add_plugin([
         'ReadmeAnyFromPod' => ReadMePodInRoot => {
           type                  => 'gfm',
@@ -391,7 +391,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
        },
      ]);
     }
-  
+
     $self->_my_add_plugin([
       'Author::Plicease::MarkDownCleanup' => {
               travis_status => int(defined $self->payload->{travis_status} ? $self->payload->{travis_status} : 0),
@@ -426,13 +426,13 @@ Specify a minimum Perl version.  If not specified it will be detected.
         },
       ]);
     }
-  
+
     unless('bakeini' eq (Dist::Zilla::Util::CurrentCmd::current_cmd() ||'') )
     {
       if(eval { require Dist::Zilla::Plugin::ACPS::RPM })
       { $self->_my_add_plugin(['ACPS::RPM']) }
     }
-    
+
     foreach my $test (map { path($_) } bsd_glob ('t/*.t'))
     {
       my @lines = grep !/-no_srand => 1/, grep /use Test2::V0/, $test->lines_utf8;
@@ -440,12 +440,12 @@ Specify a minimum Perl version.  If not specified it will be detected.
       print STDERR Term::ANSIColor::color('bold red') if -t STDERR;
       print STDERR "$test has Test2::V0 without -no_srand";
       print STDERR Term::ANSIColor::color('reset') if -t STDERR;
-      print STDERR "\n";    
+      print STDERR "\n";
     }
-  
-    foreach my $name (qw( t/00_diag.txt t/00_diag.pre.txt ), 
+
+    foreach my $name (qw( t/00_diag.txt t/00_diag.pre.txt ),
                         map { "xt/release/$_.t" } qw( build_environment unused eol no_tabs pod strict fixme changes pod_coverage pod_spelling_common pod_spelling_system version ))
-    {  
+    {
       if(-e $name)
       {
         print STDERR Term::ANSIColor::color('bold red') if -t STDERR;

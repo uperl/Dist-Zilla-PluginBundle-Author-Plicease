@@ -4,12 +4,12 @@ package Dist::Zilla::Plugin::Author::Plicease::Core {
   use Moose;
   use Module::CoreList ();
   use version ();
-  
+
   # ABSTRACT: Handle core prereqs
   # VERSION
-  
+
   with 'Dist::Zilla::Role::PrereqSource', 'Dist::Zilla::Role::InstallTool';
-  
+
   has starting_version => (
     is      => 'ro',
     lazy    => 1,
@@ -29,9 +29,9 @@ package Dist::Zilla::Plugin::Author::Plicease::Core {
   sub register_prereqs
   {
     my($self) = @_;
-    
+
     my $prereqs = $self->zilla->prereqs->as_string_hash;
-    
+
     foreach my $phase (keys %$prereqs)
     {
       foreach my $type (keys %{ $prereqs->{$phase} })
@@ -57,14 +57,14 @@ package Dist::Zilla::Plugin::Author::Plicease::Core {
       }
     }
   }
-  
+
   sub setup_installer
   {
     my($self) = @_;
     foreach my $file (grep { $_->name =~ /^(Makefile\.PL|Build\.PL)$/ } @{ $self->zilla->files })
     {
       my $content = $file->content;
-      
+
       $content = join "\n",
         "BEGIN {",
         "  use strict; use warnings;",
@@ -95,12 +95,12 @@ package Dist::Zilla::Plugin::Author::Plicease::Core {
         "  }",
         "}",
         $content;
-      
+
       $file->content($content);
     }
-    
+
   }
-  
+
 
 }
 

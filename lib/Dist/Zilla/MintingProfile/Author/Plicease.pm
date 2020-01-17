@@ -23,17 +23,17 @@ This is the normal minting profile used by Plicease.
   sub profile_dir
   {
     my($self, $profile_name) = @_;
-  
+
     # use a dist share instead of a class share
-  
+
     my $dir1 = Path::Tiny->new( File::ShareDir::Dist::dist_share( 'Dist-Zilla-Plugin-Author-Plicease' ) );
-    
+
     my $dir2 = defined $profile_name
       ? $dir1->child("profiles/$profile_name")
       : $dir1->child("profiles");
-  
+
     return $dir2 if -d $dir2;
-  
+
     Carp::confess "Can't find profile $profile_name via $self";
   }
 

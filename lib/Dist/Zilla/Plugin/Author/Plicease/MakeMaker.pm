@@ -30,7 +30,7 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
 
   around write_makefile_args => sub {
     my($orig, $self, @args) = @_;
-    my $h = $self->$orig(@args);  
+    my $h = $self->$orig(@args);
 
     # to prevent any non .pm/.pod files from being installed in lib
     # because shit like this is stuff we ought to have to customize.
@@ -42,9 +42,9 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
 
   around setup_installer => sub {
     my($orig, $self, @args) = @_;
-    
+
     $self->$orig(@args);
-    
+
     my $file   = first { $_->name eq 'Makefile.PL' }        @{ $self->zilla->files };
     my $mod    = first { $_->name eq 'inc/mymm.pl' }        @{ $self->zilla->files };
     my $config = first { $_->name eq 'inc/mymm-config.pl' } @{ $self->zilla->files };
@@ -80,15 +80,15 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
         else
         {
           my @extra = ('');
-        
+
           if($mod)
           {
             unshift @extra, 'require "./inc/mymm.pl";';
           }
-        
+
           @content = (
-            @content[0..($i-1)], 
-            @extra, 
+            @content[0..($i-1)],
+            @extra,
             @content[($i)..$#content]
           );
           last;
@@ -123,7 +123,16 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
 
     if($mod || $test)
     {
+      my @extra;
+
+      # This is cray-cray.
+      while(defined $content[-1] && $content[-1] !~ /^WriteMakefile\(/)
+      {
+        unshift @extra, pop @content;
+      }
+
       my $last = pop @content;
+
       if($last =~ /^WriteMakefile\(/)
       {
         my @new;
@@ -141,19 +150,19 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
           {
             $line =~ s/use ExtUtils::MakeMaker;/use ExtUtils::MakeMaker 6.64;/;
           }
-        
+
           push @new, $line;
         }
 
         eval $mod->content;
         $self->log_fatal("unable to eval inc/mymm.pl: $@") if $@;
-        
+
         if(mymm->can('myWriteMakefile'))
         {
           $last = "mymm::my$last";
         }
-        
-        @content = ( @new, $last );
+
+        @content = ( @new, $last, @extra );
       }
       else
       {
@@ -227,7 +236,7 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
 
   around register_prereqs => sub {
     my($orig, $self, @args) = @_;
-    my $h = $self->$orig(@args);  
+    my $h = $self->$orig(@args);
 
     my $mod  = first { $_->name eq 'inc/mymm.pl' } @{ $self->zilla->files };
     if($mod)
@@ -246,18 +255,18 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
         'ExtUtils::MakeMaker' => '7.1001'
       );
     }
-    
+
     return;
   };
 
   sub metadata
   {
     my($self) = @_;
-    
+
     my %meta;
-    
+
     my $mod  = first { $_->name eq 'inc/mymm.pl' } @{ $self->zilla->files };
-    
+
     $meta{dynamic_config} = 1 if $mod;
 
     \%meta;

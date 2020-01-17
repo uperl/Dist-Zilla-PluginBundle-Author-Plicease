@@ -33,7 +33,7 @@ subtest basic => sub {
       field x_use_unsafe_inc => 0;
       etc;
     },
-  );  
+  );
 
 };
 

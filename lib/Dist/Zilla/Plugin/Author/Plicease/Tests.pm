@@ -28,40 +28,40 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
   with 'Dist::Zilla::Role::TestRunner';
 
   sub mvp_multivalue_args { qw( diag diag_preamble ) }
-  
+
   has source => (
     is      =>'ro',
     isa     => 'Str',
   );
-  
+
   has diag => (
     is      => 'ro',
     default => sub { [] },
   );
-  
+
   has diag_preamble => (
     is      => 'ro',
     default => sub { [] },
   );
-  
+
   has _diag_content => (
     is      => 'rw',
     isa     => 'Str',
     default => '',
   );
-  
+
   has test2_v0 => (
     is      => 'ro',
     isa     => 'Int',
     default => 0,
   );
-  
+
   sub gather_files
   {
     my($self) = @_;
-    
+
     require Dist::Zilla::File::InMemory;
-  
+
     $self->add_file(
       Dist::Zilla::File::InMemory->new(
         name    => $_,
@@ -78,28 +78,28 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
               xt/release/changes.t
               xt/release/fixme.t );
   }
-  
+
   sub before_build
   {
     my($self) = @_;
-  
+
     my $source = defined $self->source
     ? $self->zilla->root->child($self->source)
     : Dist::Zilla::MintingProfile::Author::Plicease->profile_dir->child("default/skel/xt/release");
-  
+
     my $diag = $self->zilla->root->child("t/00_diag.t");
     my $content = $source->parent->parent->child('t', $self->test2_v0 ? '00_xdiag.t' : '00_diag.t' )->absolute->slurp;
     $content =~ s{## PREAMBLE ##}{join "\n", map { s/^\| //; $_ } @{ $self->diag_preamble }}e;
     $self->_diag_content($content);
   }
-  
+
   # not really an installer, but we have to create a list
   # of the prereqs / suggested modules after the prereqs
   # have been calculated
   sub setup_installer
   {
     my($self) = @_;
-    
+
     my %list;
     my $prereqs = $self->zilla->prereqs->as_string_hash;
     foreach my $phase (keys %$prereqs)
@@ -114,18 +114,18 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
         }
       }
     }
-    
+
     if($list{'JSON::MaybeXS'})
     {
       $list{'JSON::PP'}++;
       $list{'JSON::XS'}++;
     }
-    
+
     if(my($alien) = grep { $_->isa('Dist::Zilla::Plugin::Alien') } @{ $self->zilla->plugins })
     {
       $list{$_}++ foreach keys %{ $alien->module_build_args->{alien_bin_requires} };
     }
-    
+
     foreach my $lib (@{ $self->diag })
     {
       if($lib =~ /^-(.*)$/)
@@ -141,20 +141,20 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
         $self->log_fatal('diagnostic override must be prefixed with + or -');
       }
     }
-  
+
     my $code = '';
-    
+
     $code = "BEGIN { eval q{ use EV; } }\n" if $list{EV};
     $code .= '$modules{$_} = $_ for qw(' . "\n";
     $code .= join "\n", map { "  $_" } sort keys %list;
     $code .= "\n);\n";
     $code .= "eval q{ require Test::Tester; };" if $list{'Test::Builder'} && $list{'Test::Tester'};
-    
+
     my($file) = grep { $_->name eq 't/00_diag.t' } @{ $self->zilla->files };
-  
+
     my $content = $self->_diag_content;
     $content =~ s{## GENERATE ##}{$code};
-  
+
     if($file)
     {
       $file->content($content);
@@ -167,10 +167,10 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
       });
       $self->add_file($file);
     }
-  
+
     $self->zilla->root->child(qw( t 00_diag.t ))->spew_raw($content);
   }
-  
+
   sub test
   {
     my($self, $target) = @_;
@@ -178,7 +178,7 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
     system 'prove', '-br', 'xt';
     $self->log_fatal('release test failure') unless $? == 0;
   }
-  
+
   __PACKAGE__->meta->make_immutable;
 
 }
@@ -205,8 +205,8 @@ __[ xt/author/strict.t ]__
 use strict;
 use warnings;
 use Test::More;
-BEGIN { 
-  plan skip_all => 'test requires Test::Strict' 
+BEGIN {
+  plan skip_all => 'test requires Test::Strict'
     unless eval q{ use Test::Strict; 1 };
 };
 use Test::Strict;
@@ -229,8 +229,8 @@ __[ xt/author/eol.t ]__
 use strict;
 use warnings;
 use Test::More;
-BEGIN { 
-  plan skip_all => 'test requires Test::EOL' 
+BEGIN {
+  plan skip_all => 'test requires Test::EOL'
     unless eval q{ use Test::EOL; 1 };
 };
 use Test::EOL;
@@ -246,8 +246,8 @@ __[ xt/author/no_tabs.t ]__
 use strict;
 use warnings;
 use Test::More;
-BEGIN { 
-  plan skip_all => 'test requires Test::NoTabs' 
+BEGIN {
+  plan skip_all => 'test requires Test::NoTabs'
     unless eval q{ use Test::NoTabs; 1 };
 };
 use Test::NoTabs;
@@ -263,8 +263,8 @@ __[ xt/author/pod.t ]__
 use strict;
 use warnings;
 use Test::More;
-BEGIN { 
-  plan skip_all => 'test requires Test::Pod' 
+BEGIN {
+  plan skip_all => 'test requires Test::Pod'
     unless eval q{ use Test::Pod; 1 };
 };
 use Test::Pod;
@@ -280,8 +280,8 @@ __[ xt/release/changes.t ]__
 use strict;
 use warnings;
 use Test::More;
-BEGIN { 
-  plan skip_all => 'test requires Test::CPAN::Changes' 
+BEGIN {
+  plan skip_all => 'test requires Test::CPAN::Changes'
     unless eval q{ use Test::CPAN::Changes; 1 };
 };
 use Test::CPAN::Changes;
@@ -310,8 +310,8 @@ __[ xt/release/fixme.t ]__
 use strict;
 use warnings;
 use Test::More;
-BEGIN { 
-  plan skip_all => 'test requires Test::Fixme' 
+BEGIN {
+  plan skip_all => 'test requires Test::Fixme'
     unless eval q{ use Test::Fixme 0.14; 1 };
 };
 use Test::Fixme 0.07;
@@ -331,10 +331,10 @@ __[ xt/author/pod_coverage.t ]__
 use strict;
 use warnings;
 use Test::More;
-BEGIN { 
+BEGIN {
   plan skip_all => 'test requires 5.010 or better'
     unless $] >= 5.010;
-  plan skip_all => 'test requires Test::Pod::Coverage' 
+  plan skip_all => 'test requires Test::Pod::Coverage'
     unless eval q{ use Test::Pod::Coverage; 1 };
   plan skip_all => 'test requires YAML'
     unless eval q{ use YAML; 1; };
@@ -394,12 +394,12 @@ foreach my $class (@classes)
   SKIP: {
     my($is_private_class) = map { 1 } grep { $class =~ $_->{regex} && $_->{all} } @private_classes;
     skip "private class: $class", 1 if $is_private_class;
-    
+
     my %methods = map {; $_ => 1 } map { split /,/, $_->{method} } grep { $class =~ $_->{regex} } @private_classes;
     $methods{$_} = 1 for keys %private_methods;
-    
+
     my $also_private = eval 'qr{^' . join('|', keys %methods ) . '$}';
-    
+
     pod_coverage_ok $class, { also_private => [$also_private] };
   };
 }
@@ -409,8 +409,8 @@ __[ xt/author/pod_spelling_common.t ]__
 use strict;
 use warnings;
 use Test::More;
-BEGIN { 
-  plan skip_all => 'test requires Test::Pod::Spelling::CommonMistakes' 
+BEGIN {
+  plan skip_all => 'test requires Test::Pod::Spelling::CommonMistakes'
     unless eval q{ use Test::Pod::Spelling::CommonMistakes; 1 };
   plan skip_all => 'test requires YAML'
     unless eval q{ use YAML qw( LoadFile ); 1 };
@@ -439,8 +439,8 @@ __[ xt/author/pod_spelling_system.t ]__
 use strict;
 use warnings;
 use Test::More;
-BEGIN { 
-  plan skip_all => 'test requires Test::Spelling' 
+BEGIN {
+  plan skip_all => 'test requires Test::Spelling'
     unless eval q{ use Test::Spelling; 1 };
   plan skip_all => 'test requires YAML'
     unless eval q{ use YAML; 1; };
@@ -547,10 +547,10 @@ BEGIN {
 
   plan skip_all => "test requires Test::Version 2.00"
     unless eval q{
-      use Test::Version 2.00 qw( version_all_ok ), { 
+      use Test::Version 2.00 qw( version_all_ok ), {
         has_version    => 1,
         filename_match => sub { $_[0] !~ m{/(ConfigData|Install/Files)\.pm$} },
-      }; 
+      };
       1
     };
 

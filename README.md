@@ -29,12 +29,12 @@ you have to.  Sorry.
 
 - Want to submit a patch for one of my modules?
 
-    Consider using `prove -l` on the test suite or adding the lib directory 
-    to `PERL5LIB`.  Save yourself the hassle of dealing with [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla) 
-    at all.  If there is something wrong with one of the generated files 
-    (such as `Makefile.PL` or `Build.PL`) consider opening a support 
-    ticket instead.  Most other activities relating to the use of 
-    [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla) have to do with release testing and uploading to CPAN 
+    Consider using `prove -l` on the test suite or adding the lib directory
+    to `PERL5LIB`.  Save yourself the hassle of dealing with [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla)
+    at all.  If there is something wrong with one of the generated files
+    (such as `Makefile.PL` or `Build.PL`) consider opening a support
+    ticket instead.  Most other activities relating to the use of
+    [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla) have to do with release testing and uploading to CPAN
     which is more my responsibility than yours.
 
 - Really need to fix some aspect of the build process?
@@ -43,7 +43,7 @@ you have to.  Sorry.
     instead!).  If you really do need to fix some aspect of the build process
     then you probably do need to install [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla) and this bundle.
     If you are having trouble figuring out how it works, then try extracting
-    the bundle using the `example/unbundle.pl` script or 
+    the bundle using the `example/unbundle.pl` script or
     [dzil bakeini technique](https://metacpan.org/pod/Dist::Zilla::App::Command::bakeini)
     mentioned above.
 
@@ -142,7 +142,7 @@ Specify an alternative to [\[MakeMaker\]](https://metacpan.org/pod/Dist::Zilla::
 [\[ModuleBuildTiny\]](https://metacpan.org/pod/Dist::Zilla::Plugin::ModuleBuildTiny), or
 [\[ModuleBuildDatabase\]](https://metacpan.org/pod/Dist::Zilla::Plugin::ModuleBuildDatabase) for example).
 
-If installer is [Alien](https://metacpan.org/pod/Dist::Zilla::Plugin::Alien), then any options 
+If installer is [Alien](https://metacpan.org/pod/Dist::Zilla::Plugin::Alien), then any options
 with the alien\_ prefix will be passed to [Alien](https://metacpan.org/pod/Dist::Zilla::Plugin::Alien)
 (minus the alien\_ prefix).
 
@@ -155,7 +155,7 @@ will assume `installer` is `ModuleBuild` and `mb_class` = `My::ModuleBuild`.
 
 ## readme\_from
 
-Which file to pull from for the Readme (must be POD format).  If not 
+Which file to pull from for the Readme (must be POD format).  If not
 specified, then the main module will be used.
 
 ## release\_tests
@@ -244,7 +244,7 @@ Graham Ollis <plicease@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012,2013,2014,2015,2016,2017,2018 by Graham Ollis.
+This software is copyright (c) 2012,2013,2014,2015,2016,2017,2018,2019 by Graham Ollis.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

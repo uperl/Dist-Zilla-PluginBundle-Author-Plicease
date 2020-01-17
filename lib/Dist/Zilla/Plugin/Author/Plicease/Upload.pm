@@ -49,39 +49,39 @@ Base web URL if CPAN upload is disabled.
 =cut
 
   extends 'Dist::Zilla::Plugin::UploadToCPAN';
-  
+
   has cpan => (
     is      => 'ro',
     default => sub { 1 },
   );
-  
+
   has scp_dest => (
     is      => 'ro',
     default => sub { 'ollisg@ratbat.wdlabs.com:web/sites/dist/docs/' },
   );
-  
+
   has url => (
     is      => 'ro',
     default => sub { 'http://dist.wdlabs.com/' },
   );
-  
+
   around before_release => sub {
     my $orig = shift;
     my $self = shift;
-    
+
     # don't check username / password here
     # do it during release
   };
-  
+
   around release => sub {
     my $orig = shift;
     my $self = shift;
     my($archive) = @_;
-    
+
     my $local_release_dir = Path::Tiny->new("~/dev/site-dist/docs");
-    
+
     my @cmd;
-    
+
     if($self->cpan && $self->zilla->chrome->prompt_yn("upload to CPAN?"))
     {
       eval {
@@ -105,7 +105,7 @@ Base web URL if CPAN upload is disabled.
       use autodie qw( :system );
       @cmd = ('scp', '-q', $archive, $self->scp_dest);
     }
-    
+
     {
       $self->zilla->log("% @cmd");
       eval { system @cmd };
@@ -120,10 +120,10 @@ Base web URL if CPAN upload is disabled.
         $self->zilla->log("download URL: " . $self->url . "$archive");
       }
     }
-    
+
     return;
   };
-  
+
   __PACKAGE__->meta->make_immutable;
 
 }

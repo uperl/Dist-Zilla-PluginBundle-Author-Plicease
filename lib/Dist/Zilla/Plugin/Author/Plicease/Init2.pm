@@ -1,5 +1,5 @@
 package Dist::Zilla::Plugin::Author::Plicease::Init2 {
-  
+
   use 5.014;
   use Moose;
   use Dist::Zilla::File::InMemory;
@@ -37,7 +37,7 @@ Create a dist in plicease style.
       $self->chrome->prompt_str("abstract");
     },
   );
-  
+
   has include_tests => (
     is      => 'ro',
     isa     => 'Int',
@@ -46,7 +46,7 @@ Create a dist in plicease style.
       1,
     },
   );
-  
+
   has type_dzil => (
     is      => 'ro',
     lazy    => 1,
@@ -55,7 +55,7 @@ Create a dist in plicease style.
       $name =~ /^Dist-Zilla/ ? 1 : 0;
     },
   );
-  
+
   has type_alien => (
     is      => 'ro',
     lazy    => 1,
@@ -64,7 +64,7 @@ Create a dist in plicease style.
       $name =~ /^Alien-[A-Za-z0-9]+$/ ? 1 : 0;
     },
   );
-  
+
   has perl_version => (
     is      => 'ro',
     lazy    => 1,
@@ -91,15 +91,15 @@ Create a dist in plicease style.
       }
     },
   );
-  
+
   sub make_module
   {
     my($self, $arg) = @_;
     (my $filename = $arg->{name}) =~ s{::}{/}g;
-    
+
     my $name = $arg->{name};
     my $content;
-  
+
     if($self->type_dzil)
     {
       $content = join("\n", qq{use strict;} ,
@@ -179,19 +179,19 @@ Create a dist in plicease style.
                             qq{1;},
       );
     }
-  
+
     my $file = Dist::Zilla::File::InMemory->new({
       name    => "lib/$filename.pm",
       content => $content,
     });
-    
+
     $self->add_file($file);
   }
-  
+
   sub gather_files
   {
     my($self, $arg) = @_;
-    
+
     $self->gather_file_dist_ini($arg);
     $self->gather_file_changes($arg);
     $self->gather_files_tests($arg);
@@ -202,11 +202,11 @@ Create a dist in plicease style.
     $self->gather_file_author_yml($arg);
     $self->gather_file_alienfile($arg) if $self->type_alien;
   }
-  
+
   sub gather_file_alienfile
   {
     my($self) = @_;
-    
+
     my $file = Dist::Zilla::File::InMemory->new({
       name    => 'alienfile',
       content => join("\n", q{use alienfile;},
@@ -222,14 +222,14 @@ Create a dist in plicease style.
                             q(}),
       ),
     });
-  
+
     $self->add_file($file);
   }
-  
+
   sub gather_file_author_yml
   {
     my($self, $arg) = @_;
-    
+
     my $file = Dist::Zilla::File::InMemory->new({
       name    => 'author.yml',
       content => join("\n", q{---},
@@ -248,14 +248,14 @@ Create a dist in plicease style.
                             q{  private: []},
       ),
     });
-  
+
     $self->add_file($file);
   }
-  
+
   sub gather_file_travis_yml
   {
     my($self, $arg) = @_;
-  
+
     my $file = Dist::Zilla::File::InMemory->new({
       name    => '.travis.yml',
       content => join("\n",
@@ -291,15 +291,15 @@ Create a dist in plicease style.
         q{    - "$HOME/.cip"},
       ),
     });
-  
+
     $self->add_file($file);
-  
+
   }
-  
+
   sub gather_file_appveyor_yml
   {
     my($self, $arg)  =@_;
-    
+
     my $file = Dist::Zilla::File::InMemory->new({
       name    => '.appveyor.yml',
       content => join("\n",
@@ -329,19 +329,19 @@ Create a dist in plicease style.
         q{shallow_clone: true},
       ),
     });
-    
-    $self->add_file($file); 
+
+    $self->add_file($file);
   }
-  
+
   sub gather_file_dist_ini
   {
     my($self, $arg) = @_;
-    
+
     my $zilla = $self->zilla;
-    
+
     my $code = sub {
       my $content = '';
-      
+
       $content .= sprintf "name             = %s\n", $zilla->name;
       $content .= sprintf "author           = Graham Ollis <plicease\@cpan.org>\n";
       $content .= sprintf "license          = Perl_5\n";
@@ -349,43 +349,43 @@ Create a dist in plicease style.
       $content .= sprintf "copyright_year   = %s\n", (localtime)[5]+1900;
       $content .= sprintf "version          = 0.01\n";
       $content .= "\n";
-      
+
       $content .= "[\@Author::Plicease]\n"
                .  (__PACKAGE__->VERSION ? ":version       = @{[ __PACKAGE__->VERSION ]}\n" : '')
                .  "travis_status  = 1\n"
                .  "release_tests  = @{[ $self->include_tests ]}\n"
                .  "installer      = Author::Plicease::MakeMaker\n"
                .  "test2_v0       = 1\n";
-  
+
       $content .= "version_plugin = PkgVersion::Block\n" if $self->perl_version >= 5.014;
-      
+
       $content .= "\n";
 
       $content .= "[Author::Plicease::Core]\n";
-      
+
       $content .= ";[Prereqs]\n"
                .  ";Foo::Bar = 0\n"
                .  "\n";
-      
+
       $content .= "[Author::Plicease::Upload]\n"
                .  "cpan = 0\n"
                .  "\n";
-               
+
       $content;
     };
-    
+
     my $file = Dist::Zilla::File::FromCode->new({
       name => 'dist.ini',
       code => $code,
     });
-    
+
     $self->add_file($file);
   }
-  
+
   sub gather_file_changes
   {
     my($self, $arg) = @_;
-    
+
     my $file = Dist::Zilla::File::InMemory->new({
       name    => 'Changes',
       content => join("\n", q{Revision history for {{$dist->name}}},
@@ -394,17 +394,17 @@ Create a dist in plicease style.
                             q{  - initial version},
       ),
     });
-    
+
     $self->add_file($file);
   }
-  
+
   sub gather_files_tests
   {
     my($self, $arg) = @_;
-    
+
     my $name = $self->zilla->name;
     $name =~ s{-}{::}g;
-  
+
     my $use_t_file = Dist::Zilla::File::InMemory->new({
       name => 't/01_use.t',
       content => join("\n", q{use Test2::V0 -no_srand => 1;},
@@ -430,13 +430,13 @@ Create a dist in plicease style.
                             '}',
       ),
     });
-    
+
     $self->add_file($use_t_file);
-  
+
     my $test_name = lc $name;
     $test_name =~ s{::}{_}g;
     $test_name = "t/$test_name.t";
-    
+
     my $main_test = Dist::Zilla::File::InMemory->new({
       name => $test_name,
       content => join("\n", q{use Test2::V0 -no_srand => 1;},
@@ -447,38 +447,38 @@ Create a dist in plicease style.
                             q{done_testing},
       ),
     });
-    
+
     $self->add_file($main_test);
   }
-  
+
   sub gather_file_gitignore
   {
     my($self, $arg) = @_;
-    
+
     my $name = $self->zilla->name;
-    
+
     my $file = Dist::Zilla::File::InMemory->new({
       name    => '.gitignore',
       content => "/$name-*\n/.build\n",
     });
-    
+
     $self->add_file($file);
   }
-  
+
   sub gather_file_gitattributes
   {
     my($self, $arg) = @_;
-    
+
     my $name = $self->zilla->name;
-    
+
     my $file = Dist::Zilla::File::InMemory->new({
       name    => '.gitattributes',
       content => "*.pm linguist-language=Perl\n*.t linguist-language=Perl\n*.h linguist-language=C\n",
     });
-    
+
     $self->add_file($file);
   }
-  
+
   has github_login => (
     is      => 'ro',
     isa     => 'Str',
@@ -488,7 +488,7 @@ Create a dist in plicease style.
       $self->chrome->prompt_str("github user", { default => 'plicease' });
     },
   );
-  
+
   has github_pass => (
     is => 'ro',
     isa => 'Str',
@@ -498,37 +498,37 @@ Create a dist in plicease style.
       $self->chrome->prompt_str("github pass", { noecho => 1 });
     },
   );
-  
+
   sub after_mint
   {
     my($self, $opts) = @_;
-    
+
     unless(eval q{ use Git::Wrapper; 1; })
     {
       $self->zilla->log("no Git::Wrapper, can't create repository");
       return;
     }
-    
+
     my $git = Git::Wrapper->new($opts->{mint_root});
     $git->init;
     $git->commit({ 'allow-empty' => 1, message => "Start with a blank" });
     $git->add($opts->{mint_root});
     $git->commit({ message => "Initial structure" });
-    
+
     unless(eval q{ use LWP::UserAgent; use HTTP::Request; 1; })
     {
       $self->zilla->log("no LWP, can't create github repo");
     }
-  
+
     my $no_github = 1;
-    
+
     unless($ENV{DIST_ZILLA_PLUGIN_AUTHOR_PLICEASE_INIT2_NO_GITHUB})
     {
       my $ua = LWP::UserAgent->new;
       my $request = HTTP::Request->new(
         POST => "https://api.github.com/user/repos",
       );
-  
+
       my $data = encode_json({ name => $self->zilla->name, description => $self->abstract });
       $request->content($data);
       $request->header( 'Content-Length' => length encode_utf8 $data );
@@ -543,15 +543,15 @@ Create a dist in plicease style.
         $self->zilla->log("could not create a github repo!");
       }
     }
-    
+
     $git->remote('add', 'origin', "git\@github.com:" . $self->github_login . '/' . $self->zilla->name . '.git');
     $git->push('origin', 'master') unless $no_github;
-    
+
     return;
   }
-  
+
   __PACKAGE__->meta->make_immutable;
 }
-  
+
 1;
-  
+

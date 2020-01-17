@@ -25,17 +25,17 @@ subtest 'basic' => sub {
   my $file = first { $_->name eq 'Makefile.PL' } @{ $tzil->files };
 
   ok $file, 'has Makefile.PL';
-  
+
   my $content = $file->content;
-  
+
   note $content;
 
   my $file2 = first { $_->name eq 'META.json' } @{ $tzil->files };
-  
+
   ok $file2, 'has META.json';
-  
+
   my $content2 = $file2->content;
-  
+
   note $content2;
 
 };
@@ -62,17 +62,17 @@ subtest 'with eumm.pl' => sub {
   my $file = first { $_->name eq 'Makefile.PL' } @{ $tzil->files };
 
   ok $file, 'has Makefile.PL';
-  
+
   my $content = $file->content;
-  
+
   note $content;
 
   my $file2 = first { $_->name eq 'META.json' } @{ $tzil->files };
-  
+
   ok $file2, 'has META.json';
-  
+
   my $content2 = $file2->content;
-  
+
   note $content2;
 
 };

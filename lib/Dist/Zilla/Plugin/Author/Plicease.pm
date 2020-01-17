@@ -27,9 +27,27 @@ Returns this distributions share directory.
 
   sub dist_dir
   {
-    Path::Tiny->new(
-      File::ShareDir::Dist::dist_share('Dist-Zilla-Plugin-Author-Plicease')
-    );
+    my $file = Path::Tiny->new(__FILE__);
+    if($file->is_absolute)
+    {
+      return Path::Tiny->new(
+        File::ShareDir::Dist::dist_share('Dist-Zilla-PluginBundle-Author-Plicease')
+      );
+    }
+    else
+    {
+      my $share = $file
+        ->absolute
+        ->parent
+        ->parent
+        ->parent
+        ->parent
+        ->parent
+        ->parent
+        ->child('share');
+      die "no share $share" unless -d $share;
+      return $share;
+    }
   }
 }
 

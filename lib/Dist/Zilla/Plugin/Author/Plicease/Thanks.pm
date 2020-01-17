@@ -25,26 +25,26 @@ package Dist::Zilla::Plugin::Author::Plicease::Thanks {
     is  => 'ro',
     isa => 'Str',
   );
-  
+
   has current => (
     is  => 'ro',
     isa => 'Str',
   );
-  
+
   has contributor => (
     is      => 'ro',
     isa     => 'ArrayRef[Str]',
     default => sub { [] },
   );
-  
+
   sub mvp_multivalue_args { qw( contributor ) }
-  
+
   sub munge_files
   {
     my($self) = @_;
     $self->munge_file($_) for @{ $self->found_files };
   }
-  
+
   sub _escape ($)
   {
     my($txt) = @_;
@@ -55,14 +55,14 @@ package Dist::Zilla::Plugin::Author::Plicease::Thanks {
     $txt =~ s{([<>])}{E<$map{$1}>}g;
     $txt;
   }
-  
+
   sub munge_file
   {
     my($self, $file) = @_;
-    
+
     $self->log_fatal('requires at least current')
       unless $self->current;
-    
+
     my $replacer = sub {
       my @list;
       push @list, '=head1 AUTHOR', '';
@@ -80,32 +80,32 @@ package Dist::Zilla::Plugin::Author::Plicease::Thanks {
       }
       if(@{ $self->contributor } > 0)
       {
-        push @list, 'Contributors:', '', map { (_escape $_, '') } @{ $self->contributor }; 
+        push @list, 'Contributors:', '', map { (_escape $_, '') } @{ $self->contributor };
       }
       return join "\n", @list, '';
     };
-    
+
     my $content = $file->content;
     unless($content =~ s{^=head1 AUTHOR.*(=head1 COPYRIGHT)}{$replacer->() . $1}sem)
     {
       $self->log_fatal('could not replace AUTHOR section');
     }
     $file->content($content);
-    
+
     return;
   }
-  
+
   sub metadata
   {
     my ($self) = @_;
-  
+
     my @contributors = @{$self->contributor};
     unshift @contributors, $self->current  if $self->current;
     unshift @contributors, $self->original if $self->original;
-  
+
     return +{ x_contributors => \@contributors };
   }
-  
+
   __PACKAGE__->meta->make_immutable;
 
 }
