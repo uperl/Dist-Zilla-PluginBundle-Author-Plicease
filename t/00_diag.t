@@ -13,7 +13,6 @@ $modules{$_} = $_ for qw(
   Data::Section
   Dist::Zilla
   Dist::Zilla::App::Command::aliendeps
-  Dist::Zilla::Plugin::ACPS::RPM
   Dist::Zilla::Plugin::Alien
   Dist::Zilla::Plugin::Author::Plicease
   Dist::Zilla::Plugin::AutoMetaResources

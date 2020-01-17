@@ -427,12 +427,6 @@ Specify a minimum Perl version.  If not specified it will be detected.
       ]);
     }
 
-    unless('bakeini' eq (Dist::Zilla::Util::CurrentCmd::current_cmd() ||'') )
-    {
-      if(eval { require Dist::Zilla::Plugin::ACPS::RPM })
-      { $self->_my_add_plugin(['ACPS::RPM']) }
-    }
-
     foreach my $test (map { path($_) } bsd_glob ('t/*.t'))
     {
       my @lines = grep !/-no_srand => 1/, grep /use Test2::V0/, $test->lines_utf8;
