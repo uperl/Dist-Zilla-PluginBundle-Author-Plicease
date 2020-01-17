@@ -1,0 +1,34 @@
+---
+pod_spelling_system:
+  stopwords:
+    - profile.ini
+    - dist.ini
+    - ini
+    - MakeMaker
+    - deps
+    - travis
+    - yml
+    - ModuleBuild
+    - ModuleBuildTiny
+    - ModuleBuildDatabase
+    - README
+    - Readme
+    - readme
+    - md
+    - cpanfile
+    - dists
+    - EV
+    - irc
+    - OurPkgVersion
+    - appveyor
+    - bakeini
+    - EUMM
+    - ci
+
+pod_coverage:
+  private:
+    - .*#BUILDARGS
+    - Dist::Zilla::Plugin::Author::Plicease::.*
+    - Dist::Zilla::MintingProfile::Author::Plicease
+    - Dist::Zilla::PluginBundle::Author::Plicease#configure
+    - Dist::Zilla::PluginBundle::Author::Plicease#mvp_multivalue_args
