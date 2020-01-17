@@ -247,6 +247,17 @@ Specify a minimum Perl version.  If not specified it will be detected.
       };
     }
 
+    foreach my $script (qw( before_build.pl before_release.pl release.pl test.pl after_build.pl after_release.pl ))
+    {
+      if(-r "inc/run/$script")
+      {
+        print STDERR Term::ANSIColor::color('bold red') if -t STDERR;
+        print STDERR "please rename inc/run/$script to maint/run-$script";
+        print STDERR Term::ANSIColor::color('reset') if -t STDERR;
+        print STDERR "\n";
+      }
+    }
+
     foreach my $prefix (qw( inc/run/ maint/run- ))
     {
       $self->_my_add_plugin(['Run::BeforeBuild'        => { run => "%x ${prefix}before_build.pl     --name %n --version %v" }])
@@ -278,12 +289,22 @@ Specify a minimum Perl version.  If not specified it will be detected.
       my %mb = map { $_ => $self->payload->{$_} } grep /^mb_/, keys %{ $self->payload };
       if(-e "inc/My/ModuleBuild.pm")
       {
+        print STDERR Term::ANSIColor::color('bold red') if -t STDERR;
+        print STDERR "please migrate off of Module::Build";
+        print STDERR Term::ANSIColor::color('reset') if -t STDERR;
+        print STDERR "\n";
+
         $installer ||= 'ModuleBuild';
         $mb{mb_class} = 'My::ModuleBuild'
           unless defined $mb{mb_class};
       }
       if(defined $installer && $installer eq 'Alien')
       {
+        print STDERR Term::ANSIColor::color('bold red') if -t STDERR;
+        print STDERR "please do not use the Alien plugin anymore";
+        print STDERR Term::ANSIColor::color('reset') if -t STDERR;
+        print STDERR "\n";
+
         my %args =
           map { $_ => $self->payload->{"alien_$_"} }
           map { s/^alien_//; $_ }
@@ -292,6 +313,11 @@ Specify a minimum Perl version.  If not specified it will be detected.
       }
       elsif(defined $installer && $installer eq 'ModuleBuild')
       {
+        print STDERR Term::ANSIColor::color('bold red') if -t STDERR;
+        print STDERR "please migrate off of Module::Build";
+        print STDERR Term::ANSIColor::color('reset') if -t STDERR;
+        print STDERR "\n";
+
         $self->_my_add_plugin([ ModuleBuild => \%mb ]);
       }
       else
@@ -435,18 +461,6 @@ Specify a minimum Perl version.  If not specified it will be detected.
       print STDERR "$test has Test2::V0 without -no_srand";
       print STDERR Term::ANSIColor::color('reset') if -t STDERR;
       print STDERR "\n";
-    }
-
-    foreach my $name (qw( t/00_diag.txt t/00_diag.pre.txt ),
-                        map { "xt/release/$_.t" } qw( build_environment unused eol no_tabs pod strict fixme changes pod_coverage pod_spelling_common pod_spelling_system version ))
-    {
-      if(-e $name)
-      {
-        print STDERR Term::ANSIColor::color('bold red') if -t STDERR;
-        print STDERR "You have a lingering deprecated test: $name";
-        print STDERR Term::ANSIColor::color('reset') if -t STDERR;
-        print STDERR "\n";
-      }
     }
 
     $self->_my_add_plugin(
