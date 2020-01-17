@@ -12,7 +12,7 @@ package Dist::Zilla::Plugin::Author::Plicease {
 The modules in this namespace contain some miscellaneous L<Dist::Zilla>
 plugins that I use to customize my personal L<Dist::Zilla> experience.
 Most likely you don't want or need to use them.  If you do run into
-one of my distributions my L<Dist::Zilla> bundle includes documentation 
+one of my distributions my L<Dist::Zilla> bundle includes documentation
 that may be able to help:
 
 L<Dist::Zilla::PluginBundle::Author::Plicease>
