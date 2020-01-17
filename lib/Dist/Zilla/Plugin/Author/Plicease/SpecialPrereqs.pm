@@ -279,7 +279,7 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
       $content = join "\n",
         "BEGIN {",
         "  use strict; use warnings;",
-        (map { s/^\| /  /; $_ } @{ $self->preamble }),
+        (map { s/^\| /  /r } @{ $self->preamble }),
         "  unless(eval q{ use $perl_version; 1}) {",
         "    print \"Perl $perl_version or better required\\n\";",
         "    exit;",

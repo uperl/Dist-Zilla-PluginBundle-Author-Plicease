@@ -503,7 +503,7 @@ Create a dist in plicease style.
   {
     my($self, $opts) = @_;
 
-    unless(eval q{ use Git::Wrapper; 1; })
+    unless(eval { require Git::Wrapper })
     {
       $self->zilla->log("no Git::Wrapper, can't create repository");
       return;
@@ -515,7 +515,7 @@ Create a dist in plicease style.
     $git->add($opts->{mint_root});
     $git->commit({ message => "Initial structure" });
 
-    unless(eval q{ use LWP::UserAgent; use HTTP::Request; 1; })
+    unless(eval { require LWP::UserAgent; require HTTP::Request })
     {
       $self->zilla->log("no LWP, can't create github repo");
     }

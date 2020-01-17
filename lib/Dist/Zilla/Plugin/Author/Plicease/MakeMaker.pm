@@ -34,7 +34,11 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
 
     # to prevent any non .pm/.pod files from being installed in lib
     # because shit like this is stuff we ought to have to customize.
-    my %PM = map {; "lib/$_" => "\$(INST_LIB)/$_" } map { s/^lib\///; $_ } grep /^lib\/.*\.p(od|m)$/, map { $_->name } @{ $self->zilla->files };
+    my %PM = map {; "lib/$_" => "\$(INST_LIB)/$_" }
+             map { s/^lib\///r }
+             grep /^lib\/.*\.p(od|m)$/,
+             map { $_->name }
+             @{ $self->zilla->files };
     $h->{PM} = \%PM;
 
     $h;
@@ -154,7 +158,7 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
           push @new, $line;
         }
 
-        eval $mod->content;
+        eval $mod->content;  ## no critic (BuiltinFunctions::ProhibitStringyEval)
         $self->log_fatal("unable to eval inc/mymm.pl: $@") if $@;
 
         if(mymm->can('myWriteMakefile'))

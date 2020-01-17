@@ -212,12 +212,10 @@ Specify a minimum Perl version.  If not specified it will be detected.
     # right).
     if($self->payload->{non_native_release})
     {
-      eval q{
-        no warnings 'redefine';
-        use Dist::Zilla::Role::BuildPL;
-        sub Dist::Zilla::Role::BuildPL::build {};
-        sub Dist::Zilla::Role::BuildPL::test {};
-      };
+      no warnings 'redefine';
+      require Dist::Zilla::Role::BuildPL;
+      *Dist::Zilla::Role::BuildPL::build = sub {};
+      *Dist::Zilla::Role::BuildPL::test  = sub {};
     }
 
     foreach my $script (qw( before_build.pl before_release.pl release.pl test.pl after_build.pl after_release.pl ))
@@ -280,7 +278,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
 
         my %args =
           map { $_ => $self->payload->{"alien_$_"} }
-          map { s/^alien_//; $_ }
+          map { s/^alien_//r }
           grep /^alien_/, keys %{ $self->payload };
         $self->_my_add_plugin([ Alien => { %args, %mb } ]);
       }
