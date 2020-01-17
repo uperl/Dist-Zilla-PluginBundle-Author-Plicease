@@ -26,7 +26,7 @@ This is the normal minting profile used by Plicease.
 
     # use a dist share instead of a class share
 
-    my $dir1 = Path::Tiny->new( File::ShareDir::Dist::dist_share( 'Dist-Zilla-Plugin-Author-Plicease' ) );
+    my $dir1 = Path::Tiny->new( File::ShareDir::Dist::dist_share( 'Dist-Zilla-PluginBundle-Author-Plicease' ) );
 
     my $dir2 = defined $profile_name
       ? $dir1->child("profiles/$profile_name")
