@@ -355,6 +355,7 @@ Create a dist in plicease style.
                .  "travis_status  = 1\n"
                .  "release_tests  = @{[ $self->include_tests ]}\n"
                .  "installer      = Author::Plicease::MakeMaker\n"
+               .  "github_user    = @{[ $self->github_user ]}\n"
                .  "test2_v0       = 1\n";
 
       $content .= "version_plugin = PkgVersion::Block\n" if $self->perl_version >= 5.014;
@@ -485,17 +486,46 @@ Create a dist in plicease style.
     lazy    => 1,
     default => sub {
       my($self) = @_;
-      $self->chrome->prompt_str("github user", { default => 'plicease' });
+      $self->chrome->prompt_str("github login", { default => 'plicease' });
+    },
+  );
+
+  has github_user => (
+    is      => 'ro',
+    isa     => 'Str',
+    lazy    => 1,
+    default => sub {
+      my($self) = @_;
+      $self->chrome->prompt_str("github user/org", { default => 'plicease' });
+    },
+  );
+
+  has github_private => (
+    is      => 'ro',
+    isa     => 'Str',
+    lazy    => 1,
+    default => sub {
+      my($self) = @_;
+      $self->chrome->prompt_yn("github private", { default => 0 });
     },
   );
 
   has github_pass => (
-    is => 'ro',
-    isa => 'Str',
-    lazy => 1,
+    is      => 'ro',
+    isa     => 'Str',
+    lazy    => 1,
     default => sub {
       my($self) = @_;
       $self->chrome->prompt_str("github pass", { noecho => 1 });
+    },
+  );
+
+  has github_auth_token => (
+    is      => 'ro',
+    isa     => 'Str',
+    lazy    => 1,
+    default => sub {
+      $ENV{DIST_ZILLA_PLUGIN_AUTHOR_PLICEASE_INIT2_GITHUB_OAUTH_TOKEN} // $ENV{GITHUB_OAUTH_TOKEN};
     },
   );
 
@@ -525,26 +555,48 @@ Create a dist in plicease style.
     unless($ENV{DIST_ZILLA_PLUGIN_AUTHOR_PLICEASE_INIT2_NO_GITHUB})
     {
       my $ua = LWP::UserAgent->new;
+      my $org = $self->github_user ne $self->github_login
+        ? $self->github_user
+        : undef;
+      my $url = $org ? "https://api.github.com/orgs/$org/repos" : 'https://api.github.com/user/repos';
       my $request = HTTP::Request->new(
-        POST => "https://api.github.com/user/repos",
+        POST => $url,
       );
 
-      my $data = encode_json({ name => $self->zilla->name, description => $self->abstract });
+      my $data = encode_json({
+        name               => $self->zilla->name,
+        description        => $self->abstract,
+        private            => (!$org and $self->github_private) ? JSON::PP::true : JSON::PP::false,
+        has_projects       => JSON::PP::false,
+        has_wiki           => JSON::PP::false,
+        allow_squash_merge => JSON::PP::false,
+      });
       $request->content($data);
       $request->header( 'Content-Length' => length encode_utf8 $data );
-      $request->authorization_basic($self->github_login, $self->github_pass);
+      if($self->github_auth_token)
+      {
+        $request->header( 'Authorization' => "token @{[ $self->github_auth_token ]}" );
+      }
+      else
+      {
+        $request->authorization_basic($self->github_login, $self->github_pass);
+      }
       my $response = $ua->request($request);
       if($response->is_success)
       {
+        $self->zilla->log("created repo at https://github.com/@{[ $self->github_user ]}/@{[ $self->zilla->name ]}");
         $no_github = 0;
       }
       else
       {
+        $self->zilla->log("$url");
+        $self->zilla->log("$data");
+        $self->zilla->log("@{[ $response->code ]} @{[ $response->status_line ]}");
         $self->zilla->log("could not create a github repo!");
       }
     }
 
-    $git->remote('add', 'origin', "git\@github.com:" . $self->github_login . '/' . $self->zilla->name . '.git');
+    $git->remote('add', 'origin', "git\@github.com:" . $self->github_user . '/' . $self->zilla->name . '.git');
     $git->push('origin', 'master') unless $no_github;
 
     return;
