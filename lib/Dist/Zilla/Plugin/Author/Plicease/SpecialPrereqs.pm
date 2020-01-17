@@ -240,7 +240,7 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
             $self->zilla->register_prereqs({
               type => 'recommends',
               phase => $phase,
-            }, "Cpanel::JSON::XS");
+            }, "Cpanel::JSON::XS" => 0);
           }
           my($first) = split /::/, $module;
           if($first =~ /^(AnyEvent|Mojo|Mojolicious)$/)

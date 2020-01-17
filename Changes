@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix warning emitted with JSON recommendations.
 
 2.40      2019-12-30 18:12:42 -0700
   - Handle line endings better on Windows
