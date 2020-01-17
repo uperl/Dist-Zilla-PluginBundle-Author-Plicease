@@ -197,16 +197,16 @@ Create a dist in plicease style.
 
     $self->gather_file_dist_ini($arg);
     $self->gather_files_tests($arg);
-    $self->gather_file_gitignore($arg);
 
-    $self->gather_file_simple('.appveyor.yml');
-    $self->gather_file_simple('.gitattributes');
-    $self->gather_file_simple('.travis.yml');
-    $self->gather_file_simple('alienfile') if $self->type_alien;
-    $self->gather_file_simple('author.yml');
-    $self->gather_file_simple('Changes');
-    $self->gather_file_simple('perlcriticrc');
-    $self->gather_file_simple('xt/author/critic.t');
+    $self->gather_file_simple  ('.appveyor.yml');
+    $self->gather_file_simple  ('.gitattributes');
+    $self->gather_file_template('.gitignore', { name => $self->zilla->name });
+    $self->gather_file_simple  ('.travis.yml');
+    $self->gather_file_simple  ('alienfile') if $self->type_alien;
+    $self->gather_file_simple  ('author.yml');
+    $self->gather_file_simple  ('Changes');
+    $self->gather_file_simple  ('perlcriticrc');
+    $self->gather_file_simple  ('xt/author/critic.t');
   }
 
   sub gather_file_simple
@@ -219,17 +219,16 @@ Create a dist in plicease style.
     $self->add_file($file);
   }
 
-  sub gather_file_appveyor_yml
+  sub gather_file_template
   {
-    my($self, $arg)  =@_;
-
+    my($self, $filename, $stash) = @_;
+    my $template = ${ $self->section_data("template/$filename") };
+    my $content = $self->fill_in_string($template, $stash, {});
     my $file = Dist::Zilla::File::InMemory->new({
-      name    => '.appveyor.yml',
-      content => join("\n",
-      ),
+      name    => $filename,
+      content => $content,
     });
-
-    $self->add_file($file);
+    $self->add_file($file);    
   }
 
   sub gather_file_dist_ini
@@ -281,20 +280,6 @@ Create a dist in plicease style.
     });
 
     $self->add_file($main_test);
-  }
-
-  sub gather_file_gitignore
-  {
-    my($self, $arg) = @_;
-
-    my $name = $self->zilla->name;
-
-    my $file = Dist::Zilla::File::InMemory->new({
-      name    => '.gitignore',
-      content => "/$name-*\n/.build\n",
-    });
-
-    $self->add_file($file);
   }
 
   has github => (
@@ -642,5 +627,11 @@ test2_v0       = 1
 
 [Author::Plicease::Upload]
 cpan = 0
+
+
+__[ template/.gitignore ]__
+{{$name}}-*
+/.build/
+*.swp
 
 
