@@ -34,6 +34,7 @@ package Dist::Zilla::Plugin::Author::Plicease::Core {
 
     foreach my $phase (keys %$prereqs)
     {
+      next if $phase eq 'develop';
       foreach my $type (keys %{ $prereqs->{$phase} })
       {
         foreach my $module (sort keys %{ $prereqs->{$phase}->{$type} })
