@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.43      2020-02-04 03:16:36 -0700
   - Add a workflow key to [@Author::Plicease] and
     [Author::Plicease::MarkDownCleanup]
   - [Author::Plicease::Core] no longer checks for dev deps on
