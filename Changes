@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+2.44      2020-02-04 15:36:38 -0700
+  - Added support for github actions / workflow
+
 2.43      2020-02-04 03:16:36 -0700
   - Add a workflow key to [@Author::Plicease] and
     [Author::Plicease::MarkDownCleanup]
