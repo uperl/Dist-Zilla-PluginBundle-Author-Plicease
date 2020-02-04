@@ -78,7 +78,7 @@ Create a dist in plicease style.
       my $self = shift;
       my @workflow;
 
-      foreach my $workflow (qw( windows ))
+      foreach my $workflow (qw( windows macos ))
       {
         push @workflow, $workflow if $self->chrome->prompt_yn("workflow $workflow?");
       }
@@ -688,7 +688,7 @@ on:
   pull_request:
 
 env:
-  PERL5LIB: c:\\cx\\lib\\perl5
+  PERL5LIB: c:\cx\lib\perl5
   PERL_LOCAL_LIB_ROOT: c:/cx
   PERL_MB_OPT: --install_base C:/cx
   PERL_MM_OPT: INSTALL_BASE=C:/cx
@@ -728,3 +728,60 @@ jobs:
       - name: Run Tests
         run: dzil test -v
 
+
+__[ dist/.github/workflows/windows.yml ]__
+name: macos
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+env:
+  PERL5LIB: /Users/runner/perl5/lib/perl5
+  PERL_LOCAL_LIB_ROOT: /Users/runner/perl5
+  PERL_MB_OPT: --install_base /Users/runner/perl5
+  PERL_MM_OPT: INSTALL_BASE=/Users/runner/perl5
+
+jobs:
+  perl:
+
+    runs-on: macOS-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Perl
+        run: |
+          brew install perl
+          curl https://cpanmin.us | perl - App::cpanminus -n
+          echo "##[add-path]/Users/runner/perl5/bin"
+
+      - name: perl -V
+        run: perl -V
+
+      - name: Prepare for cache
+        run: |
+          perl -V > perlversion.txt
+          ls -l perlversion.txt
+
+      - name: Cache CPAN modules
+        uses: actions/cache@v1
+        with:
+          path: ~/perl5
+          key: ${{ runner.os }}-build-${{ hashFiles('perlversion.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ hashFiles('perlversion.txt') }}
+
+      - name: Install Static Dependencies
+        run: |
+          cpanm -n Dist::Zilla
+          dzil authordeps --missing | cpanm -n
+          dzil listdeps --missing   | cpanm -n
+      - name: Install Dynamic Dependencies
+        run: dzil run 'cpanm --installdeps .'
+      - name: Run Tests
+        run: dzil test -v
