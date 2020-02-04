@@ -188,6 +188,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
     upgrade
     preamble
     diag_preamble
+    workflow
 
     diag
     allow_dirty ) }
@@ -396,6 +397,8 @@ Specify a minimum Perl version.  If not specified it will be detected.
         maybe travis_user   => $self->payload->{travis_user} // $self->payload->{github_user},
         maybe appveyor_user => $self->payload->{appveyor_user},
         maybe cirrus_user   => $self->payload->{cirrus_user},
+        maybe github_user   => $self->payload->{github_user},
+        maybe workflow      => $self->payload->{workflow},
       },
     ]);
 

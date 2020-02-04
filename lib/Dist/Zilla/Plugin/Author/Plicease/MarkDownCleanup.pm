@@ -42,6 +42,19 @@ package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup {
     isa => 'Str',
   );
 
+  has github_user => (
+    is      => 'ro',
+    default => 'plicease',
+  );
+
+  has workflow => (
+    is      => 'ro',
+    isa     => 'ArrayRef[Str]',
+    default => sub { [] },
+  );
+
+  sub mvp_multivalue_args { qw( workflow ) }
+
   sub after_build
   {
     my($self) = @_;
@@ -49,14 +62,18 @@ package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup {
     if(-r $readme)
     {
       my $name = $self->zilla->name;
-      my $user = $self->travis_user;
 
       my $cirrus_status = -f $self->zilla->root->child('.cirrus.yml');
 
       my $status = '';
       $status .= " [![Build Status](https://api.cirrus-ci.com/github/@{[ $self->cirrus_user ]}/$name.svg)](https://cirrus-ci.com/github/@{[ $self->cirrus_user ]}/$name)" if $cirrus_status;
-      $status .= " [![Build Status](https://secure.travis-ci.org/$user/$name.png)](http://travis-ci.org/$user/$name)" if $self->travis_status;
+      $status .= " [![Build Status](https://secure.travis-ci.org/@{[ $self->travis_user ]}/$name.png)](http://travis-ci.org/@{[ $self->travis_user ]}/$name)" if $self->travis_status;
       $status .= " [![Build status](https://ci.appveyor.com/api/projects/status/@{[ $self->appveyor ]}/branch/master?svg=true)](https://ci.appveyor.com/project/@{[ $self->appveyor_user ]}/$name/branch/master)" if $self->appveyor;
+
+      foreach my $workflow (@{ $self->workflow })
+      {
+        $status .= " ![$workflow](https://github.com/@{[ $self->github_user ]}/$name/workflows/$workflow/badge.svg)";
+      }
 
       my $content = $readme->slurp;
       $content =~ s{# NAME\s+(.*?) - (.*?#)}{# $1$status\n\n$2}s;

@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add a workflow key to [@Author::Plicease] and
+    [Author::Plicease::MarkDownCleanup]
+  - [Author::Plicease::Core] no longer checks for dev deps on
+    incomplete Perls
 
 2.42      2020-01-17 14:43:55 -0700
   - Merged Dist-Zilla-Plugin-Author-Plicease back into this dist.
