@@ -70,6 +70,23 @@ Create a dist in plicease style.
     },
   );
 
+  has workflow => (
+    is      => 'ro',
+    isa     => 'ArrayRef[Str]',
+    lazy    => 1,
+    default => sub {
+      my $self = shift;
+      my @workflow;
+
+      foreach my $workflow (qw( windows ))
+      {
+        push @workflow, $workflow if $self->chrome->prompt_yn("workflow $workflow?");
+      }
+
+      \@workflow;
+    },
+  );
+
   has perl_version => (
     is      => 'ro',
     lazy    => 1,
@@ -144,14 +161,21 @@ Create a dist in plicease style.
     $self->gather_file_simple  ('perlcriticrc');
     $self->gather_file_template('t/main_class.t' => 't/' . lc($self->zilla->name =~ s/-/_/gr) . ".t" );
     $self->gather_file_simple  ('xt/author/critic.t');
+
+    foreach my $workflow (@{ $self->workflow })
+    {
+      $self->gather_file_simple(".github/workflows/$workflow.yml");
+    }
   }
 
   sub gather_file_simple
   {
     my($self, $filename) = @_;
+    my $content = $self->section_data("dist/$filename");
+    $self->log_fatal("no bundled file dist/$filename") unless $content;
     my $file = Dist::Zilla::File::InMemory->new({
       name    => $filename,
-      content => ${ $self->section_data("dist/$filename") },
+      content => $$content,
     });
     $self->add_file($file);
   }
@@ -161,6 +185,7 @@ Create a dist in plicease style.
     my($self, $template_name, $filename) = @_;
     $filename //= $template_name;
     my $template = ${ $self->section_data("template/$template_name") };
+    $self->log_fatal("no bundled template: template/$template_name") unless $template;
     my $content = $self->fill_in_string($template, {
       name         => $self->zilla->name,
       abstract     => $self->abstract,
@@ -179,16 +204,20 @@ Create a dist in plicease style.
 
     my $zilla = $self->zilla;
 
-    my $template = ${ $self->section_data("template/dist.ini") };
+    my $template = $self->section_data("template/dist.ini");
+
+    my $stash = {
+      name           => $zilla->name,
+      copyright_year => (localtime)[5]+1900,
+      version        => __PACKAGE__->VERSION // '2.41',
+      release_tests  => $self->include_tests,
+      github_user    => $self->github_user,
+      version_plugin => ($self->perl_version >= 5.014 ? 'PkgVersion::Block' : 0),
+      workflow       => $self->workflow,
+    };
+
     my $code = sub {
-      $self->fill_in_string($template, {
-        name           => $zilla->name,
-        copyright_year => (localtime)[5]+1900,
-        version        => __PACKAGE__->VERSION // '2.41',
-        release_tests  => $self->include_tests,
-        github_user    => $self->github_user,
-        version_plugin => $self->perl_version >= 5.014 ? 'PkgVersion::Block' : 0,
-      }, {});
+      $self->fill_in_string($$template, $stash, {});
     };
 
     my $file = Dist::Zilla::File::FromCode->new({
@@ -540,7 +569,20 @@ release_tests  = {{$release_tests}}
 installer      = Author::Plicease::MakeMaker
 github_user    = {{$github_user}}
 test2_v0       = 1
-{{ $version_plugin ? "version_plugin = $version_plugin\n" : '' }}
+{{
+
+  my $extra = '';
+
+  foreach my $wf (@workflow)
+  {
+    $extra .= "workflow       = $wf\n";
+  }
+
+  $extra .= "version_plugin = $version_plugin\n" if $version_plugin;
+
+  $extra;
+
+}}
 [Author::Plicease::Core]
 
 [Author::Plicease::Upload]
@@ -632,4 +674,57 @@ package {{ $name =~ s/-/::/gr }} {
 }
 
 1;
+
+
+__[ dist/.github/workflows/windows.yml ]__
+name: windows
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+env:
+  PERL5LIB: c:\\cx\\lib\\perl5
+  PERL_LOCAL_LIB_ROOT: c:/cx
+  PERL_MB_OPT: --install_base C:/cx
+  PERL_MM_OPT: INSTALL_BASE=C:/cx
+
+jobs:
+  perl:
+
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache CPAN modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-cpan-modules
+        with:
+          path: c:\cx
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}
+
+      - name: Set up Perl
+        run: |
+          choco install strawberryperl
+          echo "##[add-path]C:\cx\bin;C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin"
+      - name: perl -V
+        run: perl -V
+      - name: Install Static Dependencies
+        run: |
+          cpanm -n Dist::Zilla
+          dzil authordeps --missing | cpanm -n
+          dzil listdeps --missing   | cpanm -n
+      - name: Install Dynamic Dependencies
+        run: |
+          dzil run 'cpanm --installdeps .'
+      - name: Run Tests
+        run: dzil test -v
 
