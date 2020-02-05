@@ -723,8 +723,7 @@ jobs:
           dzil authordeps --missing | cpanm -n
           dzil listdeps --missing   | cpanm -n
       - name: Install Dynamic Dependencies
-        run: |
-          dzil run 'cpanm --installdeps .'
+        run: dzil run --no-build 'cpanm --installdeps .'
       - name: Run Tests
         run: dzil test -v
 
@@ -782,6 +781,6 @@ jobs:
           dzil authordeps --missing | cpanm -n
           dzil listdeps --missing   | cpanm -n
       - name: Install Dynamic Dependencies
-        run: dzil run 'cpanm --installdeps .'
+        run: dzil run --no-build 'cpanm --installdeps .'
       - name: Run Tests
         run: dzil test -v
