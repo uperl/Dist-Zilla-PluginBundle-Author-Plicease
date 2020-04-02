@@ -701,15 +701,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Prepare for cache
+        run: |
+          perl -V > perlversion.txt
+          ls -l perlversion.txt
+
       - name: Cache CPAN modules
         uses: actions/cache@v1
         env:
           cache-name: cache-cpan-modules
         with:
           path: c:\cx
-          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          key: ${{ runner.os }}-build-${{ hashFiles('perlversion.txt') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}
+            ${{ runner.os }}-build-${{ hashFiles('perlversion.txt') }}
 
       - name: Set up Perl
         run: |
@@ -728,7 +733,7 @@ jobs:
         run: dzil test -v
 
 
-__[ dist/.github/workflows/windows.yml ]__
+__[ dist/.github/workflows/macos.yml ]__
 name: macos
 
 on:
