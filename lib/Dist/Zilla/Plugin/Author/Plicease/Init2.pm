@@ -151,7 +151,6 @@ Create a dist in plicease style.
 
     $self->gather_file_dist_ini($arg);
 
-    $self->gather_file_simple  ('.appveyor.yml');
     $self->gather_file_simple  ('.gitattributes');
     $self->gather_file_template('.gitignore');
     $self->gather_file_simple  ('.travis.yml');
@@ -433,33 +432,6 @@ jobs:
 cache:
   directories:
     - "$HOME/.cip"
-
-
-__[ dist/.appveyor.yml ]__
----
-
-install:
-  - choco install strawberryperl
-  - SET PATH=C:\Perl5\bin;C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%
-  - perl -v
-  - if not exist C:\\Perl5 mkdir C:\\Perl5
-  - SET PERL5LIB=C:/Perl5/lib/perl5
-  - SET PERL_LOCAL_LIB_ROOT=C:/Perl5
-  - SET PERL_MB_OPT=--install_base C:/Perl5
-  - SET PERL_MM_OPT=INSTALL_BASE=C:/Perl5
-  - cpanm -n Dist::Zilla
-  - dzil authordeps --missing | cpanm -n
-  - dzil listdeps --missing | cpanm -n
-
-build: off
-
-test_script:
-  - dzil test -v
-
-cache:
-  - C:\\Perl5
-
-shallow_clone: true
 
 
 __[ dist/perlcriticrc ]__
