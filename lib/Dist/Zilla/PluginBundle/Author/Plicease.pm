@@ -372,7 +372,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
     unless($self->payload->{no_readme})
     {
       $self->_my_add_plugin([
-        'ReadmeAnyFromPod' => {
+        'Author::Plicease::ReadmeAnyFromPod' => {
                 type            => 'text',
                 filename        => 'README',
                 location        => 'build',
@@ -381,7 +381,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
       ]);
 
       $self->_my_add_plugin([
-        'ReadmeAnyFromPod' => ReadMePodInRoot => {
+        'Author::Plicease::ReadmeAnyFromPod' => ReadMePodInRoot => {
           type                  => 'gfm',
           filename              => 'README.md',
           location              => 'root',

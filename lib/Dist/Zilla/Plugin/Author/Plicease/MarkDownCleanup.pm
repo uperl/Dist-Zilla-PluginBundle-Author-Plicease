@@ -100,3 +100,4 @@ package Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup {
 =item L<Dist::Zilla::PluginBundle::Author::Plicease>
 
 =back
+

@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Removed .appveyor.yml from init2 template
+  - Added [Author::Plicease::ReadmeAnyFromPod] to work around
+    rt-129865 regression.
 
 2.45      2020-04-02 11:11:08 -0600
   - Fixed default macos and windows workflows.
