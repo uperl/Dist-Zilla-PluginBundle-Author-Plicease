@@ -382,25 +382,22 @@ Specify a minimum Perl version.  If not specified it will be detected.
 
       $self->_my_add_plugin([
         'Author::Plicease::ReadmeAnyFromPod' => ReadMePodInRoot => {
-          type                  => 'gfm',
-          filename              => 'README.md',
-          location              => 'root',
+                type            => 'gfm',
+                filename        => 'README.md',
+                location        => 'root',
           maybe source_filename => $self->payload->{readme_from},
+
+          # these are for my ReadmeAnyFromPod wrapper.
+                travis_status   => int(defined $self->payload->{travis_status} ? $self->payload->{travis_status} : 0),
+          maybe appveyor        => $self->payload->{appveyor},
+          maybe travis_user     => $self->payload->{travis_user} // $self->payload->{github_user},
+          maybe appveyor_user   => $self->payload->{appveyor_user},
+          maybe cirrus_user     => $self->payload->{cirrus_user},
+          maybe github_user     => $self->payload->{github_user},
+          maybe workflow        => $self->payload->{workflow},
        },
      ]);
     }
-
-    $self->_my_add_plugin([
-      'Author::Plicease::MarkDownCleanup' => {
-              travis_status => int(defined $self->payload->{travis_status} ? $self->payload->{travis_status} : 0),
-        maybe appveyor      => $self->payload->{appveyor},
-        maybe travis_user   => $self->payload->{travis_user} // $self->payload->{github_user},
-        maybe appveyor_user => $self->payload->{appveyor_user},
-        maybe cirrus_user   => $self->payload->{cirrus_user},
-        maybe github_user   => $self->payload->{github_user},
-        maybe workflow      => $self->payload->{workflow},
-      },
-    ]);
 
     $self->_my_add_plugin([
       'Author::Plicease::SpecialPrereqs' => {
@@ -463,8 +460,6 @@ Specify a minimum Perl version.  If not specified it will be detected.
 =over 4
 
 =item L<Dist::Zilla>
-
-=item L<Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup>
 
 =item L<Dist::Zilla::Plugin::Author::Plicease::SpecialPrereqs>
 

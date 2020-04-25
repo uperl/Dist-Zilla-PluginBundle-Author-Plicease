@@ -116,10 +116,8 @@ type = text
 [Author::Plicease::ReadmeAnyFromPod / ReadMePodInRoot]
 filename = README.md
 location = root
-type = gfm
-
-[Author::Plicease::MarkDownCleanup]
 travis_status = 0
+type = gfm
 
 [Author::Plicease::SpecialPrereqs]
 [Author::Plicease::NoUnsafeInc]
@@ -232,7 +230,6 @@ Specify a minimum Perl version.  If not specified it will be detected.
 # SEE ALSO
 
 - [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla)
-- [Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup](https://metacpan.org/pod/Dist::Zilla::Plugin::Author::Plicease::MarkDownCleanup)
 - [Dist::Zilla::Plugin::Author::Plicease::SpecialPrereqs](https://metacpan.org/pod/Dist::Zilla::Plugin::Author::Plicease::SpecialPrereqs)
 - [Dist::Zilla::Plugin::Author::Plicease::Tests](https://metacpan.org/pod/Dist::Zilla::Plugin::Author::Plicease::Tests)
 - [Dist::Zilla::Plugin::Author::Plicease::Thanks](https://metacpan.org/pod/Dist::Zilla::Plugin::Author::Plicease::Thanks)
