@@ -58,6 +58,7 @@ package Dist::Zilla::Plugin::Author::Plicease::ReadmeAnyFromPod {
     my $self = shift;
 
     my $content = do {
+      no warnings 'redefine';
       local *URI::Escape::uri_escape = sub {
         my($uri) = @_;
         $uri;
