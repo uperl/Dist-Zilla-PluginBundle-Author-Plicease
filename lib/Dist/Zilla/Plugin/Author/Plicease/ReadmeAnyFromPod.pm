@@ -76,7 +76,7 @@ package Dist::Zilla::Plugin::Author::Plicease::ReadmeAnyFromPod {
 
       my $status = '';
       $status .= " [![Build Status](https://api.cirrus-ci.com/github/@{[ $self->cirrus_user ]}/$name.svg)](https://cirrus-ci.com/github/@{[ $self->cirrus_user ]}/$name)" if $cirrus_status;
-      $status .= " [![Build Status](https://secure.travis-ci.org/@{[ $self->travis_user ]}/$name.png)](http://travis-ci.org/@{[ $self->travis_user ]}/$name)" if $self->travis_status;
+      $status .= " [![Build Status](https://travis-ci.org/@{[ $self->travis_user ]}/$name.svg)](http://travis-ci.org/@{[ $self->travis_user ]}/$name)" if $self->travis_status;
       $status .= " [![Build status](https://ci.appveyor.com/api/projects/status/@{[ $self->appveyor ]}/branch/master?svg=true)](https://ci.appveyor.com/project/@{[ $self->appveyor_user ]}/$name/branch/master)" if $self->appveyor;
 
       foreach my $workflow (@{ $self->workflow })
