@@ -177,7 +177,7 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
 
     if($config || $build || $test || $clean)
     {
-      push @content, "{ package MY;";
+      push @content, "{ package " . "MY;"; # confuse the PAUSE parser, which otherwise thinks I am claiming MY
       push @content, "  sub postamble {";
       push @content, "    my \$postamble = '';";
       push @content, '';
