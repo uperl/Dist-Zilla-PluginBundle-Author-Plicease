@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Bump default minimum perl to 5.8.4
 
 2.47      2020-04-29 09:58:39 -0600
   - Silence redefine warning.

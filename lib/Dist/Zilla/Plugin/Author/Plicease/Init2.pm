@@ -108,7 +108,7 @@ Create a dist in plicease style.
         }
         else
         {
-          return '5.008001';
+          return '5.008004';
         }
       }
     },
