@@ -377,6 +377,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
                 filename        => 'README',
                 location        => 'build',
           maybe source_filename => $self->payload->{readme_from},
+          maybe default_branch  => $self->payload->{default_branch},
         },
       ]);
 
@@ -386,6 +387,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
                 filename        => 'README.md',
                 location        => 'root',
           maybe source_filename => $self->payload->{readme_from},
+          maybe default_branch  => $self->payload->{default_branch},
 
           # these are for my ReadmeAnyFromPod wrapper.
                 travis_status   => int(defined $self->payload->{travis_status} ? $self->payload->{travis_status} : 0),

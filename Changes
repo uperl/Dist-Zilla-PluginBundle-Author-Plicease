@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - New git repositories are created with a default `main` branch
+    instead of the normal git default.
 
 2.48      2020-06-12 07:53:34 -0600
   - Bump default minimum perl to 5.8.4

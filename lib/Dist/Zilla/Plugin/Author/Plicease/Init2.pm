@@ -213,6 +213,7 @@ Create a dist in plicease style.
       github_user    => $self->github_user,
       version_plugin => ($self->perl_version >= 5.014 ? 'PkgVersion::Block' : 0),
       workflow       => $self->workflow,
+      default_branch => 'main',
     };
 
     my $code = sub {
@@ -298,6 +299,7 @@ Create a dist in plicease style.
 
     my $git = Git::Wrapper->new($opts->{mint_root});
     $git->init;
+    $git->checkout( '-b' => 'main' );
     $git->commit({ 'allow-empty' => 1, message => "Start with a blank" });
     $git->add($opts->{mint_root});
     $git->commit({ message => "Initial structure" });
@@ -354,7 +356,7 @@ Create a dist in plicease style.
     }
 
     $git->remote('add', 'origin', "git\@github.com:" . $self->github_user . '/' . $self->zilla->name . '.git');
-    $git->push('origin', 'master') unless $no_github;
+    $git->push('origin', 'main') unless $no_github;
 
     return;
   }
@@ -406,7 +408,7 @@ dist: xenial
 services:
   - docker
 before_install:
-  - curl https://raw.githubusercontent.com/plicease/cip/master/bin/travis-bootstrap | bash
+  - curl https://raw.githubusercontent.com/plicease/cip/main/bin/travis-bootstrap | bash
   - cip before-install
 install:
   - cip diag
@@ -540,6 +542,7 @@ travis_status  = 1
 release_tests  = {{$release_tests}}
 installer      = Author::Plicease::MakeMaker
 github_user    = {{$github_user}}
+default_branch = {{$default_branch}}
 test2_v0       = 1
 {{
 
