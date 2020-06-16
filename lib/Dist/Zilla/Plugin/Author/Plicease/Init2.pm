@@ -356,7 +356,7 @@ Create a dist in plicease style.
     }
 
     $git->remote('add', 'origin', "git\@github.com:" . $self->github_user . '/' . $self->zilla->name . '.git');
-    $git->push('origin', 'main') unless $no_github;
+    $git->push('--set-upstream', 'origin', 'main') unless $no_github;
 
     return;
   }
