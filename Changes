@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.49      2020-06-16 17:43:38 -0600
   - New git repositories are created with a default `main` branch
     instead of the normal git default.
   - Set upgrade on main branch on newly minted repos.
