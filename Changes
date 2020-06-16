@@ -4,6 +4,7 @@ Revision history for {{$dist->name}}
   - New git repositories are created with a default `main` branch
     instead of the normal git default.
   - Set upgrade on main branch on newly minted repos.
+  - Changed default branch for this dists repo to `main`.
 
 2.48      2020-06-12 07:53:34 -0600
   - Bump default minimum perl to 5.8.4
