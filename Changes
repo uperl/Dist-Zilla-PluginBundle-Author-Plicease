@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Prompt for IRC for newly minted dist
+  - Newly minted dist has .travis.yml that only CIs `main` branch
 
 2.49      2020-06-16 17:43:38 -0600
   - New git repositories are created with a default `main` branch
