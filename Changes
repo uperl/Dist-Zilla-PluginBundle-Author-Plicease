@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.50      2020-07-03 05:55:21 -0600
   - Prompt for IRC for newly minted dist
   - Newly minted dist has .travis.yml that only CIs `main` branch
 
