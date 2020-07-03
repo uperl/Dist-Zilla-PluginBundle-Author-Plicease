@@ -87,6 +87,17 @@ Create a dist in plicease style.
     },
   );
 
+  has irc => (
+    is      => 'ro',
+    isa     => 'Maybe[Str]',
+    lazy    => 1,
+    default => sub {
+      my $self = shift;
+      return undef unless $self->chrome->prompt_yn("irc?");
+      $self->chrome->prompt_str("irc url", { default => 'irc://irc.perl.org/#native' });
+    },
+  );
+
   has perl_version => (
     is      => 'ro',
     lazy    => 1,
@@ -213,6 +224,7 @@ Create a dist in plicease style.
       github_user    => $self->github_user,
       version_plugin => ($self->perl_version >= 5.014 ? 'PkgVersion::Block' : 0),
       workflow       => $self->workflow,
+      irc            => $self->irc,
       default_branch => 'main',
     };
 
@@ -554,6 +566,7 @@ test2_v0       = 1
   }
 
   $extra .= "version_plugin = $version_plugin\n" if $version_plugin;
+  $extra .= "irc            = $irc\n" if $irc;
 
   $extra;
 
