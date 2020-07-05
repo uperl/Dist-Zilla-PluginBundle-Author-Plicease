@@ -178,7 +178,7 @@ L<Dist::Zilla::PluginBundle::Author::Plicease>
     if($config || $build || $test || $clean)
     {
       push @content, "{ package";
-      push @content, "    My;";
+      push @content, "    MY;";
       push @content, "  sub postamble {";
       push @content, "    my \$postamble = '';";
       push @content, '';
