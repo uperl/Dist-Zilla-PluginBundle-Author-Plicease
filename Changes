@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.51      2020-07-05 07:11:23 -0600
   - Fixed typo in generated Makefile.PL
 
 2.50      2020-07-03 05:55:21 -0600
