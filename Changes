@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Remove [Alien] and Dist::Zilla::App::Command::aliendeps as prereqs.
 
 2.52      2020-08-03 04:41:23 -0600
   - Add additional diagnostics to diag.t

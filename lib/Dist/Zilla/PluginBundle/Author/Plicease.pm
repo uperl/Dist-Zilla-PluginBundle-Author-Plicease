@@ -88,10 +88,6 @@ Specify an alternative to L<[MakeMaker]|Dist::Zilla::Plugin::MakeMaker>
 L<[ModuleBuildTiny]|Dist::Zilla::Plugin::ModuleBuildTiny>, or
 L<[ModuleBuildDatabase]|Dist::Zilla::Plugin::ModuleBuildDatabase> for example).
 
-If installer is L<Alien|Dist::Zilla::Plugin::Alien>, then any options
-with the alien_ prefix will be passed to L<Alien|Dist::Zilla::Plugin::Alien>
-(minus the alien_ prefix).
-
 If installer is L<ModuleBuild|Dist::Zilla::Plugin::ModuleBuild>, then any
 options with the mb_ prefix will be passed to L<ModuleBuild|Dist::Zilla::Plugin::ModuleBuild>
 (including the mb_ prefix).
@@ -180,11 +176,6 @@ Specify a minimum Perl version.  If not specified it will be detected.
   with 'Dist::Zilla::Role::PluginBundle::Easy';
 
   sub mvp_multivalue_args { qw(
-    alien_build_command
-    alien_install_command
-    alien_auto_include
-    alien_bin_requires
-    alien_helper
     upgrade
     preamble
     diag_preamble
@@ -272,16 +263,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
       }
       if(defined $installer && $installer eq 'Alien')
       {
-        print STDERR Term::ANSIColor::color('bold red') if -t STDERR;
-        print STDERR "please do not use the Alien plugin anymore";
-        print STDERR Term::ANSIColor::color('reset') if -t STDERR;
-        print STDERR "\n";
-
-        my %args =
-          map { $_ => $self->payload->{"alien_$_"} }
-          map { s/^alien_//r }
-          grep /^alien_/, keys %{ $self->payload };
-        $self->_my_add_plugin([ Alien => { %args, %mb } ]);
+        die "[Alien] no longer supported as an installer";
       }
       elsif(defined $installer && $installer eq 'ModuleBuild')
       {

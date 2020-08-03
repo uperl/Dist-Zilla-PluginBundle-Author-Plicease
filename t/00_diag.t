@@ -12,8 +12,6 @@ my $post_diag;
 $modules{$_} = $_ for qw(
   Data::Section
   Dist::Zilla
-  Dist::Zilla::App::Command::aliendeps
-  Dist::Zilla::Plugin::Alien
   Dist::Zilla::Plugin::AutoMetaResources
   Dist::Zilla::Plugin::CopyFilesFromBuild
   Dist::Zilla::Plugin::Git

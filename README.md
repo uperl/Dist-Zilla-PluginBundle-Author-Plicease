@@ -140,10 +140,6 @@ Specify an alternative to [\[MakeMaker\]](https://metacpan.org/pod/Dist::Zilla::
 [\[ModuleBuildTiny\]](https://metacpan.org/pod/Dist::Zilla::Plugin::ModuleBuildTiny), or
 [\[ModuleBuildDatabase\]](https://metacpan.org/pod/Dist::Zilla::Plugin::ModuleBuildDatabase) for example).
 
-If installer is [Alien](https://metacpan.org/pod/Dist::Zilla::Plugin::Alien), then any options
-with the alien\_ prefix will be passed to [Alien](https://metacpan.org/pod/Dist::Zilla::Plugin::Alien)
-(minus the alien\_ prefix).
-
 If installer is [ModuleBuild](https://metacpan.org/pod/Dist::Zilla::Plugin::ModuleBuild), then any
 options with the mb\_ prefix will be passed to [ModuleBuild](https://metacpan.org/pod/Dist::Zilla::Plugin::ModuleBuild)
 (including the mb\_ prefix).
