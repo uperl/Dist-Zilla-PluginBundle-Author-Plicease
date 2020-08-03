@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add additional diagnostics to diag.t
 
 2.51      2020-07-05 07:11:23 -0600
   - Fixed typo in generated Makefile.PL

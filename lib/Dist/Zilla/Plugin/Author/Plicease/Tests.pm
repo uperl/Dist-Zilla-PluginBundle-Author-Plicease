@@ -243,7 +243,7 @@ if(@keys > 0)
   spacer;
 }
 
-diag sprintf $format, 'perl ', $];
+diag sprintf $format, 'perl', "$] $^O $Config{archname}";
 
 foreach my $module (@modules)
 {
@@ -324,7 +324,7 @@ if(@keys > 0)
   spacer;
 }
 
-diag sprintf $format, 'perl ', $];
+diag sprintf $format, 'perl', "$] $^O $Config{archname}";
 
 foreach my $module (sort @modules)
 {
