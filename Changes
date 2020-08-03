@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.52      2020-08-03 04:41:23 -0600
   - Add additional diagnostics to diag.t
 
 2.51      2020-07-05 07:11:23 -0600
