@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.55      2020-09-10 15:51:02 -0600
   - Disable Archive::Tar::Wrapper which can produce tarballs that do
     not work with HP-UX if built using recent GNU tar.
 
