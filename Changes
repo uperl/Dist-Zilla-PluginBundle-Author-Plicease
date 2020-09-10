@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Disable Archive::Tar::Wrapper which can produce tarballs that do
+    not work with HP-UX if built using recent GNU tar.
 
 2.54      2020-08-10 05:53:33 -0600
   - Update minting profile to test 5.33+5.32 instead of 5.31

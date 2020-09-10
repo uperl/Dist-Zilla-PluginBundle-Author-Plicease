@@ -198,6 +198,20 @@ Specify a minimum Perl version.  If not specified it will be detected.
   sub configure
   {
     my($self) = @_;
+
+    if($INC{"Archive/Tar/Wrapper.pm"})
+    {
+      # https://github.com/PerlAlien/Alien-Build/issues/228
+      # But honestly?    FUCK HP-UX
+      die "Somehow Archive::Tar::Wrapper was loaded before the plugin bundle.";
+    }
+    else
+    {
+      package Archive::Tar::Wrapper;
+      sub new { die "do not use ATW"; }
+      $INC{"Archive/Tar/Wrapper.pm"} = __FILE__;
+    }
+
     # undocumented for a reason: sometimes I need to release on
     # a different platform that where I do testing, (eg. MSWin32
     # only modules, where Dist::Zilla is frequently not working
