@@ -208,7 +208,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
     else
     {
       package Archive::Tar::Wrapper;
-      sub new { die "do not use ATW"; }
+      *new = sub { die "do not use ATW" };
       $INC{"Archive/Tar/Wrapper.pm"} = __FILE__;
     }
 
