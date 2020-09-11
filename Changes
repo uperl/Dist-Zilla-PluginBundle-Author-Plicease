@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.56      2020-09-11 09:12:18 -0600
   - Avoid claiming Archive::Tar::Wrapper oops!
 
 2.55      2020-09-10 15:51:02 -0600
