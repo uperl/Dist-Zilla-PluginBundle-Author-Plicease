@@ -121,6 +121,10 @@ If set to true use travis-ci.com instead of travis-ci.org.
 
 Base URL for travis-ci.
 
+=head2 travis_image_base
+
+Base URL for the travis-ci status button.
+
 =head2 appveyor
 
 if set to a appveyor id, then include a link to the appveyor build page in the readme.
@@ -378,32 +382,33 @@ Specify a minimum Perl version.  If not specified it will be detected.
     {
       $self->_my_add_plugin([
         'Author::Plicease::ReadmeAnyFromPod' => {
-                type            => 'text',
-                filename        => 'README',
-                location        => 'build',
-          maybe source_filename => $self->payload->{readme_from},
-          maybe default_branch  => $self->payload->{default_branch},
+                type              => 'text',
+                filename          => 'README',
+                location          => 'build',
+          maybe source_filename   => $self->payload->{readme_from},
+          maybe default_branch    => $self->payload->{default_branch},
         },
       ]);
 
       $self->_my_add_plugin([
         'Author::Plicease::ReadmeAnyFromPod' => ReadMePodInRoot => {
-                type            => 'gfm',
-                filename        => 'README.md',
-                location        => 'root',
-          maybe source_filename => $self->payload->{readme_from},
-          maybe default_branch  => $self->payload->{default_branch},
+                type              => 'gfm',
+                filename          => 'README.md',
+                location          => 'root',
+          maybe source_filename   => $self->payload->{readme_from},
+          maybe default_branch    => $self->payload->{default_branch},
 
           # these are for my ReadmeAnyFromPod wrapper.
-                travis_status   => int(defined $self->payload->{travis_status} ? $self->payload->{travis_status} : 0),
-          maybe appveyor        => $self->payload->{appveyor},
-          maybe travis_user     => $self->payload->{travis_user} // $self->payload->{github_user},
-          maybe travis_com      => $self->payload->{travis_com},
-          maybe travis_base     => $self->payload->{travis_base},
-          maybe appveyor_user   => $self->payload->{appveyor_user},
-          maybe cirrus_user     => $self->payload->{cirrus_user},
-          maybe github_user     => $self->payload->{github_user},
-          maybe workflow        => $self->payload->{workflow},
+                travis_status     => int(defined $self->payload->{travis_status} ? $self->payload->{travis_status} : 0),
+          maybe appveyor          => $self->payload->{appveyor},
+          maybe travis_user       => $self->payload->{travis_user} // $self->payload->{github_user},
+          maybe travis_com        => $self->payload->{travis_com},
+          maybe travis_base       => $self->payload->{travis_base},
+          maybe travis_image_base => $self->payload->{travis_image_base},
+          maybe appveyor_user     => $self->payload->{appveyor_user},
+          maybe cirrus_user       => $self->payload->{cirrus_user},
+          maybe github_user       => $self->payload->{github_user},
+          maybe workflow          => $self->payload->{workflow},
        },
      ]);
     }
