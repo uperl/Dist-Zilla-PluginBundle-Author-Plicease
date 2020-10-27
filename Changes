@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Added travis_com and travis_base options
 
 2.57      2020-09-22 10:10:53 -0600
   - Newly minted dists will use LF on windows CI

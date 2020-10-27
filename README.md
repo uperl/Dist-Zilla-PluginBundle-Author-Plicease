@@ -1,4 +1,4 @@
-# Dist::Zilla::PluginBundle::Author::Plicease [![Build Status](https://travis-ci.org/plicease/Dist-Zilla-PluginBundle-Author-Plicease.svg)](http://travis-ci.org/plicease/Dist-Zilla-PluginBundle-Author-Plicease) ![windows](https://github.com/plicease/Dist-Zilla-PluginBundle-Author-Plicease/workflows/windows/badge.svg) ![macos](https://github.com/plicease/Dist-Zilla-PluginBundle-Author-Plicease/workflows/macos/badge.svg)
+# Dist::Zilla::PluginBundle::Author::Plicease [![Build Status](https://travis-ci.org/plicease/Dist-Zilla-PluginBundle-Author-Plicease.svg)](https://travis-ci.org/plicease/Dist-Zilla-PluginBundle-Author-Plicease) ![windows](https://github.com/plicease/Dist-Zilla-PluginBundle-Author-Plicease/workflows/windows/badge.svg) ![macos](https://github.com/plicease/Dist-Zilla-PluginBundle-Author-Plicease/workflows/macos/badge.svg)
 
 Dist::Zilla plugin bundle used by Plicease
 
@@ -164,6 +164,14 @@ if `release_tests` is true.
 ## travis\_status
 
 if set to true, then include a link to the travis build page in the readme.
+
+## travis\_com
+
+If set to true use travis-ci.com instead of travis-ci.org.
+
+## travis\_base
+
+Base URL for travis-ci.
 
 ## appveyor
 

@@ -113,6 +113,14 @@ if C<release_tests> is true.
 
 if set to true, then include a link to the travis build page in the readme.
 
+=head2 travis_com
+
+If set to true use travis-ci.com instead of travis-ci.org.
+
+=head2 travis_base
+
+Base URL for travis-ci.
+
 =head2 appveyor
 
 if set to a appveyor id, then include a link to the appveyor build page in the readme.
@@ -390,6 +398,8 @@ Specify a minimum Perl version.  If not specified it will be detected.
                 travis_status   => int(defined $self->payload->{travis_status} ? $self->payload->{travis_status} : 0),
           maybe appveyor        => $self->payload->{appveyor},
           maybe travis_user     => $self->payload->{travis_user} // $self->payload->{github_user},
+          maybe travis_com      => $self->payload->{travis_com},
+          maybe travis_base     => $self->payload->{travis_base},
           maybe appveyor_user   => $self->payload->{appveyor_user},
           maybe cirrus_user     => $self->payload->{cirrus_user},
           maybe github_user     => $self->payload->{github_user},
