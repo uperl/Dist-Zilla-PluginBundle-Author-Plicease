@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Added travis_com and travis_base options
 
 2.54      2020-08-10 05:53:33 -0600
   - Update minting profile to test 5.33+5.32 instead of 5.31
