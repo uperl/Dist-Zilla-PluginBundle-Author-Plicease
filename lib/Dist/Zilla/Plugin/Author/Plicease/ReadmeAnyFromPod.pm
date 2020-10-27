@@ -37,6 +37,17 @@ package Dist::Zilla::Plugin::Author::Plicease::ReadmeAnyFromPod {
     },
   );
 
+  has travis_image_base => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+      my($self) = @_;
+      $self->travis_com
+        ? 'https://api.travis-ci.com'
+        : 'https://travis-ci.org',
+    },
+  );
+
   has cirrus_user => (
     is      => 'ro',
     lazy    => 1,
@@ -98,7 +109,7 @@ package Dist::Zilla::Plugin::Author::Plicease::ReadmeAnyFromPod {
 
       my $status = '';
       $status .= " [![Build Status](https://api.cirrus-ci.com/github/@{[ $self->cirrus_user ]}/$name.svg)](https://cirrus-ci.com/github/@{[ $self->cirrus_user ]}/$name)" if $cirrus_status;
-      $status .= " [![Build Status](@{[ $self->travis_base ]}/@{[ $self->travis_user ]}/$name.svg)](@{[ $self->travis_base ]}/@{[ $self->travis_user ]}/$name)" if $self->travis_status;
+      $status .= " [![Build Status](@{[ $self->travis_image_base ]}/@{[ $self->travis_user ]}/$name.svg?branch=@{[ $self->default_branch ]})](@{[ $self->travis_base ]}/@{[ $self->travis_user ]}/$name)" if $self->travis_status;
       $status .= " [![Build status](https://ci.appveyor.com/api/projects/status/@{[ $self->appveyor ]}/branch/@{[ $self->default_branch ]}?svg=true)](https://ci.appveyor.com/project/@{[ $self->appveyor_user ]}/$name/branch/@{[ $self->default_branch ]})" if $self->appveyor;
 
       foreach my $workflow (@{ $self->workflow })
