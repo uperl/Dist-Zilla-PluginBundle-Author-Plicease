@@ -28,6 +28,7 @@ package Dist::Zilla::Plugin::Author::Plicease::ReadmeAnyFromPod {
 
   has travis_base => (
     is      => 'ro',
+    lazy    => 1,
     default => sub {
       my($self) = @_;
       $self->travis_com
