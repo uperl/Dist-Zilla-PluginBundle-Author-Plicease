@@ -716,7 +716,7 @@ jobs:
       - name: Set up Perl
         run: |
           choco install strawberryperl
-          echo "##[add-path]C:\cx\bin;C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin"
+          echo "C:\cx\bin;C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin" >> $GITHUB_PATH
       - name: perl -V
         run: perl -V
       - name: Install Static Dependencies
@@ -759,7 +759,10 @@ jobs:
         run: |
           brew install perl
           curl https://cpanmin.us | perl - App::cpanminus -n
-          echo "##[add-path]/Users/runner/perl5/bin"
+          echo "C:\cx\bin" >> $GITHUB_PATH
+          echo "C:\strawberry\c\bin" >> $GITHUB_PATH
+          echo "C:\strawberry\perl\site\bin" >> $GITHUB_PATH
+          echo "C:\strawberry\perl\bin" >> $GITHUB_PATH
 
       - name: perl -V
         run: perl -V
