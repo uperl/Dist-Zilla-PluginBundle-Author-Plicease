@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Update template for github actions to use new add-path incantation
+  - Try to autodetect the default branch
 
 2.58      2020-10-26 19:14:59 -0600
   - Added travis_com and travis_base options
