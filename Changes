@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.59      2020-12-10 16:17:30 -0700
   - Update template for github actions to use new add-path incantation
   - Try to autodetect the default branch
 
