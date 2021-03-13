@@ -413,44 +413,6 @@ pod_coverage:
   private: []
 
 
-__[ dist/.travis.yml ]__
-language: minimal
-dist: xenial
-services:
-  - docker
-before_install:
-  - curl https://raw.githubusercontent.com/plicease/cip/main/bin/travis-bootstrap | bash
-  - cip before-install
-install:
-  - cip diag
-  - cip install
-script:
-  - cip script
-jobs:
-  include:
-    - env: CIP_TAG=static
-    - env: CIP_TAG=5.33
-    - env: CIP_TAG=5.32
-    - env: CIP_TAG=5.30
-    - env: CIP_TAG=5.28
-    - env: CIP_TAG=5.26
-    - env: CIP_TAG=5.24
-    - env: CIP_TAG=5.22
-    - env: CIP_TAG=5.20
-    - env: CIP_TAG=5.18
-    - env: CIP_TAG=5.16
-    - env: CIP_TAG=5.14
-    - env: CIP_TAG=5.12
-    - env: CIP_TAG=5.10
-    - env: CIP_TAG=5.8
-branches:
-  only:
-    - main
-cache:
-  directories:
-    - "$HOME/.cip"
-
-
 __[ dist/perlcriticrc ]__
 severity = 1
 only = 1
@@ -710,7 +672,7 @@ jobs:
 
       - name: Bootstrap CIP
         run: |
-          curl https://raw.githubusercontent.com/plicease/cip/main/bin/github-bootstrap | bash
+          curl -L https://raw.githubusercontent.com/plicease/cip/main/bin/github-bootstrap | bash
 
       - name: Cache-Key
         id: cache-key

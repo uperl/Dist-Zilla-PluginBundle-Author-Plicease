@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Follow recirects on cip
 
 2.60      2021-03-13 07:49:33 -0700
   - Require Perl 5.24
