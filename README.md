@@ -1,4 +1,4 @@
-# Dist::Zilla::PluginBundle::Author::Plicease [![Build Status](https://api.travis-ci.com/plicease/Dist-Zilla-PluginBundle-Author-Plicease.svg?branch=main)](https://travis-ci.com/github/plicease/Dist-Zilla-PluginBundle-Author-Plicease) ![windows](https://github.com/plicease/Dist-Zilla-PluginBundle-Author-Plicease/workflows/windows/badge.svg) ![macos](https://github.com/plicease/Dist-Zilla-PluginBundle-Author-Plicease/workflows/macos/badge.svg)
+# Dist::Zilla::PluginBundle::Author::Plicease ![linux](https://github.com/uperl/Dist-Zilla-PluginBundle-Author-Plicease/workflows/linux/badge.svg) ![windows](https://github.com/uperl/Dist-Zilla-PluginBundle-Author-Plicease/workflows/windows/badge.svg) ![macos](https://github.com/uperl/Dist-Zilla-PluginBundle-Author-Plicease/workflows/macos/badge.svg)
 
 Dist::Zilla plugin bundle used by Plicease
 
