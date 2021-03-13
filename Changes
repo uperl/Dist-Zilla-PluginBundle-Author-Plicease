@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.60      2021-03-13 07:49:33 -0700
   - Require Perl 5.24
   - Move to uperl GitHub org
   - Do not include .travis.yml in new repositories anymore
