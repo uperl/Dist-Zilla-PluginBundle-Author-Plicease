@@ -78,7 +78,7 @@ Create a dist in plicease style.
       my $self = shift;
       my @workflow;
 
-      foreach my $workflow (qw( windows macos ))
+      foreach my $workflow (qw( linux windows macos ))
       {
         push @workflow, $workflow if $self->chrome->prompt_yn("workflow $workflow?");
       }
@@ -164,7 +164,6 @@ Create a dist in plicease style.
 
     $self->gather_file_simple  ('.gitattributes');
     $self->gather_file_template('.gitignore');
-    $self->gather_file_simple  ('.travis.yml');
     $self->gather_file_simple  ('alienfile') if $self->type_alien;
     $self->gather_file_simple  ('author.yml');
     $self->gather_file_simple  ('Changes');
@@ -266,7 +265,7 @@ Create a dist in plicease style.
     lazy    => 1,
     default => sub {
       my($self) = @_;
-      $self->chrome->prompt_str("github user/org", { default => 'plicease' });
+      $self->chrome->prompt_str("github user/org", { default => 'uperl' });
     },
   );
 
@@ -666,6 +665,82 @@ package {{ $name =~ s/-/::/gr }} {
 }
 
 1;
+
+
+__[ dist/.github/workflows/linux.yml ]__
+name: linux
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+jobs:
+  perl:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        cip_tag:
+          - static
+          - "5.33"
+          - "5.32"
+          - "5.30"
+          - "5.28"
+          - "5.26"
+          - "5.24"
+          - "5.22"
+          - "5.20"
+          - "5.18"
+          - "5.16"
+          - "5.14"
+          - "5.12"
+          - "5.10"
+          - "5.8"
+
+    env:
+      CIP_TAG: ${{ matrix.cip_tag }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Bootstrap CIP
+        run: |
+          curl https://raw.githubusercontent.com/plicease/cip/main/bin/github-bootstrap | bash
+
+      - name: Cache-Key
+        id: cache-key
+        run: |
+          echo -n '::set-output name=key::'
+          cip cache-key
+
+      - name: Cache CPAN modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.cip
+          key: ${{ runner.os }}-build-${{ steps.cache-key.outputs.key }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ steps.cache-key.outputs.key }}
+
+      - name: Start-Container
+        run: |
+          cip start
+
+      - name: Diagnostics
+        run: |
+          cip diag
+
+      - name: Install-Dependencies
+        run: |
+          cip install
+
+      - name: Build + Test
+        run: |
+          cip script
 
 
 __[ dist/.github/workflows/windows.yml ]__

@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Require Perl 5.24
+  - Move to uperl GitHub org
+  - Do not include .travis.yml in new repositories anymore
+  - New github actions linux template uses cip to replace travis-ci
 
 2.59      2020-12-10 16:17:30 -0700
   - Update template for github actions to use new add-path incantation
