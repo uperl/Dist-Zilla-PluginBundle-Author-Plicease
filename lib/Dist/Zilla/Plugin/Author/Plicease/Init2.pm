@@ -644,6 +644,7 @@ jobs:
   perl:
 
     runs-on: ubuntu-latest
+    fail-fast: false
 
     strategy:
       matrix:
