@@ -644,9 +644,9 @@ jobs:
   perl:
 
     runs-on: ubuntu-latest
-    fail-fast: false
 
     strategy:
+      fail-fast: false
       matrix:
         cip_tag:
           - static
@@ -728,6 +728,9 @@ jobs:
 
     runs-on: windows-latest
 
+    strategy:
+      fail-fast: false
+
     steps:
       - name: Set git to use LF
         run: |
@@ -792,6 +795,9 @@ jobs:
   perl:
 
     runs-on: macOS-latest
+
+    strategy:
+      fail-fast: false
 
     steps:
       - uses: actions/checkout@v2
