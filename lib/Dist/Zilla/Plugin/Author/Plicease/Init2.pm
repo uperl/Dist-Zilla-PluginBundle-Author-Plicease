@@ -78,7 +78,7 @@ Create a dist in plicease style.
       my $self = shift;
       my @workflow;
 
-      foreach my $workflow (qw( linux windows macos ))
+      foreach my $workflow (qw( linux windows macos cygwin msys2-mingw ))
       {
         push @workflow, $workflow if $self->chrome->prompt_yn("workflow $workflow?");
       }
@@ -705,6 +705,11 @@ jobs:
         run: |
           cip script
 
+      - name: CPAN log
+        if: ${{ failure() }}
+        run: |
+          cip exec bash -c 'cat $HOME/.cpanm/latest-build/build.log'
+
 
 __[ dist/.github/workflows/windows.yml ]__
 name: windows
@@ -739,10 +744,17 @@ jobs:
 
       - uses: actions/checkout@v2
 
+      - name: Set up Perl
+        run: |
+          choco install strawberryperl
+          echo "C:\cx\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "C:\strawberry\c\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "C:\strawberry\perl\site\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "C:\strawberry\perl\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
       - name: Prepare for cache
         run: |
           perl -V > perlversion.txt
-          ls -l perlversion.txt
 
       - name: Cache CPAN modules
         uses: actions/cache@v1
@@ -754,22 +766,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-${{ hashFiles('perlversion.txt') }}
 
-      - name: Set up Perl
-        run: |
-          choco install strawberryperl
-          echo "C:\cx\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          echo "C:\strawberry\c\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          echo "C:\strawberry\perl\site\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          echo "C:\strawberry\perl\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: perl -V
         run: perl -V
+
       - name: Install Static Dependencies
         run: |
           cpanm -n Dist::Zilla
           dzil authordeps --missing | cpanm -n
           dzil listdeps --missing   | cpanm -n
+
       - name: Install Dynamic Dependencies
         run: dzil run --no-build 'cpanm --installdeps .'
+
       - name: Run Tests
         run: dzil test -v
 
@@ -829,7 +837,198 @@ jobs:
           cpanm -n Dist::Zilla
           dzil authordeps --missing | cpanm -n
           dzil listdeps --missing   | cpanm -n
+
       - name: Install Dynamic Dependencies
         run: dzil run --no-build 'cpanm --installdeps .'
+
       - name: Run Tests
         run: dzil test -v
+
+      - name: CPAN log
+        if: ${{ failure() }}
+        run: |
+          cat ~/.cpanm/latest-build/build.log
+
+
+__[ dist/.github/workflows/cygwin.yml ]__
+name: cygwin
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+env:
+  PERL5LIB: /cygdrive/c/cx/lib/perl5:/cygdrive/c/cx/lib/perl5/MSWin32-x64-multi-thread
+  PERL_LOCAL_LIB_ROOT: /cygdrive/cx
+  PERL_MB_OPT: --install_base /cygdrive/c/cx
+  PERL_MM_OPT: INSTALL_BASE=/cygdrive/c/cx
+  ALIEN_BUILD_PLUGIN_PKGCONFIG_COMMANDLINE_TEST: 1 # Test Alien::Build::Plugin::PkgConfig::CommandLine
+  CYGWIN_NOWINPATH: 1
+
+jobs:
+  perl:
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+
+    defaults:
+      run:
+        shell: C:\tools\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
+
+    steps:
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+        shell: powershell
+
+      - uses: actions/checkout@v2
+
+      - name: Set up Cygwin
+        uses: egor-tensin/setup-cygwin@v3
+        with:
+          platform: x64
+          packages: make perl gcc-core gcc-g++ pkg-config libcrypt-devel libssl-devel git
+
+      - name: perl -V
+        run: |
+          perl -V
+          gcc --version
+
+      - name: Prepare for cache
+        run: |
+          perl -V > perlversion.txt
+          gcc --version >> perlversion.txt
+          ls perlversion.txt
+
+      - name: Cache CPAN modules
+        uses: actions/cache@v1
+        with:
+          path: c:\cx
+          key: ${{ runner.os }}-build-cygwin-${{ hashFiles('perlversion.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-build-cygwin-${{ hashFiles('perlversion.txt') }}
+
+      - name: Install Static Dependencies
+        run: |
+          export PATH="/cygdrive/c/cx/bin:$PATH"
+          cd $( cygpath -u $GITHUB_WORKSPACE )
+          yes | cpan App::cpanminus || true
+          cpanm -n Dist::Zilla
+          perl -S dzil authordeps --missing | perl -S cpanm -n
+          perl -S dzil listdeps --missing   | perl -S cpanm -n
+
+      - name: Install Dynamic Dependencies
+        run: |
+          export PATH="/cygdrive/c/cx/bin:$PATH"
+          cd $( cygpath -u $GITHUB_WORKSPACE )
+          perl -S dzil run --no-build 'perl -S cpanm --installdeps .'
+
+      - name: Run Tests
+        run: |
+          export PATH="/cygdrive/c/cx/bin:$PATH"
+          cd $( cygpath -u $GITHUB_WORKSPACE )
+          perl -S dzil test -v
+
+      - name: CPAN log
+        if: ${{ failure() }}
+        run: |
+          cat ~/.cpanm/latest-build/build.log
+
+
+
+__[ dist/.github/workflows/msys2-mingw.yml ]__
+name: msys2-mingw
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+env:
+  PERL5LIB: /c/cx/lib/perl5:/c/cx/lib/perl5/MSWin32-x64-multi-thread
+  PERL_LOCAL_LIB_ROOT: c:/cx
+  PERL_MB_OPT: --install_base C:/cx
+  PERL_MM_OPT: INSTALL_BASE=C:/cx
+  ALIEN_BUILD_PLUGIN_PKGCONFIG_COMMANDLINE_TEST: 1 # Test Alien::Build::Plugin::PkgConfig::CommandLine
+
+jobs:
+  perl:
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+        shell: powershell
+
+      - uses: actions/checkout@v2
+
+      - name: Set up Perl
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            base-devel
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-perl
+
+      - name: perl -V
+        run: |
+          perl -V
+
+      - name: Prepare for cache
+        run: |
+          perl -V > perlversion.txt
+          ls perlversion.txt
+
+      - name: Cache CPAN modules
+        uses: actions/cache@v1
+        with:
+          path: c:\cx
+          key: ${{ runner.os }}-build-msys2-${{ hashFiles('perlversion.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-build-msys2-${{ hashFiles('perlversion.txt') }}
+
+      - name: Install Static Dependencies
+        run: |
+          export PATH="/c/cx/bin:$PATH"
+          yes | cpan App::cpanminus || true
+          cpanm -n Dist::Zilla
+          perl -S dzil authordeps --missing | perl -S cpanm -n
+          perl -S dzil listdeps --missing   | perl -S cpanm -n
+
+      - name: Install Dynamic Dependencies
+        run: |
+          export PATH="/c/cx/bin:$PATH"
+          perl -S dzil run --no-build 'perl -S cpanm --installdeps .'
+
+      - name: Run Tests
+        run: |
+          export PATH="/c/cx/bin:$PATH"
+          perl -S dzil test -v
+
+      - name: CPAN log
+        if: ${{ failure() }}
+        run: |
+          cat ~/.cpanm/latest-build/build.log
+
+
