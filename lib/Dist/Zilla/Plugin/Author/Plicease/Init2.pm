@@ -515,7 +515,6 @@ version          = 0.01
 
 [@Author::Plicease]
 :version       = {{$version}}
-travis_status  = 1
 release_tests  = {{$release_tests}}
 installer      = Author::Plicease::MakeMaker
 github_user    = {{$github_user}}
