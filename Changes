@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - remove travis_status as a default for new dists.
 
 2.61      2021-03-13 12:51:30 -0700
   - Follow recirects on cip, new location for cip repository
