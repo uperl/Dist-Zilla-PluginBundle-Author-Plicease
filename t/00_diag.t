@@ -39,6 +39,7 @@ $modules{$_} = $_ for qw(
   PerlX::Maybe
   PerlX::Maybe::XS
   Pod::Markdown
+  Ref::Util
   Sub::Exporter::ForMethods
   Term::Encoding
   Test2::V0

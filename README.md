@@ -61,8 +61,6 @@ exclude_filename = xt/release/fixme.t
 exclude_match = ^_build/
 
 [PruneCruft]
-except = .travis.yml
-
 [ManifestSkip]
 [MetaYAML]
 [License]
@@ -116,7 +114,6 @@ type = text
 [Author::Plicease::ReadmeAnyFromPod / ReadMePodInRoot]
 filename = README.md
 location = root
-travis_status = 0
 type = gfm
 
 [Author::Plicease::SpecialPrereqs]
@@ -161,26 +158,6 @@ If set to true, then include release tests when building.
 Passed into the [Author::Plicease::Tests](https://metacpan.org/pod/Dist::Zilla::Plugin::Author::Plicease::Tests)
 if `release_tests` is true.
 
-## travis\_status
-
-if set to true, then include a link to the travis build page in the readme.
-
-## travis\_com
-
-If set to true use travis-ci.com instead of travis-ci.org.
-
-## travis\_base
-
-Base URL for travis-ci.
-
-## travis\_image\_base
-
-Base URL for the travis-ci status button.
-
-## appveyor
-
-if set to a appveyor id, then include a link to the appveyor build page in the readme.
-
 ## mb\_class
 
 if builder = ModuleBuild, this is the mb\_class passed into the \[ModuleBuild\]
@@ -194,17 +171,9 @@ Set the GitHub repo name to something other than the dist name.
 
 Set the GitHub user name.
 
-## travis\_user
-
-Set the travis user name (defaults to github\_user).
-
-## appveyor\_user
-
-Set the appveyor username (defaults to plicease).
-
 ## cirrus\_user
 
-Set the cirrus-ci user (defaults to same as travis\_user, which itself defaults to plicease).
+Set the cirrus-ci user (defaults to same as github\_user, which itself defaults to plicease).
 
 ## copy\_mb
 

@@ -1,7 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
-  - remove travis_status as a default for new dists.
+  - remove travis_* and appveyor_* keys
 
 2.62      2021-03-19 05:38:03 -0600
   - Additional CI defaults for freshly minted dists for cygwin

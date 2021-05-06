@@ -109,26 +109,6 @@ If set to true, then include release tests when building.
 Passed into the L<Author::Plicease::Tests|Dist::Zilla::Plugin::Author::Plicease::Tests>
 if C<release_tests> is true.
 
-=head2 travis_status
-
-if set to true, then include a link to the travis build page in the readme.
-
-=head2 travis_com
-
-If set to true use travis-ci.com instead of travis-ci.org.
-
-=head2 travis_base
-
-Base URL for travis-ci.
-
-=head2 travis_image_base
-
-Base URL for the travis-ci status button.
-
-=head2 appveyor
-
-if set to a appveyor id, then include a link to the appveyor build page in the readme.
-
 =head2 mb_class
 
 if builder = ModuleBuild, this is the mb_class passed into the [ModuleBuild]
@@ -142,17 +122,9 @@ Set the GitHub repo name to something other than the dist name.
 
 Set the GitHub user name.
 
-=head2 travis_user
-
-Set the travis user name (defaults to github_user).
-
-=head2 appveyor_user
-
-Set the appveyor username (defaults to plicease).
-
 =head2 cirrus_user
 
-Set the cirrus-ci user (defaults to same as travis_user, which itself defaults to plicease).
+Set the cirrus-ci user (defaults to same as github_user, which itself defaults to plicease).
 
 =head2 copy_mb
 
@@ -211,6 +183,20 @@ Specify a minimum Perl version.  If not specified it will be detected.
   {
     my($self) = @_;
 
+    foreach my $key (qw( travis_status travis_com travis_base travis_image_base appveyor travis_user appveyor_user ))
+    {
+      my $bad = 0;
+      if(defined $self->payload->{$key})
+      {
+        print STDERR Term::ANSIColor::color('bold red') if -t STDERR;
+        print STDERR "dist.ini [\@Author::Plicease] key $key is no longer supported";
+        print STDERR Term::ANSIColor::color('reset') if -t STDERR;
+        print STDERR "\n";
+        $bad = 1;
+      }
+      die "unsuppor" if $bad;
+    }
+
     if($INC{"Archive/Tar/Wrapper.pm"})
     {
       # https://github.com/PerlAlien/Alien-Build/issues/228
@@ -266,7 +252,7 @@ Specify a minimum Perl version.  If not specified it will be detected.
     $self->_my_add_plugin(
       ['GatherDir' => { exclude_filename => [qw( Makefile.PL Build.PL xt/release/changes.t xt/release/fixme.t )],
                         exclude_match => '^_build/' }, ],
-      [ PruneCruft => { except => '.travis.yml' } ],
+      [ 'PruneCruft'   ],
       [ 'ManifestSkip' ],
       [ 'MetaYAML',    ],
       [ 'License',     ],
@@ -399,13 +385,6 @@ Specify a minimum Perl version.  If not specified it will be detected.
           maybe default_branch    => $self->payload->{default_branch},
 
           # these are for my ReadmeAnyFromPod wrapper.
-                travis_status     => int(defined $self->payload->{travis_status} ? $self->payload->{travis_status} : 0),
-          maybe appveyor          => $self->payload->{appveyor},
-          maybe travis_user       => $self->payload->{travis_user} // $self->payload->{github_user},
-          maybe travis_com        => $self->payload->{travis_com},
-          maybe travis_base       => $self->payload->{travis_base},
-          maybe travis_image_base => $self->payload->{travis_image_base},
-          maybe appveyor_user     => $self->payload->{appveyor_user},
           maybe cirrus_user       => $self->payload->{cirrus_user},
           maybe github_user       => $self->payload->{github_user},
           maybe workflow          => $self->payload->{workflow},
