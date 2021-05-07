@@ -3,6 +3,7 @@ package Dist::Zilla::Plugin::Author::Plicease::SpecialPrereqs {
   use 5.020;
   use Moose;
   use experimental qw( postderef );
+  use Dist::Zilla::Plugin::Author::Plicease;
 
   # ABSTRACT: Special prereq handling
 
@@ -117,6 +118,11 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
   );
 
   has win32 => (
+    is      => 'ro',
+    default => 0,
+  );
+
+  has git => (
     is      => 'ro',
     default => 0,
   );
@@ -302,6 +308,12 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
         $self->log_fatal("This dist is not releasable on MSWin32");
       }
     }
+
+    unless(Dist::Zilla::Plugin::Author::Plicease->git)
+    {
+      $self->log_fatal("release requires git and Dist::Zilla::Plugin::Git to be installed");
+    }
+
     $self->log("Okay to release this dist on $^O");
   }
 
