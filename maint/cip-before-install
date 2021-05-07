@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -ex
+
+cip exec cpanm -n https://cpan.metacpan.org/authors/id/P/PL/PLICEASE/Dist-Zilla-Plugin-InsertExample-0.12.tar.gz

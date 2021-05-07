@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::Author::Plicease::NoUnsafeInc {
 
-  use 5.014;
+  use 5.020;
   use Moose;
 
   # ABSTRACT: Set x_use_unsafe_inc = 0

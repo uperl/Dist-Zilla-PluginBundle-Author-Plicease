@@ -1,6 +1,6 @@
 package Dist::Zilla::MintingProfile::Author::Plicease {
 
-  use 5.014;
+  use 5.020;
   use Moose;
   with qw( Dist::Zilla::Role::MintingProfile );
   use namespace::autoclean;

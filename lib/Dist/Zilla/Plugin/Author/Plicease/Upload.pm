@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::Author::Plicease::Upload {
 
-  use 5.014;
+  use 5.020;
   use Moose;
   use Path::Tiny ();
 

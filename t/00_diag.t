@@ -44,7 +44,6 @@ $modules{$_} = $_ for qw(
   Term::Encoding
   Test2::V0
   Test::Fixme
-  Test::More
   Test::Pod
   Test::Pod::Coverage
   Test::Script

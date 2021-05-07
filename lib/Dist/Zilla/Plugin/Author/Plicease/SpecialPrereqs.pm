@@ -1,7 +1,8 @@
 package Dist::Zilla::Plugin::Author::Plicease::SpecialPrereqs {
 
-  use 5.014;
+  use 5.020;
   use Moose;
+  use experimental qw( postderef );
 
   # ABSTRACT: Special prereq handling
 
@@ -191,7 +192,7 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
         Test2::Util::Table::LineBreak
     );
 
-    foreach my $upgrade (@{ $self->upgrade })
+    foreach my $upgrade ($self->upgrade->@*)
     {
       if($upgrade =~ /^\s*(\S+)\s*=\s*(\S+)\s*$/)
       {
@@ -205,9 +206,9 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
 
     foreach my $phase (keys %$prereqs)
     {
-      foreach my $type (keys %{ $prereqs->{$phase} })
+      foreach my $type (keys $prereqs->{$phase}->%*)
       {
-        foreach my $module (sort keys %{ $prereqs->{$phase}->{$type} })
+        foreach my $module (sort keys $prereqs->{$phase}->{$type}->%*)
         {
           my $value = $prereqs->{$phase}->{$type}->{$module};
           next unless $value == 0;
@@ -224,9 +225,9 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
 
     foreach my $phase (keys %$prereqs)
     {
-      foreach my $type (keys %{ $prereqs->{$phase} })
+      foreach my $type (keys $prereqs->{$phase}->%*)
       {
-        foreach my $module (keys %{ $prereqs->{$phase}->{$type} })
+        foreach my $module (keys $prereqs->{$phase}->{$type}->%*)
         {
           if($module =~ /^(JSON|PerlX::Maybe)$/)
           {
@@ -273,13 +274,13 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
 
     $self->log("perl version required = $perl_version");
 
-    foreach my $file (grep { $_->name =~ /^(Makefile\.PL|Build\.PL)$/ } @{ $self->zilla->files })
+    foreach my $file (grep { $_->name =~ /^(Makefile\.PL|Build\.PL)$/ } $self->zilla->files->@*)
     {
       my $content = $file->content;
       $content = join "\n",
         "BEGIN {",
         "  use strict; use warnings;",
-        (map { s/^\| /  /r } @{ $self->preamble }),
+        (map { s/^\| /  /r } $self->preamble->@*),
         "  unless(eval q{ use $perl_version; 1}) {",
         "    print \"Perl $perl_version or better required\\n\";",
         "    exit;",

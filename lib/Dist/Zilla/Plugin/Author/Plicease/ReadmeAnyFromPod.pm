@@ -1,10 +1,11 @@
 package Dist::Zilla::Plugin::Author::Plicease::ReadmeAnyFromPod {
 
-  use 5.014;
+  use 5.020;
   use Moose;
   use URI::Escape ();
   use File::Which ();
   use Ref::Util qw( is_plain_hashref );
+  use experimental qw( postderef );
 
 =head1 SYNOPSIS
 
@@ -18,7 +19,7 @@ package Dist::Zilla::Plugin::Author::Plicease::ReadmeAnyFromPod {
     my $orig = shift;
     my $class = shift;
 
-    my %args = @_ == 1 && is_plain_hashref($_[0]) ? %{$_[0]} : @_;
+    my %args = @_ == 1 && is_plain_hashref($_[0]) ? $_[0]->%* : @_;
     foreach my $key (keys %args)
     {
       die "removed key: $key"
@@ -111,7 +112,7 @@ package Dist::Zilla::Plugin::Author::Plicease::ReadmeAnyFromPod {
       my $status = '';
       $status .= " [![Build Status](https://api.cirrus-ci.com/github/@{[ $self->cirrus_user ]}/$name.svg)](https://cirrus-ci.com/github/@{[ $self->cirrus_user ]}/$name)" if $cirrus_status;
 
-      foreach my $workflow (@{ $self->workflow })
+      foreach my $workflow ($self->workflow->@*)
       {
         $status .= " ![$workflow](https://github.com/@{[ $self->github_user ]}/$name/workflows/$workflow/badge.svg)";
       }

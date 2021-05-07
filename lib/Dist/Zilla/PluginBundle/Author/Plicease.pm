@@ -1,6 +1,6 @@
 package Dist::Zilla::PluginBundle::Author::Plicease {
 
-  use 5.024;
+  use 5.020;
   use Moose;
   use Dist::Zilla;
   use PerlX::Maybe qw( maybe );
