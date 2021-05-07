@@ -302,6 +302,7 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
         $self->log_fatal("This dist is not releasable on MSWin32");
       }
     }
+    $self->log("Okay to release this dist on $^O");
   }
 
   sub setup_installer

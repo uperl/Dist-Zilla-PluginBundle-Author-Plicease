@@ -120,14 +120,6 @@ type = gfm
 [Author::Plicease::NoUnsafeInc]
 ```
 
-Some exceptions:
-
-- MSWin32
-
-    Installing [Dist::Zilla::Plugin::Git::\*](https://metacpan.org/pod/Dist::Zilla::Plugin::Git::*) on MSWin32 is a pain
-    so it is also not a prereq on that platform, isn't used and as a result
-    releasing from MSWin32 is not allowed.
-
 # OPTIONS
 
 ## installer
