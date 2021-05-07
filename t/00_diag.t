@@ -14,7 +14,6 @@ $modules{$_} = $_ for qw(
   Dist::Zilla
   Dist::Zilla::Plugin::AutoMetaResources
   Dist::Zilla::Plugin::CopyFilesFromBuild
-  Dist::Zilla::Plugin::Git
   Dist::Zilla::Plugin::InsertExample
   Dist::Zilla::Plugin::InstallGuide
   Dist::Zilla::Plugin::MinimumPerl
@@ -23,6 +22,7 @@ $modules{$_} = $_ for qw(
   Dist::Zilla::Plugin::PodWeaver
   Dist::Zilla::Plugin::ReadmeAnyFromPod
   Dist::Zilla::Plugin::Run::BeforeBuild
+  Dist::Zilla::PluginBundle::Git
   Dist::Zilla::Role::PluginBundle::Easy
   Dist::Zilla::Role::TextTemplate
   Dist::Zilla::Util::CurrentCmd
@@ -31,6 +31,7 @@ $modules{$_} = $_ for qw(
   File::ShareDir::Install
   File::Which
   File::chdir
+  Git::Wrapper
   IPC::System::Simple
   Moose
   Path::Tiny
