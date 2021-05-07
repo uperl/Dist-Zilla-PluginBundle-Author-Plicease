@@ -204,6 +204,14 @@ Specify an alternative to OurPkgVersion for updating the versions in .pm files.
 
 Specify a minimum Perl version.  If not specified it will be detected.
 
+## win32
+
+If set to true, then the dist MUST be released on MSWin32.  This is
+useful for `Win32::` type dists that aren't testable on Unixy platforms.
+
+If set to false, then the dist MUST NOT be released on MSWin32.  This
+is a personal preference; I prefer not to release on non-Unixy platforms.
+
 # SEE ALSO
 
 - [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla)

@@ -21,8 +21,9 @@ Some modules are recommended if certain modules are already
 prerequisites.  For example, XS modules may be recommended if
 otherwise pure perl modules will optionally use them.
 
-This plugin also enforces that releases are not done on
-Perl 5.8 or C<MSWin32>.
+This plugin also enforces that releases are done on MSWin32
+for pure-C<Win32::> type modules and on a Unixy platform
+if they are not.
 
 This plugin also adds a preface to your C<Makefile.PL> or C<Build.PL> to
 test the Perl version in a way that will not throw an exception,
@@ -76,6 +77,27 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
 
 =back
 
+=head1 OPTIONS
+
+=head2 preamble
+
+...
+
+=head2 upgrade
+
+Upgrade additional prereqs.  This takes a key=value pair, so something like
+
+ [Author::Plicease::SpecialPrereqs]
+ upgrade = Foo::Bar = 0.02
+
+=head2 win32
+
+If set to true, then the dist MUST be released on MSWin32.  This is
+useful for C<Win32::> type dists that aren't testable on Unixy platforms.
+
+If set to false, then the dist MUST NOT be released on MSWin32.  This
+is a personal preference; I prefer not to release on non-Unixy platforms.
+
 =cut
 
   with 'Dist::Zilla::Role::BeforeRelease';
@@ -92,6 +114,11 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
   has upgrade => (
     is      => 'ro',
     default => sub { [] },
+  );
+
+  has win32 => (
+    is      => 'ro',
+    default => 0,
   );
 
   sub register_prereqs
@@ -260,8 +287,21 @@ Require 0.11 for dealing with C<exit> inside and C<eval>.
   sub before_release
   {
     my $self = shift;
-    $self->log_fatal('don\'t release via MSWin32')           if $^O eq 'MSWin32';
-    $self->log_fatal('don\'t release without Git plugins')   if $ENV{PLICEASE_DZIL_NO_GIT};
+
+    if($self->win32)
+    {
+      if($^O ne 'MSWin32')
+      {
+        $self->log_fatal("This dist must be released on MSWin32");
+      }
+    }
+    else
+    {
+      if($^O eq 'MSWin32')
+      {
+        $self->log_fatal("This dist is not releasable on MSWin32");
+      }
+    }
   }
 
   sub setup_installer
