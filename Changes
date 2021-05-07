@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.63      2021-05-07 11:31:18 -0600
   - Allow release on MSWin32 if win32 is set
     [@Author::Plicease] + [Author::Plicease::SpecialPrereqs] (gh#17)
   - remove travis_* and appveyor_* keys
