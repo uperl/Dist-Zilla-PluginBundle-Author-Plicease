@@ -67,18 +67,6 @@ This plugin bundle is mostly equivalent to
 
 # EXAMPLE: example/default_dist.ini
 
-Some exceptions:
-
-=over 4
-
-=item MSWin32
-
-Installing L<Dist::Zilla::Plugin::Git::*> on MSWin32 is a pain
-so it is also not a prereq on that platform, isn't used and as a result
-releasing from MSWin32 is not allowed.
-
-=back
-
 =head1 OPTIONS
 
 =head2 installer
@@ -319,15 +307,12 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
     )]);
     $self->_my_add_plugin(['MetaJSON']);
 
-    if($^O ne 'MSWin32' && !$ENV{PLICEASE_DZIL_NO_GIT})
+    foreach my $plugin (qw( Git::Check Git::Commit Git::Tag Git::Push ))
     {
-      foreach my $plugin (qw( Git::Check Git::Commit Git::Tag Git::Push ))
-      {
-        my %args;
-        $args{'allow_dirty'} = [ qw( dist.ini Changes README.md ), @{ $self->payload->{allow_dirty} || [] } ]
-          if $plugin =~ /^Git::(Check|Commit)$/;
-        $self->_my_add_plugin([$plugin, \%args])
-      }
+      my %args;
+      $args{'allow_dirty'} = [ qw( dist.ini Changes README.md ), @{ $self->payload->{allow_dirty} || [] } ]
+        if $plugin =~ /^Git::(Check|Commit)$/;
+      $self->_my_add_plugin([$plugin, \%args])
     }
 
     do {
