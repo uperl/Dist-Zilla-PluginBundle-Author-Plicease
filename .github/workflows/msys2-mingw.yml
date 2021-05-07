@@ -44,7 +44,6 @@ jobs:
             base-devel
             mingw-w64-x86_64-toolchain
             mingw-w64-x86_64-perl
-            git
 
       - name: perl -V
         run: |

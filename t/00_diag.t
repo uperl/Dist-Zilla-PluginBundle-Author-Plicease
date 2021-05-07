@@ -14,6 +14,7 @@ $modules{$_} = $_ for qw(
   Dist::Zilla
   Dist::Zilla::Plugin::AutoMetaResources
   Dist::Zilla::Plugin::CopyFilesFromBuild
+  Dist::Zilla::Plugin::Git
   Dist::Zilla::Plugin::InsertExample
   Dist::Zilla::Plugin::InstallGuide
   Dist::Zilla::Plugin::MinimumPerl

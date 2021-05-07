@@ -10,6 +10,7 @@ package Dist::Zilla::PluginBundle::Author::Plicease {
   use Path::Tiny qw( path );
   use File::Glob qw( bsd_glob );
   use Path::Tiny qw( path );
+  use Dist::Zilla::Plugin::Author::Plicease;
 
   # ABSTRACT: Dist::Zilla plugin bundle used by Plicease
 
@@ -307,12 +308,15 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
     )]);
     $self->_my_add_plugin(['MetaJSON']);
 
-    foreach my $plugin (qw( Git::Check Git::Commit Git::Tag Git::Push ))
+    if(Dist::Zilla::Plugin::Author::Plicease->git)
     {
-      my %args;
-      $args{'allow_dirty'} = [ qw( dist.ini Changes README.md ), @{ $self->payload->{allow_dirty} || [] } ]
-        if $plugin =~ /^Git::(Check|Commit)$/;
-      $self->_my_add_plugin([$plugin, \%args])
+      foreach my $plugin (qw( Git::Check Git::Commit Git::Tag Git::Push ))
+      {
+        my %args;
+        $args{'allow_dirty'} = [ qw( dist.ini Changes README.md ), @{ $self->payload->{allow_dirty} || [] } ]
+          if $plugin =~ /^Git::(Check|Commit)$/;
+        $self->_my_add_plugin([$plugin, \%args])
+      }
     }
 
     do {
