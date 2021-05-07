@@ -351,7 +351,6 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
     $self->_my_add_plugin(map { [$_] } qw(
 
       InstallGuide
-      ConfirmRelease
 
     ));
 
@@ -360,6 +359,20 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
         maybe perl => $self->payload->{perl},
       },
     ]);
+
+    $self->_my_add_plugin([
+      'Author::Plicease::SpecialPrereqs' => {
+        maybe upgrade  => $self->payload->{upgrade},
+        maybe preamble => $self->payload->{preamble},
+        maybe win32    => $self->payload->{win32},
+      },
+    ]);
+
+    $self->_my_add_plugin(map { [$_] } qw(
+
+      ConfirmRelease
+
+    ));
 
     unless($self->payload->{no_readme})
     {
@@ -388,14 +401,6 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
        },
      ]);
     }
-
-    $self->_my_add_plugin([
-      'Author::Plicease::SpecialPrereqs' => {
-        maybe upgrade  => $self->payload->{upgrade},
-        maybe preamble => $self->payload->{preamble},
-        maybe win32    => $self->payload->{win32},
-      },
-    ]);
 
     if($self->payload->{copy_mb})
     {
