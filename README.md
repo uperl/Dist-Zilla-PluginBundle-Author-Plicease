@@ -103,8 +103,9 @@ repository.url = git://github.com/plicease/My-Dist.git
 repository.web = https://github.com/plicease/My-Dist
 
 [InstallGuide]
-[ConfirmRelease]
 [MinimumPerl]
+[Author::Plicease::SpecialPrereqs]
+[ConfirmRelease]
 
 [Author::Plicease::ReadmeAnyFromPod]
 filename = README
@@ -116,7 +117,6 @@ filename = README.md
 location = root
 type = gfm
 
-[Author::Plicease::SpecialPrereqs]
 [Author::Plicease::NoUnsafeInc]
 ```
 
