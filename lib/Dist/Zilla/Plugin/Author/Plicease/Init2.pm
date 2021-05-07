@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::Author::Plicease::Init2 {
 
-  use 5.014;
+  use 5.020;
   use Moose;
   use Dist::Zilla::File::InMemory;
   use Dist::Zilla::File::FromCode;
@@ -9,6 +9,7 @@ package Dist::Zilla::Plugin::Author::Plicease::Init2 {
   use Dist::Zilla::MintingProfile::Author::Plicease;
   use JSON::PP qw( encode_json );
   use Encode qw( encode_utf8 );
+  use experimental qw( postderef );
 
   # ABSTRACT: Dist::Zilla initialization tasks for Plicease
 
@@ -171,7 +172,7 @@ Create a dist in plicease style.
     $self->gather_file_template('t/main_class.t' => 't/' . lc($self->zilla->name =~ s/-/_/gr) . ".t" );
     $self->gather_file_simple  ('xt/author/critic.t');
 
-    foreach my $workflow (@{ $self->workflow })
+    foreach my $workflow ($self->workflow->@*)
     {
       $self->gather_file_simple(".github/workflows/$workflow.yml");
     }

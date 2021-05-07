@@ -1,7 +1,8 @@
 package Dist::Zilla::Plugin::Author::Plicease::Thanks {
 
-  use 5.014;
+  use 5.020;
   use Moose;
+  use experimental qw( postderef );
 
   with 'Dist::Zilla::Role::MetaProvider';
   with 'Dist::Zilla::Role::FileMunger';
@@ -42,7 +43,7 @@ package Dist::Zilla::Plugin::Author::Plicease::Thanks {
   sub munge_files
   {
     my($self) = @_;
-    $self->munge_file($_) for @{ $self->found_files };
+    $self->munge_file($_) for $self->found_files->@*;
   }
 
   sub _escape ($)
@@ -78,9 +79,9 @@ package Dist::Zilla::Plugin::Author::Plicease::Thanks {
         push @list, 'Author: ' . _escape $self->current,
                     '';
       }
-      if(@{ $self->contributor } > 0)
+      if($self->contributor->@* > 0)
       {
-        push @list, 'Contributors:', '', map { (_escape $_, '') } @{ $self->contributor };
+        push @list, 'Contributors:', '', map { (_escape $_, '') } $self->contributor->@*;
       }
       return join "\n", @list, '';
     };
@@ -99,7 +100,7 @@ package Dist::Zilla::Plugin::Author::Plicease::Thanks {
   {
     my ($self) = @_;
 
-    my @contributors = @{$self->contributor};
+    my @contributors = $self->contributor->@*;
     unshift @contributors, $self->current  if $self->current;
     unshift @contributors, $self->original if $self->original;
 
