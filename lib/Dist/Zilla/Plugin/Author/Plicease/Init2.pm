@@ -650,7 +650,8 @@ jobs:
       matrix:
         cip_tag:
           - static
-          - "5.33"
+          - "5.35"
+          - "5.34"
           - "5.32"
           - "5.30"
           - "5.28"
@@ -1025,10 +1026,3 @@ jobs:
         run: |
           export PATH="/c/cx/bin:$PATH"
           perl -S dzil test -v
-
-      - name: CPAN log
-        if: ${{ failure() }}
-        run: |
-          cat ~/.cpanm/latest-build/build.log
-
-
