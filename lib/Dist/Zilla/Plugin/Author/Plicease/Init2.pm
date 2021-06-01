@@ -116,7 +116,7 @@ Create a dist in plicease style.
       {
         if($self->type_dzil)
         {
-          return '5.014';
+          return '5.020';
         }
         else
         {
@@ -587,7 +587,8 @@ use base qw( Alien::Base );
 __[ template/Dzil.pm ]__
 use strict;
 use warnings;
-use {{ $perl_version }}
+use {{ $perl_version }};
+use experimental qw( postderef );
 
 package {{ $name =~ s/-/::/gr }} {
 
