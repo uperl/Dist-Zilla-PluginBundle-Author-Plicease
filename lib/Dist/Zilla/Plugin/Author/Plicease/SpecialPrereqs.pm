@@ -144,7 +144,6 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
       Test::Exit                            0.11
       Clustericious                         1.20
       Test::Clustericious::Cluster          0.31
-      Test2::V0                             0.000092
       ExtUtils::ParseXS                     3.30
     );
 
@@ -158,7 +157,7 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
         'Test2',
     );
 
-    $upgrades{$_} = '0.000060' for qw(
+    $upgrades{$_} = '0.000121' for qw(
         Test2::V0
         Test2::Bundle
         Test2::Bundle::Extended
