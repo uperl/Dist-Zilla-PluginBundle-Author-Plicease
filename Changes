@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Put static testing in separate workflow for CI
 
 2.64      2021-06-01 05:31:07 -0600
   - Bump CI in generated dist to use Perl 5.34/5.35
