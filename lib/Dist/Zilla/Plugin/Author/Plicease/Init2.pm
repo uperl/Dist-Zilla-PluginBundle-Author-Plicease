@@ -79,7 +79,7 @@ Create a dist in plicease style.
       my $self = shift;
       my @workflow;
 
-      foreach my $workflow (qw( linux windows macos cygwin msys2-mingw ))
+      foreach my $workflow (qw( static linux windows macos cygwin msys2-mingw ))
       {
         push @workflow, $workflow if $self->chrome->prompt_yn("workflow $workflow?");
       }
@@ -629,6 +629,36 @@ package {{ $name =~ s/-/::/gr }} {
 
 1;
 
+__[ dist/.github/workflows/static.yml ]__
+name: static
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+jobs:
+  perl:
+
+    runs-on: ubuntu-latest
+
+    env:
+      CIP_TAG: static
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Bootstrap CIP
+        run: |
+          curl -L https://raw.githubusercontent.com/uperl/cip/main/bin/github-bootstrap | bash
+
+      - name: Build + Test
+        run: |
+          cip script
+
 
 __[ dist/.github/workflows/linux.yml ]__
 name: linux
@@ -650,7 +680,6 @@ jobs:
       fail-fast: false
       matrix:
         cip_tag:
-          - static
           - "5.35"
           - "5.34"
           - "5.32"
