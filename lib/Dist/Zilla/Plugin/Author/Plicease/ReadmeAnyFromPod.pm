@@ -7,7 +7,7 @@ package Dist::Zilla::Plugin::Author::Plicease::ReadmeAnyFromPod {
   use Ref::Util qw( is_plain_hashref );
   use experimental qw( postderef );
 
-# ABSTRACT: Personal subcalss of Dist::Zilla::Plugin::ReadmeAnyFromPod
+# ABSTRACT: Personal subclass of Dist::Zilla::Plugin::ReadmeAnyFromPod
 
 =head1 SYNOPSIS
 
