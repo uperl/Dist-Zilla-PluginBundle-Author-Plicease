@@ -120,7 +120,7 @@ package Dist::Zilla::Plugin::Author::Plicease::ReadmeAnyFromPod {
     };
 
     $content =~ s{# NAME\s+(.*?) - (.*?#)}{# $1$status\n\n$2}s;
-    $content =~ s{# VERSION\s+version (\d+\.|)\d+\.\d+(\\_\d+|)\s+#}{#};
+    $content =~ s{# VERSION\s+version (\d+\.|)\d+\.\d+(\\_\d+|)\s+#}{#}a;
     return $content;
   };
 
