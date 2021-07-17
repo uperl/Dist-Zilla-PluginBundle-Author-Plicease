@@ -5,6 +5,7 @@ package Dist::Zilla::Plugin::Author::Plicease::SpecialPrereqs {
   use experimental qw( postderef );
   use Dist::Zilla::Plugin::Author::Plicease;
   use Config::INI::Reader;
+  use Dist::Zilla::Util::AuthorDeps;
 
   # ABSTRACT: Special prereq handling
 
@@ -296,6 +297,18 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
           type  => 'recommends',
           phase => 'develop',
         }, "Perl::Critic::Policy::$policy" => 0);
+      }
+    }
+
+    foreach my $pairs (Dist::Zilla::Util::AuthorDeps::extract_author_deps('.',0)->@*)
+    {
+      foreach my $module (sort keys $pairs->%*)
+      {
+        my $version = $pairs->{$module};
+        $self->zilla->register_prereqs({
+          type => 'recommends',
+          phase => 'develop',
+        }, $module => $version);
       }
     }
 
