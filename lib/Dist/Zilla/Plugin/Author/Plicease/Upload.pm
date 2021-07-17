@@ -8,6 +8,9 @@ package Dist::Zilla::Plugin::Author::Plicease::Upload {
 
 =head1 SYNOPSIS
 
+ [Author::Plicease::Upload]
+ cpan = 1
+
 =head1 DESCRIPTION
 
 This works similar to L<Dist::Zilla::Plugin::UploadToCPAN>.  Except:
