@@ -4,6 +4,7 @@ package Dist::Zilla::Plugin::Author::Plicease::SpecialPrereqs {
   use Moose;
   use experimental qw( postderef );
   use Dist::Zilla::Plugin::Author::Plicease;
+  use Config::INI::Reader;
 
   # ABSTRACT: Special prereq handling
 
@@ -284,6 +285,17 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
             }, EV => 0);
           }
         }
+      }
+    }
+
+    if(my($perlcritic_file) = grep { $_->name eq 'perlcriticrc' } $self->zilla->files->@*)
+    {
+      foreach my $policy (grep { $_ ne '_' } sort keys Config::INI::Reader->read_string($perlcritic_file->content)->%*)
+      {
+        $self->zilla->register_prereqs({
+          type  => 'recommends',
+          phase => 'develop',
+        }, "Perl::Critic::Policy::$policy" => 0);
       }
     }
 

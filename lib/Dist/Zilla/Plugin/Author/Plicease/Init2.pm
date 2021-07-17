@@ -418,30 +418,30 @@ __[ dist/perlcriticrc ]__
 severity = 1
 only = 1
 
-[Freenode::ArrayAssignAref]
-[Freenode::BarewordFilehandles]
-[Freenode::ConditionalDeclarations]
-[Freenode::ConditionalImplicitReturn]
-[Freenode::DeprecatedFeatures]
-[Freenode::DiscouragedModules]
-[Freenode::DollarAB]
-[Freenode::Each]
-[Freenode::EmptyReturn]
-[Freenode::IndirectObjectNotation]
-[Freenode::LexicalForeachIterator]
-[Freenode::LoopOnHash]
-[Freenode::ModPerl]
-[Freenode::OpenArgs]
-[Freenode::OverloadOptions]
-[Freenode::POSIXImports]
-[Freenode::PackageMatchesFilename]
-[Freenode::PreferredAlternatives]
-[Freenode::StrictWarnings]
+[Community::ArrayAssignAref]
+[Community::BarewordFilehandles]
+[Community::ConditionalDeclarations]
+[Community::ConditionalImplicitReturn]
+[Community::DeprecatedFeatures]
+[Community::DiscouragedModules]
+[Community::DollarAB]
+[Community::Each]
+[Community::EmptyReturn]
+[Community::IndirectObjectNotation]
+[Community::LexicalForeachIterator]
+[Community::LoopOnHash]
+[Community::ModPerl]
+[Community::OpenArgs]
+[Community::OverloadOptions]
+[Community::POSIXImports]
+[Community::PackageMatchesFilename]
+[Community::PreferredAlternatives]
+[Community::StrictWarnings]
 extra_importers = Test2::V0
-[Freenode::Threads]
-[Freenode::Wantarray]
-[Freenode::WarningsSwitch]
-[Freenode::WhileDiamondDefaultAssignment]
+[Community::Threads]
+[Community::Wantarray]
+[Community::WarningsSwitch]
+[Community::WhileDiamondDefaultAssignment]
 
 [BuiltinFunctions::ProhibitBooleanGrep]
 [BuiltinFunctions::ProhibitStringyEval]
@@ -479,7 +479,7 @@ allow_leading_tabs = 0
 __[ dist/xt/author/critic.t ]__
 use Test2::Require::Module 'Test2::Tools::PerlCritic';
 use Test2::Require::Module 'Perl::Critic';
-use Test2::Require::Module 'Perl::Critic::Freenode';
+use Test2::Require::Module 'Perl::Critic::Community';
 use Test2::V0;
 use Perl::Critic;
 use Test2::Tools::PerlCritic;
