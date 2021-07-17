@@ -26,6 +26,7 @@ $modules{$_} = $_ for qw(
   Dist::Zilla::Plugin::Run::BeforeBuild
   Dist::Zilla::Role::PluginBundle::Easy
   Dist::Zilla::Role::TextTemplate
+  Dist::Zilla::Util::AuthorDeps
   Dist::Zilla::Util::CurrentCmd
   ExtUtils::MakeMaker
   File::ShareDir::Dist
