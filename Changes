@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Use [ArchiveTar] or [Libarchive] to build archive
+  - Removed workaround to disable Archive::Tar::Wrapper
 
 2.67      2021-07-17 14:57:49 -0600
   - Minting templates refer to Community instead of
