@@ -444,6 +444,15 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
 
     }
 
+    if(eval { require Dist::Zilla::Plugin::Libarchive; Dist::Zilla::Plugin::Libarchive->VERSION('0.03'); 1 })
+    {
+      $self->_my_add_plugin(['Libarchive']);
+    }
+    else
+    {
+      $self->_my_add_plugin(['ArchiveTar']);
+    }
+
   }
 
   __PACKAGE__->meta->make_immutable;

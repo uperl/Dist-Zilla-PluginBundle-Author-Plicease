@@ -118,6 +118,7 @@ location = root
 type = gfm
 
 [Author::Plicease::NoUnsafeInc]
+[Libarchive]
 ```
 
 # OPTIONS
