@@ -500,7 +500,7 @@ __[ dist/.gitattributes ]__
 
 
 __[ dist/Changes ]__
-Revision history for {{$dist->name}}},
+Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - initial version
