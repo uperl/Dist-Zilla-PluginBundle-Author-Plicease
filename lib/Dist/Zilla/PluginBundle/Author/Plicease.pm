@@ -416,6 +416,25 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
       print STDERR "\n";
     }
 
+    if(-f 'Changes')
+    {
+      my $text = path('Changes')->slurp_utf8;
+      if($text =~ /\}\}\}/)
+      {
+        print STDERR Term::ANSIColor::color('bold red') if -t STDERR;
+        print STDERR "Please fix extra } in Changes template";
+        print STDERR Term::ANSIColor::color('reset') if -t STDERR;
+        print STDERR "\n";
+      }
+    }
+    else
+    {
+      print STDERR Term::ANSIColor::color('bold red') if -t STDERR;
+      print STDERR "no Changes file";
+      print STDERR Term::ANSIColor::color('reset') if -t STDERR;
+      print STDERR "\n";
+    }
+
     $self->_my_add_plugin(
       [ 'Author::Plicease::NoUnsafeInc' ],
     );

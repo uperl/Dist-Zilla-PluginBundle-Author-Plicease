@@ -118,7 +118,7 @@ location = root
 type = gfm
 
 [Author::Plicease::NoUnsafeInc]
-[ArchiveTar]
+[Libarchive]
 ```
 
 # OPTIONS
