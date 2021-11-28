@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.69      2021-11-28 05:21:20 -0700
   - An extra } crept into the Changes template during a refactor.
     The extra } has been removed, and a warning will be displayed
     when a build is attempted on a dist with this error.
