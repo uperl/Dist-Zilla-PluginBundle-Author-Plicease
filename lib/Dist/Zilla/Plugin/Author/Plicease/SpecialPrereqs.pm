@@ -293,6 +293,7 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
     {
       foreach my $policy (grep { $_ ne '_' } sort keys Config::INI::Reader->read_string($perlcritic_file->content)->%*)
       {
+        next if $policy =~ /^-/;
         $self->zilla->register_prereqs({
           type  => 'recommends',
           phase => 'develop',

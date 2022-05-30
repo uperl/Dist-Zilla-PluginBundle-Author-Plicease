@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Do not attempt to add negative perlcritic configs [-whatever]
 
 2.69      2021-11-28 05:21:20 -0700
   - An extra } crept into the Changes template during a refactor.
