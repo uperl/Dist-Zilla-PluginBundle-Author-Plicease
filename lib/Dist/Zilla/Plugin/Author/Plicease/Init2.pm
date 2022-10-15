@@ -585,10 +585,9 @@ use base qw( Alien::Base );
 
 
 __[ template/Dzil.pm ]__
-use strict;
 use warnings;
 use {{ $perl_version }};
-use experimental qw( postderef );
+use experimental qw( postderef signatures );
 
 package {{ $name =~ s/-/::/gr }} {
 
@@ -604,7 +603,6 @@ package {{ $name =~ s/-/::/gr }} {
 
 
 __[ template/P5014.pm ]__
-use strict;
 use warnings;
 use {{ $perl_version }};
 
@@ -617,10 +615,9 @@ package {{ $name =~ s/-/::/gr }} {
 
 
 __[ template/P5020.pm ]__
-use strict;
 use warnings;
 use {{ $perl_version }};
-use experimental qw( postderef );
+use experimental qw( postderef signatures );
 
 package {{ $name =~ s/-/::/gr }} {
 
