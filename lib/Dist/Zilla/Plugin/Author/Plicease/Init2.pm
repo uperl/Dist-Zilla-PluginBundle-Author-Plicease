@@ -125,7 +125,6 @@ Create a dist in plicease style.
             my $answer = $self->chrome->prompt_str("Minimum required Perl (min: 5.008004, old: 5.014, def: 5.020 (default), or an explicit Perl version)",
               { default => "def" },
             );
-            warn "answer = $answer";
             return $answer    if $answer =~ /^5\.[0-9]{3,6}$/;
             return '5.008004' if $answer eq 'min';
             return '5.014'    if $answer eq 'old';
