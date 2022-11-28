@@ -3,7 +3,7 @@ package Dist::Zilla::PluginBundle::Author::Plicease {
   use 5.020;
   use Moose;
   use Dist::Zilla;
-  use PerlX::Maybe qw( maybe );
+  use PerlX::Maybe qw( maybe provided );
   use YAML ();
   use Term::ANSIColor ();
   use Dist::Zilla::Util::CurrentCmd ();
@@ -318,6 +318,7 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
           'repository.web'  => $self->payload->{'repository.web'}  || sprintf("https://github.com/%s/%s",        $user, $repo),
           'repository.type' => $self->payload->{'repository.type'} || 'git',
           maybe 'x_IRC' => $self->payload->{irc},
+          provided $user =~ /\APerlFFI\Z/i, 'x_twitter' => 'https://fosstodon.org/@PerlFFI',
         },
       ]);
     };
