@@ -119,6 +119,7 @@ type = gfm
 
 [Author::Plicease::NoUnsafeInc]
 [Libarchive]
+[Author::Plicease::Cleaner]
 ```
 
 # OPTIONS

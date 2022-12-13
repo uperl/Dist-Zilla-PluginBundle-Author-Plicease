@@ -176,7 +176,7 @@ Create a dist in plicease style.
     my($self) = @_;
 
     my %x;
-  
+
     if($self->perl_version >= 5.020)
     {
       $x{signatures} = 1;

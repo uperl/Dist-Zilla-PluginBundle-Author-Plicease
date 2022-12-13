@@ -4,7 +4,6 @@ package Dist::Zilla::PluginBundle::Author::Plicease {
   use Moose;
   use Dist::Zilla;
   use PerlX::Maybe qw( maybe );
-  use YAML ();
   use Term::ANSIColor ();
   use Dist::Zilla::Util::CurrentCmd ();
   use Path::Tiny qw( path );
@@ -161,6 +160,7 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
     preamble
     diag_preamble
     workflow
+    clean
 
     diag
     allow_dirty ) }
@@ -457,6 +457,8 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
     {
       $self->_my_add_plugin(['ArchiveTar']);
     }
+
+    $self->_my_add_plugin(['Author::Plicease::Cleaner' => { maybe clean => $self->payload->{clean} }]);
 
   }
 
