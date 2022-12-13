@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.73      2022-12-13 11:24:34 -0700
   - Added [Author::Plicease::Cleaner] plugin
   - Minting profile includes signatures and postderef enabled
     with the appropriate minimum required Perl
