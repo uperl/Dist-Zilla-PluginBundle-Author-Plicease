@@ -28,7 +28,14 @@ package Dist::Zilla::Plugin::Author::Plicease::Cleaner {
 
   sub BUILD ($self, $) {
 
-    my @clean_list = ('ffi/_build', 't/ffi/_build', '.tmp', '_alien');
+    my @clean_list = qw(
+      ffi/_build
+      ffi/target
+      t/ffi/_build
+      t/ffi/target
+      .tmp
+      _alien
+    );
     push @clean_list, $self->clean->@*;
 
     install_modifier 'Dist::Zilla::Dist::Builder', 'after', 'clean' => sub ($bld, $dry) {
