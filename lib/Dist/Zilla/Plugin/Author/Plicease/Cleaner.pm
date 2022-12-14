@@ -29,13 +29,19 @@ package Dist::Zilla::Plugin::Author::Plicease::Cleaner {
   sub BUILD ($self, $) {
 
     my @clean_list = qw(
-      ffi/_build
-      ffi/target
-      t/ffi/_build
-      t/ffi/target
       .tmp
       _alien
     );
+
+    # rust:   target
+    # zig:    zig-cache, zig-out
+    # c:      *.o *.obj *.so *.dll *.dylib
+    # Pascal: *.ppu
+    foreach my $x (qw( target zig-cache zig-out *.o *.obj *.so *.dll *.dylib *.ppu))
+    {
+      push @clean_list, join('/', 'ffi', $x), join('/', 't/ffi', $x)
+    }
+
     push @clean_list, $self->clean->@*;
 
     install_modifier 'Dist::Zilla::Dist::Builder', 'after', 'clean' => sub ($bld, $dry) {
