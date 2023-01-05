@@ -165,10 +165,6 @@ Set the GitHub repo name to something other than the dist name.
 
 Set the GitHub user name.
 
-## cirrus\_user
-
-Set the cirrus-ci user (defaults to same as github\_user, which itself defaults to plicease).
-
 ## copy\_mb
 
 Copy Build.PL from the build into the git repository.

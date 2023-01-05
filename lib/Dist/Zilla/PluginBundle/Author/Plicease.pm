@@ -110,10 +110,6 @@ Set the GitHub repo name to something other than the dist name.
 
 Set the GitHub user name.
 
-=head2 cirrus_user
-
-Set the cirrus-ci user (defaults to same as github_user, which itself defaults to plicease).
-
 =head2 copy_mb
 
 Copy Build.PL from the build into the git repository.
@@ -382,8 +378,8 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
           maybe default_branch    => $self->payload->{default_branch},
 
           # these are for my ReadmeAnyFromPod wrapper.
-          maybe cirrus_user       => $self->payload->{cirrus_user},
           maybe github_user       => $self->payload->{github_user},
+          maybe github_repo       => $self->payload->{github_repo},
           maybe workflow          => $self->payload->{workflow},
        },
      ]);
