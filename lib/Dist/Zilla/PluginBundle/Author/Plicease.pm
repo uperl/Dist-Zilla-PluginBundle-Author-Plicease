@@ -157,6 +157,7 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
     diag_preamble
     workflow
     clean
+    clean_keep
 
     diag
     allow_dirty ) }
@@ -455,7 +456,10 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
       $self->_my_add_plugin(['ArchiveTar']);
     }
 
-    $self->_my_add_plugin(['Author::Plicease::Cleaner' => { maybe clean => $self->payload->{clean} }]);
+    $self->_my_add_plugin(['Author::Plicease::Cleaner' => {
+      maybe clean      => $self->payload->{clean},
+      maybe clean_keep => $self->payload->{clean_keep}
+    }]);
 
   }
 
