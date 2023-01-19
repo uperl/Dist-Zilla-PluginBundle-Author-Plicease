@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Added clean_keep option to [@Author::Plicease] and [Author::Plicease::Cleaner]
 
 2.74      2023-01-04 20:30:24 -0700
   - Removing support fir cirrus-ci since I no longer use it.
