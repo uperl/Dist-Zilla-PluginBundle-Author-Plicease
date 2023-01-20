@@ -545,6 +545,7 @@ __[ dist/.gitattributes ]__
 *.pm linguist-language=Perl
 *.t linguist-language=Perl
 *.h linguist-language=C
+alienfile linguist-language=perl
 
 
 __[ dist/Changes ]__
