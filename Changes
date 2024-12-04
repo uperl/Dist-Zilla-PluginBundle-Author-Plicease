@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+2.76      2024-12-04 04:34:05 -0700
+  - Update Perls used in CI for template and for this dist
+
 2.74      2023-01-04 20:30:24 -0700
   - Removing support fir cirrus-ci since I no longer use it.
   - Added github_repo property to [Plicease::Author::ReadmeAnyFromPod]
