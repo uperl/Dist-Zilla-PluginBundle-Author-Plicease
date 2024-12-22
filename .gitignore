@@ -1,3 +1,5 @@
 /Dist-Zilla-PluginBundle-Author-Plicease-*
 /.build
 *.swp
+*.old
+*.orig
