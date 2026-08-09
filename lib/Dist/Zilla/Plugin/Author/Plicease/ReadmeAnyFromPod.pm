@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::Author::Plicease::ReadmeAnyFromPod {
 
-  use 5.020;
+  use 5.022;
   use Moose;
   use experimental qw( signatures );
   use URI::Escape ();

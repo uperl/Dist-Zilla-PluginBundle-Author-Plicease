@@ -2,7 +2,7 @@ package Dist::Zilla::Plugin::Author::Plicease {
 
   use strict;
   use warnings;
-  use 5.020;
+  use 5.022;
   use Path::Tiny ();
   use File::ShareDir::Dist ();
   use File::Which ();

@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::Author::Plicease::Core {
 
-  use 5.020;
+  use 5.022;
   use Moose;
   use Module::CoreList ();
   use version ();
