@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::Author::Plicease::Thanks {
 
-  use 5.020;
+  use 5.022;
   use Moose;
   use experimental qw( postderef );
 
