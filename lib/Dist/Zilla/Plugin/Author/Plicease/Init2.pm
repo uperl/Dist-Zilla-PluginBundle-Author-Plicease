@@ -1,5 +1,6 @@
-use 5.020;
+use 5.022;
 use stable qw( postderef );
+use experimental qw( signatures );
 use true;
 
 package Dist::Zilla::Plugin::Author::Plicease::Init2 {
@@ -155,10 +156,8 @@ Create a dist in plicease style.
     },
   );
 
-  sub make_module
+  sub make_module ( $self, $arg )
   {
-    my($self, $arg) = @_;
-
     my $template_name;
 
     if($self->type_dzil)
@@ -196,10 +195,8 @@ Create a dist in plicease style.
     }
   }
 
-  sub experimental
+  sub experimental ( $self )
   {
-    my($self) = @_;
-
     my %x;
 
     if($self->perl_version >= 5.020)
@@ -229,10 +226,8 @@ Create a dist in plicease style.
     return join(' ', sort keys %x);
   }
 
-  sub gather_files
+  sub gather_files ( $self, $arg )
   {
-    my($self, $arg) = @_;
-
     $self->gather_file_dist_ini($arg);
 
     $self->gather_file_simple  ('.gitattributes');
@@ -251,9 +246,8 @@ Create a dist in plicease style.
     }
   }
 
-  sub gather_file_simple
+  sub gather_file_simple ( $self, $filename )
   {
-    my($self, $filename) = @_;
     my $content = $self->section_data("dist/$filename")->$*;
     $content =~ s/\s*\z/"\n"/e;
     $self->log_fatal("no bundled file dist/$filename") unless $content;
@@ -264,9 +258,8 @@ Create a dist in plicease style.
     $self->add_file($file);
   }
 
-  sub gather_file_template
+  sub gather_file_template ( $self, $template_name, $filename = undef )
   {
-    my($self, $template_name, $filename) = @_;
     $filename //= $template_name;
     my $template = $self->section_data("template/$template_name")->$*;
     $template =~ s/\s*\z/"\n"/e;
@@ -284,10 +277,8 @@ Create a dist in plicease style.
     $self->add_file($file);
   }
 
-  sub gather_file_dist_ini
+  sub gather_file_dist_ini ( $self, $arg )
   {
-    my($self, $arg) = @_;
-
     my $zilla = $self->zilla;
 
     my $template = $self->section_data("template/dist.ini");
@@ -376,10 +367,8 @@ Create a dist in plicease style.
     },
   );
 
-  sub after_mint
+  sub after_mint ( $self, $opts )
   {
-    my($self, $opts) = @_;
-
     unless(eval { require Git::Wrapper })
     {
       $self->zilla->log("no Git::Wrapper, can't create repository");

@@ -4,7 +4,8 @@ package Dist::Zilla::Plugin::Author::Plicease::Core {
   use Moose;
   use Module::CoreList ();
   use version ();
-  use experimental qw( postderef );
+  use experimental qw( signatures postderef );
+  use true;
 
   # ABSTRACT: Handle core prereqs
   # VERSION
@@ -27,10 +28,8 @@ package Dist::Zilla::Plugin::Author::Plicease::Core {
     default => sub { { } },
   );
 
-  sub register_prereqs
+  sub register_prereqs ( $self )
   {
-    my($self) = @_;
-
     my $prereqs = $self->zilla->prereqs->as_string_hash;
 
     foreach my $phase (keys %$prereqs)
@@ -60,9 +59,8 @@ package Dist::Zilla::Plugin::Author::Plicease::Core {
     }
   }
 
-  sub setup_installer
+  sub setup_installer ( $self )
   {
-    my($self) = @_;
     foreach my $file (grep { $_->name =~ /^(Makefile\.PL|Build\.PL)$/ } $self->zilla->files->@*)
     {
       my $content = $file->content;
@@ -103,7 +101,4 @@ package Dist::Zilla::Plugin::Author::Plicease::Core {
 
   }
 
-
 }
-
-1;
