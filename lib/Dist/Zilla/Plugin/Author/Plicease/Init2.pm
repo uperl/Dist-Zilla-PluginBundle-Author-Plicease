@@ -172,6 +172,10 @@ Create a dist in plicease style.
     {
       $template_name = 'App.pm';
     }
+    elsif($self->perl_version >= 5.042)
+    {
+      $template_name = 'P5042.pm';
+    }
     elsif($self->perl_version >= 5.020)
     {
       $template_name = 'P5020.pm';
@@ -226,7 +230,7 @@ Create a dist in plicease style.
     return join(' ', sort keys %x);
   }
 
-  sub gather_files ( $self, $arg )
+  sub gather_files ( $self, $arg = undef )
   {
     $self->gather_file_dist_ini($arg);
 
@@ -698,6 +702,14 @@ package {{ $name =~ s/-/::/gr }} {
     # ABSTRACT: {{ $abstract }}
 }
 
+@@ template/P5042.pm
+use warnings;
+use v{{ $perl_version =~ s/^5.0/5./r }};
+
+package {{ $name =~ s/-/::/gr }} {
+
+    # ABSTRACT: {{ $abstract }}
+}
 
 @@ template/bin.pl
 use warnings;
