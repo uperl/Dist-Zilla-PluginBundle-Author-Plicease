@@ -6,6 +6,7 @@ package Dist::Zilla::Plugin::Author::Plicease::Cleaner {
   use Scalar::Util qw( refaddr );
   use Class::Method::Modifiers qw( install_modifier );
   use experimental qw( signatures postderef );
+  use true;
 
   with 'Dist::Zilla::Role::Plugin';
 
@@ -119,8 +120,6 @@ package Dist::Zilla::Plugin::Author::Plicease::Cleaner {
   __PACKAGE__->meta->make_immutable;
 
 }
-
-1;
 
 =head1 SEE ALSO
 

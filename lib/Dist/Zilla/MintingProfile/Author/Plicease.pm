@@ -7,6 +7,8 @@ package Dist::Zilla::MintingProfile::Author::Plicease {
   use File::ShareDir::Dist ();
   use Path::Tiny ();
   use Carp ();
+  use experimental qw( signatures );
+  use true;
 
   # ABSTRACT: Minting profile for Plicease
 
@@ -20,10 +22,7 @@ This is the normal minting profile used by Plicease.
 
 =cut
 
-  sub profile_dir
-  {
-    my($self, $profile_name) = @_;
-
+  sub profile_dir ( $self, $profile_name ) {
     # use a dist share instead of a class share
 
     require Dist::Zilla::Plugin::Author::Plicease;
@@ -40,6 +39,3 @@ This is the normal minting profile used by Plicease.
 
   __PACKAGE__->meta->make_immutable;
 }
-
-1;
-
