@@ -801,7 +801,7 @@ jobs:
       CIP_TAG: static
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Bootstrap CIP
         run: |
@@ -849,7 +849,7 @@ jobs:
       CIP_TAG: ${{ matrix.cip_tag }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Bootstrap CIP
         run: |
@@ -862,7 +862,7 @@ jobs:
           cip cache-key
 
       - name: Cache CPAN modules
-        uses: actions/cache@v2
+        uses: actions/cache@v6
         with:
           path: ~/.cip
           key: ${{ runner.os }}-build-${{ steps.cache-key.outputs.key }}
@@ -922,7 +922,7 @@ jobs:
           git config --global core.autocrlf false
           git config --global core.eol lf
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Set up Perl
         run: |
@@ -937,7 +937,7 @@ jobs:
           perl -V > perlversion.txt
 
       - name: Cache CPAN modules
-        uses: actions/cache@v1
+        uses: actions/cache@v6
         env:
           cache-name: cache-cpan-modules
         with:
@@ -988,7 +988,7 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Set up Perl
         run: |
@@ -1005,7 +1005,7 @@ jobs:
           ls -l perlversion.txt
 
       - name: Cache CPAN modules
-        uses: actions/cache@v1
+        uses: actions/cache@v6
         with:
           path: ~/perl5
           key: ${{ runner.os }}-build-${{ hashFiles('perlversion.txt') }}
@@ -1068,7 +1068,7 @@ jobs:
           git config --global core.eol lf
         shell: powershell
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Set up Cygwin
         uses: egor-tensin/setup-cygwin@v3
@@ -1088,7 +1088,7 @@ jobs:
           ls perlversion.txt
 
       - name: Cache CPAN modules
-        uses: actions/cache@v1
+        uses: actions/cache@v6
         with:
           path: c:\cx
           key: ${{ runner.os }}-build-cygwin-${{ hashFiles('perlversion.txt') }}
@@ -1160,7 +1160,7 @@ jobs:
           git config --global core.eol lf
         shell: powershell
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Set up Perl
         uses: msys2/setup-msys2@v2
@@ -1181,7 +1181,7 @@ jobs:
           ls perlversion.txt
 
       - name: Cache CPAN modules
-        uses: actions/cache@v1
+        uses: actions/cache@v6
         with:
           path: c:\cx
           key: ${{ runner.os }}-build-msys2-${{ hashFiles('perlversion.txt') }}
