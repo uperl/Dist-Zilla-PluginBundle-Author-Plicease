@@ -3,6 +3,7 @@ use Test2::V0 -no_srand => 1;
 use Test::DZil;
 use Path::Tiny qw( path tempdir );
 use CPAN::Uploader;
+use Capture::Tiny qw( capture_stderr );
 
 local $ENV{DZIL_RELEASING};
 
@@ -178,7 +179,16 @@ subtest 'cpan = 0, copy fails' => sub {
 
   my $tzil = tzil( cpan => 0 );
 
-  ok lives { $tzil->release }, 'release does not die' or note $@;
+  # cp is expected to fail here, keep its error message out of the test output
+  my $error;
+  my($stderr, $ok) = capture_stderr {
+    my $ok = lives { $tzil->release };
+    $error = $@;
+    $ok;
+  };
+  note $stderr;
+
+  ok $ok, 'release does not die' or note $error;
 
   ok !-e $www->child('DZT-Sample-0.001.tar.gz'), 'archive not copied';
 
