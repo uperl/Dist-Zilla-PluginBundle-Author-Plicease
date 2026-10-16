@@ -91,10 +91,9 @@ specified, then the main module will be used.
 
 If set to true, then include release tests when building.
 
-=head2 release_tests_skip
-
-Passed into the L<Author::Plicease::Tests|Dist::Zilla::Plugin::Author::Plicease::Tests>
-if C<release_tests> is true.
+The C<pod_coverage>, C<pod_spelling_common> and C<pod_spelling_system> release
+tests can be individually disabled by setting C<skip: 1> under the test's key
+in C<author.yml>.
 
 =head2 mb_class
 
@@ -313,7 +312,6 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
     {
       $self->_my_add_plugin([
         'Author::Plicease::Tests' => {
-          maybe skip          => $self->payload->{release_tests_skip},
           maybe diag          => $self->payload->{diag},
           maybe diag_preamble => $self->payload->{diag_preamble},
           maybe test2_v0      => $self->payload->{test2_v0},

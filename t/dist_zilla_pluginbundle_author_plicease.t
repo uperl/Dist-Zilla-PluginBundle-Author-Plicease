@@ -204,11 +204,10 @@ subtest 'github / irc / homepage' => sub {
 subtest 'release_tests' => sub {
 
   my($plugins) = bundle({
-    release_tests      => 1,
-    release_tests_skip => 'foo',
-    diag               => [ '+Foo::Bar' ],
-    diag_preamble      => [ '| 1;' ],
-    test2_v0           => 1,
+    release_tests => 1,
+    diag          => [ '+Foo::Bar' ],
+    diag_preamble => [ '| 1;' ],
+    test2_v0      => 1,
   });
 
   is(
@@ -217,7 +216,6 @@ subtest 'release_tests' => sub {
       '@Author::Plicease/Author::Plicease::Tests',
       'Dist::Zilla::Plugin::Author::Plicease::Tests',
       {
-        skip          => 'foo',
         diag          => [ '+Foo::Bar' ],
         diag_preamble => [ '| 1;' ],
         test2_v0      => 1,

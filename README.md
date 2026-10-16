@@ -147,10 +147,9 @@ specified, then the main module will be used.
 
 If set to true, then include release tests when building.
 
-## release\_tests\_skip
-
-Passed into the [Author::Plicease::Tests](https://metacpan.org/pod/Dist::Zilla::Plugin::Author::Plicease::Tests)
-if `release_tests` is true.
+The `pod_coverage`, `pod_spelling_common` and `pod_spelling_system` release
+tests can be individually disabled by setting `skip: 1` under the test's key
+in `author.yml`.
 
 ## mb\_class
 
