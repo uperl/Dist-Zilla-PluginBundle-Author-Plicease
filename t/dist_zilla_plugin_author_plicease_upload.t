@@ -1,0 +1,169 @@
+use 5.022;
+use Test2::V0 -no_srand => 1;
+use Test::DZil;
+use Path::Tiny qw( path tempdir );
+use CPAN::Uploader;
+
+local $ENV{DZIL_RELEASING};
+
+# keep ~/dev/site-dist/docs pointed somewhere we control
+my $home = tempdir( CLEANUP => 1 );
+local $ENV{HOME} = "$home";
+
+my @uploaded;
+
+# make sure we never actually talk to PAUSE
+my $mock = mock 'CPAN::Uploader' => (
+  override => [
+    upload_file => sub {
+      my($self, $file) = @_;
+      push @uploaded, { file => $file, user => $self->{user}, password => $self->{password} };
+      return;
+    },
+  ],
+);
+
+my @keep;
+
+sub tzil
+{
+  my(%config) = @_;
+
+  my $pause = tempdir( CLEANUP => 1 );
+  push @keep, $pause;
+  $pause->child('.pause')->spew_utf8(
+    $config{no_credentials} ? "" : "user FOOBAR\npassword secret\n"
+  );
+  delete $config{no_credentials};
+
+  my $tzil = Builder->from_config(
+    { dist_root => 'corpus/DZT' },
+    {
+      add_files => {
+        'source/dist.ini' => simple_ini(
+          {},
+          # [GatherDir]
+          'GatherDir',
+          [ 'Author::Plicease::Upload' => {
+            pause_cfg_dir  => "$pause",
+            pause_cfg_file => '.pause',
+            %config,
+          } ],
+        )
+      }
+    }
+  );
+
+  return $tzil;
+}
+
+sub log_messages ($)
+{
+  my($tzil) = @_;
+  [ map { $_->{message} } $tzil->chrome->logger->events->@* ];
+}
+
+subtest 'defaults' => sub {
+
+  my $tzil = tzil();
+  my($plugin) = grep { $_->isa('Dist::Zilla::Plugin::Author::Plicease::Upload') } $tzil->plugins->@*;
+
+  isa_ok $plugin, 'Dist::Zilla::Plugin::UploadToCPAN';
+  is $plugin->cpan, 1, 'cpan defaults to on';
+  is $plugin->url, 'http://dist.wdlabs.com/', 'default url';
+
+};
+
+subtest 'upload to cpan' => sub {
+
+  @uploaded = ();
+
+  my $tzil = tzil();
+  $tzil->chrome->set_response_for('upload to CPAN?' => 'y');
+
+  $tzil->release;
+
+  is
+    \@uploaded,
+    [ hash {
+      field file     => match qr/DZT-Sample-0\.001\.tar\.gz$/;
+      field user     => 'FOOBAR';
+      field password => 'secret';
+      end;
+    } ],
+    'uploaded to CPAN with credentials';
+
+  note $_ for log_messages($tzil)->@*;
+
+};
+
+subtest 'upload to cpan without credentials' => sub {
+
+  @uploaded = ();
+
+  my $tzil = tzil( no_credentials => 1 );
+  $tzil->chrome->set_response_for('upload to CPAN?' => 'y');
+  $tzil->chrome->set_response_for('PAUSE username: ' => '');
+
+  # before_release is a no-op, so missing credentials are not
+  # fatal, they are just logged during release.
+  ok lives { $tzil->release }, 'release does not die' or note $@;
+
+  is \@uploaded, [], 'nothing uploaded';
+
+  my $log = log_messages($tzil);
+  note $_ for @$log;
+  ok( (grep /error uploading to cpan: no username/, @$log), 'logged missing username' );
+  ok( (grep /you will have to manually upload the dist/, @$log), 'logged manual upload' );
+
+};
+
+subtest 'declined cpan, local release directory' => sub {
+
+  @uploaded = ();
+
+  my $docs = $home->child('dev/site-dist/docs');
+  $docs->mkpath;
+
+  my $tzil = tzil();
+  $tzil->chrome->set_response_for('upload to CPAN?' => 'n');
+
+  $tzil->release;
+
+  is \@uploaded, [], 'nothing uploaded to CPAN';
+  ok -f $docs->child('DZT-Sample-0.001.tar.gz'), 'copied archive to local release dir';
+
+  my $log = log_messages($tzil);
+  note $_ for @$log;
+  ok( (grep /% cp .*DZT-Sample-0\.001\.tar\.gz \Q$docs\E$/, @$log), 'logged copy command' );
+  ok( (grep /download URL: http:\/\/dist\.wdlabs\.com\/.*DZT-Sample-0\.001\.tar\.gz/, @$log), 'logged download URL' );
+
+  $docs->remove_tree;
+
+};
+
+subtest 'cpan = 0, no local release directory' => sub {
+
+  @uploaded = ();
+
+  my $tzil = tzil( cpan => 0, url => 'http://example.test/' );
+
+  # should not even ask
+  $tzil->chrome->set_response_for('upload to CPAN?' => 'y');
+
+  # NOTE: with no release process available the plugin still tries to
+  # run an empty command, which warns "Can't exec"; silence that here.
+  {
+    local $SIG{__WARN__} = sub { note "warning: $_[0]" };
+    $tzil->release;
+  }
+
+  is \@uploaded, [], 'nothing uploaded to CPAN';
+
+  my $log = log_messages($tzil);
+  note $_ for @$log;
+  ok( (grep /no release process available, upload tarball manually/, @$log), 'logged no release process' );
+
+};
+
+done_testing;
