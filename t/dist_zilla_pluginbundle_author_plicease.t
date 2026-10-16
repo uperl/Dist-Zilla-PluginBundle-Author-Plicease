@@ -117,7 +117,7 @@ subtest 'defaults' => sub {
     {
       'homepage'        => 'https://metacpan.org/pod/My::Dist',
       'bugtracker.web'  => 'https://github.com/plicease/My-Dist/issues',
-      'repository.url'  => 'git://github.com/plicease/My-Dist.git',
+      'repository.url'  => 'https://github.com/plicease/My-Dist.git',
       'repository.web'  => 'https://github.com/plicease/My-Dist',
       'repository.type' => 'git',
     },
@@ -154,6 +154,29 @@ subtest 'defaults' => sub {
 
 };
 
+subtest 'MetaResources overrides' => sub {
+
+  my($plugins) = bundle({
+    'bugtracker.web'  => 'https://example.com/issues',
+    'repository.url'  => 'https://example.com/repo.git',
+    'repository.web'  => 'https://example.com/repo',
+    'repository.type' => 'hg',
+  });
+
+  is(
+    args($plugins, 'MetaResources'),
+    hash {
+      field 'bugtracker.web'  => 'https://example.com/issues';
+      field 'repository.url'  => 'https://example.com/repo.git';
+      field 'repository.web'  => 'https://example.com/repo';
+      field 'repository.type' => 'hg';
+      etc;
+    },
+    'each override is used for its own key',
+  );
+
+};
+
 subtest 'github / irc / homepage' => sub {
 
   my($plugins) = bundle({
@@ -170,7 +193,7 @@ subtest 'github / irc / homepage' => sub {
     {
       'homepage'        => 'https://example.com',
       'bugtracker.web'  => 'https://github.com/PerlFFI/Other-Repo/issues',
-      'repository.url'  => 'git://github.com/PerlFFI/Other-Repo.git',
+      'repository.url'  => 'https://github.com/PerlFFI/Other-Repo.git',
       'repository.web'  => 'https://github.com/PerlFFI/Other-Repo',
       'repository.type' => 'git',
       'x_IRC'           => 'irc://irc.perl.org/#native',

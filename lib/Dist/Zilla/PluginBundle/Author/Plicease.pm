@@ -299,7 +299,7 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
         'MetaResources' => {
           'homepage' => $self->payload->{homepage}                 || "https://metacpan.org/pod/@{[ do { my $foo = $name; $foo =~ s/-/::/g; $foo }]}",
           'bugtracker.web'  => $self->payload->{'bugtracker.web'}  || sprintf("https://github.com/%s/%s/issues", $user, $repo),
-          'repository.url'  => $self->payload->{'repository.web'}  || sprintf("git://github.com/%s/%s.git",      $user, $repo),
+          'repository.url'  => $self->payload->{'repository.url'}  || sprintf("https://github.com/%s/%s.git",    $user, $repo),
           'repository.web'  => $self->payload->{'repository.web'}  || sprintf("https://github.com/%s/%s",        $user, $repo),
           'repository.type' => $self->payload->{'repository.type'} || 'git',
           maybe 'x_IRC' => $self->payload->{irc},

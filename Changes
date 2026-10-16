@@ -9,6 +9,10 @@ Revision history for {{$dist->name}}
   - [@Author::Plicease] Remove release_tests_skip option, which has not
     done anything since 2016.  Use skip in author.yml instead.
   - [@Author::Plicease] Clearer diagnostic for no longer supported keys
+  - [@Author::Plicease] Default repository.url is now https:// instead of
+    git://, which GitHub no longer supports
+  - [@Author::Plicease] Fix repository.url override, which was using the
+    value of repository.web
   - [Author::Plicease::Tests] Generated t/00_diag.t no longer uses string eval
   - [Author::Plicease::Tests] Create t/ if needed when writing t/00_diag.t
   - [Author::Plicease::SpecialPrereqs] Default the Makefile.PL Perl version
