@@ -1,5 +1,6 @@
 use 5.022;
 use Test2::V0 -no_srand => 1;
+use Test::DZil;
 use Dist::Zilla::PluginBundle::Author::Plicease;
 use Dist::Zilla::Plugin::Author::Plicease;
 use Path::Tiny qw( tempdir );
@@ -362,8 +363,39 @@ subtest 'allow_dirty' => sub {
 
 subtest 'clean' => sub {
 
-  my($plugins) = bundle({ clean => [ '*.o' ], clean_keep => 'foo' });
-  is args($plugins, 'Author::Plicease::Cleaner'), { clean => [ '*.o' ], clean_keep => 'foo' }, 'Cleaner';
+  my($plugins) = bundle({ clean => [ '*.o' ], clean_keep => [ 'foo' ] });
+  is args($plugins, 'Author::Plicease::Cleaner'), { clean => [ '*.o' ], clean_keep => [ 'foo' ] }, 'Cleaner';
+
+};
+
+subtest 'clean / clean_keep multiple values from dist.ini' => sub {
+
+  # bundle_config above skips the dist.ini parsing, which is where
+  # multi-value options are handled, so load a real dist.ini here.
+  my $tzil;
+  {
+    local *STDERR;
+    open STDERR, '>', \my $stderr or die "unable to redirect STDERR: $!";
+    $tzil = Builder->from_config(
+      { dist_root => 'corpus/DZT' },
+      {
+        tempdir_root => undef,
+        add_files    => {
+          'source/dist.ini' => simple_ini(
+            {},
+            [ '@Author::Plicease' => {
+              clean      => [ '*.o', '/roger' ],
+              clean_keep => [ '^corpus', '^share' ],
+            } ],
+          ),
+        },
+      },
+    );
+  }
+
+  my($cleaner) = grep { $_->isa('Dist::Zilla::Plugin::Author::Plicease::Cleaner') } $tzil->plugins->@*;
+  is $cleaner->clean,      [ '*.o', '/roger' ],     'clean';
+  is $cleaner->clean_keep, [ '^corpus', '^share' ], 'clean_keep';
 
 };
 

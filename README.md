@@ -201,6 +201,20 @@ useful for `Win32::` type dists that aren't testable on Unixy platforms.
 If set to false, then the dist MUST NOT be released on MSWin32.  This
 is a personal preference; I prefer not to release on non-Unixy platforms.
 
+## clean
+
+Extra files or directories to remove on `dzil clean`, in addition to the usual
+`.tmp`, `_alien` and FFI build artifacts.  Patterns without a `/` are matched
+in any directory, patterns with a `/` are relative to the root of the dist.
+Can be specified multiple times.  Passed into
+[Author::Plicease::Cleaner](https://metacpan.org/pod/Dist::Zilla::Plugin::Author::Plicease::Cleaner).
+
+## clean\_keep
+
+Regular expressions for paths that should not be removed by `dzil clean`.  Can be
+specified multiple times.  Passed into
+[Author::Plicease::Cleaner](https://metacpan.org/pod/Dist::Zilla::Plugin::Author::Plicease::Cleaner).
+
 # SEE ALSO
 
 - [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla)

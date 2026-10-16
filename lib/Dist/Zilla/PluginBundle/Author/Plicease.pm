@@ -145,6 +145,20 @@ useful for C<Win32::> type dists that aren't testable on Unixy platforms.
 If set to false, then the dist MUST NOT be released on MSWin32.  This
 is a personal preference; I prefer not to release on non-Unixy platforms.
 
+=head2 clean
+
+Extra files or directories to remove on C<dzil clean>, in addition to the usual
+C<.tmp>, C<_alien> and FFI build artifacts.  Patterns without a C</> are matched
+in any directory, patterns with a C</> are relative to the root of the dist.
+Can be specified multiple times.  Passed into
+L<Author::Plicease::Cleaner|Dist::Zilla::Plugin::Author::Plicease::Cleaner>.
+
+=head2 clean_keep
+
+Regular expressions for paths that should not be removed by C<dzil clean>.  Can be
+specified multiple times.  Passed into
+L<Author::Plicease::Cleaner|Dist::Zilla::Plugin::Author::Plicease::Cleaner>.
+
 =cut
 
   with 'Dist::Zilla::Role::PluginBundle::Easy';
@@ -155,6 +169,7 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
     diag_preamble
     workflow
     clean
+    clean_keep
 
     diag
     allow_dirty ) }
