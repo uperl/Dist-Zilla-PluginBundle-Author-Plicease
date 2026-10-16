@@ -95,9 +95,14 @@ Create a dist in plicease style.
       my $self = shift;
       my @workflow;
 
-      foreach my $workflow (qw( static linux windows macos cygwin msys2-mingw ))
+      foreach my $workflow (qw( static linux ))
       {
-        push @workflow, $workflow if $self->chrome->prompt_yn("workflow $workflow?");
+        push @workflow, $workflow if $self->chrome->prompt_yn("workflow $workflow?", { default => 1 });
+      }
+
+      foreach my $workflow (qw( windows macos cygwin msys2-mingw ))
+      {
+        push @workflow, $workflow if $self->chrome->prompt_yn("workflow $workflow?", { default => 0 });
       }
 
       \@workflow;
@@ -110,7 +115,7 @@ Create a dist in plicease style.
     lazy    => 1,
     default => sub {
       my $self = shift;
-      return undef unless $self->chrome->prompt_yn("irc?");
+      return undef unless $self->chrome->prompt_yn("irc?", { default => 0 });
       $self->chrome->prompt_str("irc url", { default => 'irc://irc.perl.org/#native' });
     },
   );
@@ -293,7 +298,7 @@ Create a dist in plicease style.
       version        => __PACKAGE__->VERSION // '2.41',
       release_tests  => $self->include_tests,
       github_user    => $self->github_user,
-      version_plugin => ($self->perl_version >= 5.014 ? 'PkgVersion::Block' : 0),
+      version_plugin => 0,
       workflow       => $self->workflow,
       irc            => $self->irc,
       default_branch => 'main',
@@ -664,52 +669,53 @@ use base qw( Alien::Base );
 1;
 
 @@ template/Dzil.pm
+package {{ $name =~ s/-/::/gr }};
+
 use warnings;
 use {{ $perl_version }};
 use experimental qw( {{ $experimental }} );
 use true;
+use Moose;
+use namespace::autoclean;
 
-package {{ $name =~ s/-/::/gr }} {
+# ABSTRACT: {{ $abstract }}
+# VERSION
 
-    use Moose;
-    use namespace::autoclean;
-
-    # ABSTRACT: {{ $abstract }}
-
-    __PACKAGE__->meta->make_immutable;
-}
+__PACKAGE__->meta->make_immutable;
 
 
 @@ template/P5014.pm
+package {{ $name =~ s/-/::/gr }};
+
 use warnings;
 use {{ $perl_version }};
 use true;
 
-package {{ $name =~ s/-/::/gr }} {
-
-    # ABSTRACT: {{ $abstract }}
-}
+# ABSTRACT: {{ $abstract }}
+# VERSION
 
 
 @@ template/P5020.pm
+package {{ $name =~ s/-/::/gr }};
+
 use warnings;
 use {{ $perl_version }};
 use experimental qw( {{ $experimental }} );
 use true;
 
-package {{ $name =~ s/-/::/gr }} {
+# ABSTRACT: {{ $abstract }}
+# VERSION
 
-    # ABSTRACT: {{ $abstract }}
-}
 
 @@ template/P5042.pm
+package {{ $name =~ s/-/::/gr }};
+
 use warnings;
 use v{{ $perl_version =~ s/^5.0/5./r }};
 
-package {{ $name =~ s/-/::/gr }} {
+# ABSTRACT: {{ $abstract }}
+# VERSION
 
-    # ABSTRACT: {{ $abstract }}
-}
 
 @@ template/bin.pl
 use warnings;
@@ -724,60 +730,59 @@ use {{ $name =~ s/-/::/gr }};
 
 
 @@ template/App.pm
+package {{ $name =~ s/-/::/gr }};
+
 use warnings;
 use {{ $perl_version }};
 use experimental qw( {{ $experimental }} );
 use true;
 
-package {{ $name =~ s/-/::/gr }} {
+# ABSTRACT: {{ $abstract }}
+# VERSION
 
-    # ABSTRACT: {{ $abstract }}
-
-    use App::Cmd::Setup -app;
-
-}
+use App::Cmd::Setup -app;
 
 
 @@ template/AppCommand.pm
+package {{ $name =~ s/-/::/gr }}::Command;
+
 use warnings;
 use {{ $perl_version }};
 use experimental qw( {{ $experimental }} );
 use true;
 
-package {{ $name =~ s/-/::/gr }}::Command {
+# ABSTRACT: {{ $abstract }}
+# VERSION
 
-    # ABSTRACT: {{ $abstract }}
+use App::Cmd::Setup -command;
 
-    use App::Cmd::Setup -command;
+sub opt_spec ($self) {
+}
 
-    sub opt_spec ($self) {
-    }
-
-    sub validate_args ($self, $opt, $args) {
-    }
+sub validate_args ($self, $opt, $args) {
 }
 
 
 @@ template/AppCommandImpl.pm
+package {{ $name =~ s/-/::/gr }}::Command::foo;
+
 use warnings;
 use {{ $perl_version }};
 use experimental qw( {{ $experimental }} );
 use true;
 
-package {{ $name =~ s/-/::/gr }}::Command::foo {
+# ABSTRACT: {{ $abstract }}
+# VERSION
 
-    # ABSTRACT: {{ $abstract }}
+use App::Cmd::Setup -command;
 
-    use App::Cmd::Setup -command;
+sub opt_spec ($self) {
+}
 
-    sub opt_spec ($self) {
-    }
+sub validate_args ($self, $opt, $args) {
+}
 
-    sub validate_args ($self, $opt, $args) {
-    }
-
-    sub execute ($self, $opt, $args) {
-    }
+sub execute ($self, $opt, $args) {
 }
 
 
