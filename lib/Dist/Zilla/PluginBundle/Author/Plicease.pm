@@ -8,7 +8,6 @@ package Dist::Zilla::PluginBundle::Author::Plicease {
   use Dist::Zilla::Util::CurrentCmd ();
   use Path::Tiny qw( path );
   use File::Glob qw( bsd_glob );
-  use Path::Tiny qw( path );
   use Dist::Zilla::Plugin::Author::Plicease;
 
   # ABSTRACT: Dist::Zilla plugin bundle used by Plicease
