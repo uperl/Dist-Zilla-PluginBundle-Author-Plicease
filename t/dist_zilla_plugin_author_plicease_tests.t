@@ -15,8 +15,6 @@ sub build ($tests_config = {}, @extra)
     { dist_root => 'corpus/DZT' },
     {
       add_files => {
-        # the plugin writes t/00_diag.t into the source root, so t/ must exist
-        'source/t/basic.t' => "use Test2::V0 -no_srand => 1;\nok 1;\ndone_testing;\n",
         'source/dist.ini' => simple_ini(
           {},
           # [GatherDir]
