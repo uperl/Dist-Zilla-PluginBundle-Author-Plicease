@@ -801,7 +801,7 @@ jobs:
       CIP_TAG: static
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Bootstrap CIP
         run: |
@@ -849,7 +849,7 @@ jobs:
       CIP_TAG: ${{ matrix.cip_tag }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Bootstrap CIP
         run: |
@@ -922,7 +922,7 @@ jobs:
           git config --global core.autocrlf false
           git config --global core.eol lf
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up Perl
         run: |
@@ -988,7 +988,7 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up Perl
         run: |
@@ -1068,7 +1068,7 @@ jobs:
           git config --global core.eol lf
         shell: powershell
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up Cygwin
         uses: egor-tensin/setup-cygwin@v3
@@ -1160,7 +1160,7 @@ jobs:
           git config --global core.eol lf
         shell: powershell
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up Perl
         uses: msys2/setup-msys2@v2

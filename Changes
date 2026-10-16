@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - bump gh checkout action template to v7
 
 2.80      2026-08-08 20:51:23 -0600
   - bump gh action templates to v6
