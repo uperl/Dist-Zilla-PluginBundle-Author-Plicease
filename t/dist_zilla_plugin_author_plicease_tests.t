@@ -1,7 +1,13 @@
 use 5.022;
 use Test2::V0 -no_srand => 1;
 use Test::DZil;
+use Perl::PrereqScanner;
 use experimental qw( signatures );
+
+sub scanned_prereqs ($content)
+{
+  Perl::PrereqScanner->new->scan_string($content)->as_string_hash;
+}
 
 sub build ($tests_config = {}, @extra)
 {
@@ -73,8 +79,8 @@ subtest 'basic' => sub {
   like   $diag, qr/^  Baz::Test$/m,                'test prereq';
   unlike $diag, qr/^  Develop::Only$/m,            'no develop prereq';
   unlike $diag, qr/^  (perl|strict|warnings|base)$/m, 'no perl/strict/warnings/base';
-  unlike $diag, qr/use EV/,                        'no EV';
-  unlike $diag, qr/Test::Tester/,                  'no Test::Tester';
+  unlike $diag, qr/EV\.pm/,                        'no EV';
+  unlike $diag, qr/Test\/Tester/,                  'no Test::Tester';
 
   is(
     $tzil->root->child('t/00_diag.t')->slurp_raw,
@@ -112,7 +118,8 @@ subtest 'diag overrides' => sub {
   like   $diag, qr/^  Extra::Module$/m,  'added module';
   unlike $diag, qr/^  Foo::Bar$/m,       'removed module';
   like   $diag, qr/^  Other::Thing$/m,   'kept module';
-  like   $diag, qr/^BEGIN \{ eval q\{ use EV; \} \}$/m, 'EV loaded early';
+  like   $diag, qr/^BEGIN \{ eval \{ require 'EV\.pm'; \} \}$/m, 'EV loaded early';
+  ok !exists scanned_prereqs($diag)->{EV}, 'EV not detected as a prereq';
 
 };
 
@@ -148,7 +155,8 @@ subtest 'Test::Builder + Test::Tester' => sub {
     [ 'Prereqs' => { 'Test::Builder' => 0, 'Test::Tester' => 0 } ],
   );
 
-  like $files->{'t/00_diag.t'}->content, qr/^eval q\{ require Test::Tester; \};/m, 'requires Test::Tester';
+  like $files->{'t/00_diag.t'}->content, qr/^eval \{ require 'Test\/Tester\.pm'; \};/m, 'requires Test::Tester';
+  ok !exists scanned_prereqs($files->{'t/00_diag.t'}->content)->{'Test::Tester'}, 'Test::Tester not detected as a prereq';
 
 };
 

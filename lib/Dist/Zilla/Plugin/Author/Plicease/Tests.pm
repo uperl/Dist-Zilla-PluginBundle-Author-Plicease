@@ -132,11 +132,11 @@ package Dist::Zilla::Plugin::Author::Plicease::Tests {
 
     my $code = '';
 
-    $code = "BEGIN { eval q{ use EV; } }\n" if $list{EV};
+    $code = "BEGIN { eval { require 'EV.pm'; } }\n" if $list{EV};
     $code .= '$modules{$_} = $_ for qw(' . "\n";
     $code .= join "\n", map { "  $_" } sort keys %list;
     $code .= "\n);\n";
-    $code .= "eval q{ require Test::Tester; };" if $list{'Test::Builder'} && $list{'Test::Tester'};
+    $code .= "eval { require 'Test/Tester.pm'; };" if $list{'Test::Builder'} && $list{'Test::Tester'};
 
     my($file) = grep { $_->name eq 't/00_diag.t' } $self->zilla->files->@*;
 
