@@ -29,7 +29,10 @@ If C<cpan> is set to a true value, ask first before uploading to CPAN.
 Sometimes and for some dists I instead commit it to a GitHub pages website
 for internal use.  If C<cpan> is set to a false value or if you deny
 uploading to CPAN, the dist will be copied into the usual place where
-the aforementioned GitHub pages repository is checked out.
+the aforementioned GitHub pages repository is checked out
+(C<~/www/dist.wdlabs.com/docs> if it exists, otherwise
+C<~/dev/site-dist/docs>).  If neither exists, a warning is logged
+and the tarball will need to be uploaded manually.
 
 =back
 
@@ -74,7 +77,7 @@ Base web URL if CPAN upload is disabled.
     my $self = shift;
     my($archive) = @_;
 
-    my $local_release_dir = Path::Tiny->new("~/dev/site-dist/docs");
+    my($local_release_dir) = grep { -d } map { Path::Tiny->new($_) } qw( ~/www/dist.wdlabs.com/docs ~/dev/site-dist/docs );
 
     my @cmd;
 
@@ -92,13 +95,14 @@ Base web URL if CPAN upload is disabled.
       }
       return;
     }
-    elsif(-d "$local_release_dir")
+    elsif(defined $local_release_dir)
     {
       @cmd = ('cp', $archive, "$local_release_dir");
     }
     else
     {
       $self->zilla->log("no release process available, upload tarball manually");
+      return;
     }
 
     {
@@ -111,7 +115,7 @@ Base web URL if CPAN upload is disabled.
       }
       else
       {
-        $self->zilla->log("don't forget to commit and push to site-dist");
+        $self->zilla->log("don't forget to commit and push $local_release_dir");
         $self->zilla->log("download URL: " . $self->url . "$archive");
       }
     }

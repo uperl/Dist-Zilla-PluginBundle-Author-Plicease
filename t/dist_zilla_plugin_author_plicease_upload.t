@@ -6,7 +6,7 @@ use CPAN::Uploader;
 
 local $ENV{DZIL_RELEASING};
 
-# keep ~/dev/site-dist/docs pointed somewhere we control
+# keep ~/www/dist.wdlabs.com/docs and ~/dev/site-dist/docs pointed somewhere we control
 my $home = tempdir( CLEANUP => 1 );
 local $ENV{HOME} = "$home";
 
@@ -118,7 +118,7 @@ subtest 'upload to cpan without credentials' => sub {
 
 };
 
-subtest 'declined cpan, local release directory' => sub {
+subtest 'declined cpan, falls back to ~/dev/site-dist/docs' => sub {
 
   @uploaded = ();
 
@@ -142,6 +142,32 @@ subtest 'declined cpan, local release directory' => sub {
 
 };
 
+subtest 'cpan = 0, prefers ~/www/dist.wdlabs.com/docs' => sub {
+
+  @uploaded = ();
+
+  my $www = $home->child('www/dist.wdlabs.com/docs');
+  my $dev = $home->child('dev/site-dist/docs');
+  $_->mkpath for $www, $dev;
+
+  my $tzil = tzil( cpan => 0 );
+
+  $tzil->release;
+
+  is \@uploaded, [], 'nothing uploaded to CPAN';
+  ok -f $www->child('DZT-Sample-0.001.tar.gz'), 'copied archive to ~/www/dist.wdlabs.com/docs';
+  ok !-e $dev->child('DZT-Sample-0.001.tar.gz'), 'not copied to ~/dev/site-dist/docs';
+
+  my $log = log_messages($tzil);
+  note $_ for @$log;
+  ok( (grep /% cp .*DZT-Sample-0\.001\.tar\.gz \Q$www\E$/, @$log), 'logged copy command' );
+  ok( (grep /don't forget to commit and push \Q$www\E$/, @$log), 'logged commit reminder' );
+
+  $home->child('www')->remove_tree;
+  $home->child('dev')->remove_tree;
+
+};
+
 subtest 'cpan = 0, no local release directory' => sub {
 
   @uploaded = ();
@@ -151,18 +177,14 @@ subtest 'cpan = 0, no local release directory' => sub {
   # should not even ask
   $tzil->chrome->set_response_for('upload to CPAN?' => 'y');
 
-  # NOTE: with no release process available the plugin still tries to
-  # run an empty command, which warns "Can't exec"; silence that here.
-  {
-    local $SIG{__WARN__} = sub { note "warning: $_[0]" };
-    $tzil->release;
-  }
+  ok no_warnings { $tzil->release }, 'no warnings';
 
   is \@uploaded, [], 'nothing uploaded to CPAN';
 
   my $log = log_messages($tzil);
   note $_ for @$log;
   ok( (grep /no release process available, upload tarball manually/, @$log), 'logged no release process' );
+  ok( !(grep /^%|don't forget|download URL/, @$log), 'no copy attempted' );
 
 };
 
