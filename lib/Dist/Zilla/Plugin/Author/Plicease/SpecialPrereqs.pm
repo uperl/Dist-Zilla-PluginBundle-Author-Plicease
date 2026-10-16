@@ -353,7 +353,7 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
 
     my $prereqs = $self->zilla->prereqs->as_string_hash;
 
-    my $perl_version = $prereqs->{runtime}->{requires}->{perl};
+    my $perl_version = $prereqs->{runtime}->{requires}->{perl} // '5.006';
 
     $self->log("perl version required = $perl_version");
 

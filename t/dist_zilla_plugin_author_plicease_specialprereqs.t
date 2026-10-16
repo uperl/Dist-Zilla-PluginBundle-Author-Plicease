@@ -142,6 +142,34 @@ subtest 'installer preamble' => sub {
 
 };
 
+subtest 'installer preamble without perl prereq' => sub {
+
+  my $tzil = Builder->from_config(
+    { dist_root => 'corpus/DZT' },
+    {
+      add_files => {
+        'source/dist.ini' => simple_ini(
+          {},
+          'GatherDir',
+          'MakeMaker',
+          [ 'Author::Plicease::SpecialPrereqs' => {} ],
+        ),
+      },
+    },
+  );
+
+  ok no_warnings { $tzil->build }, 'no warnings';
+
+  my $file = first { $_->name eq 'Makefile.PL' } $tzil->files->@*;
+  ok $file, 'has Makefile.PL';
+
+  my $content = $file->content;
+  note $content;
+
+  like $content, qr/^  unless\(eval q\{ use 5\.006; 1\}\) \{\n    print "Perl 5\.006 or better required\\n";/m, 'defaults to 5.006';
+
+};
+
 subtest 'before_release' => sub {
 
   my $tzil = build();
