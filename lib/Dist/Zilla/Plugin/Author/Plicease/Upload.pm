@@ -107,7 +107,11 @@ Base web URL if CPAN upload is disabled.
 
     {
       $self->zilla->log("% @cmd");
-      eval { system @cmd };
+      eval {
+        system @cmd;
+        die "failed to execute: $!\n" if $? == -1;
+        die "exited with status @{[ $? >> 8 ]}\n" if $?;
+      };
       if(my $error = $@)
       {
         $self->zilla->log("NOTE COPY FAILED: $error");

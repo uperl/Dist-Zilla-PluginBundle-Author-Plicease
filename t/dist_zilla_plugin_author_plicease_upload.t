@@ -168,6 +168,31 @@ subtest 'cpan = 0, prefers ~/www/dist.wdlabs.com/docs' => sub {
 
 };
 
+subtest 'cpan = 0, copy fails' => sub {
+
+  skip_all 'test requires non-root unix' if $^O eq 'MSWin32' || $> == 0;
+
+  my $www = $home->child('www/dist.wdlabs.com/docs');
+  $www->mkpath;
+  chmod 0555, $www;
+
+  my $tzil = tzil( cpan => 0 );
+
+  ok lives { $tzil->release }, 'release does not die' or note $@;
+
+  ok !-e $www->child('DZT-Sample-0.001.tar.gz'), 'archive not copied';
+
+  my $log = log_messages($tzil);
+  note $_ for @$log;
+  ok( (grep /NOTE COPY FAILED: exited with status [1-9]/, @$log), 'logged copy failure' );
+  ok( (grep /manual upload will be required/, @$log), 'logged manual upload' );
+  ok( !(grep /don't forget|download URL/, @$log), 'did not log success' );
+
+  chmod 0755, $www;
+  $home->child('www')->remove_tree;
+
+};
+
 subtest 'cpan = 0, no local release directory' => sub {
 
   @uploaded = ();
