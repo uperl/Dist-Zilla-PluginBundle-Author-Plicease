@@ -3,6 +3,7 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
   - bump gh checkout action template to v7
   - default ci to test only 5.42+
+  - Update dzil min (5.22), old (5.20), def (5.42)
 
 2.80      2026-08-08 20:51:23 -0600
   - bump gh action templates to v6

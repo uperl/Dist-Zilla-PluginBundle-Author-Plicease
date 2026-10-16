@@ -132,19 +132,19 @@ Create a dist in plicease style.
       {
         if($self->type_dzil)
         {
-          return '5.020';
+          return '5.022';
         }
         else
         {
           for(1..100)
           {
-            my $answer = $self->chrome->prompt_str("Minimum required Perl (min/old: 5.016, def: 5.020 (default), or an explicit Perl version)",
+            my $answer = $self->chrome->prompt_str("Minimum required Perl (min: 5.016, old: 5.022, def: 5.042 (default), or an explicit Perl version)",
               { default => "def" },
             );
             return $answer    if $answer =~ /^5\.[0-9]{3,6}$/;
             return '5.016'    if $answer eq 'min';
-            return '5.016'    if $answer eq 'old';
-            return '5.020'    if $answer eq 'def';
+            return '5.020'    if $answer eq 'old';
+            return '5.042'    if $answer eq 'def';
             if($answer =~ /^5\.([0-9]+)\.([0-9]+)$/)
             {
               return sprintf "5.%03d%03d", $1, $2;
