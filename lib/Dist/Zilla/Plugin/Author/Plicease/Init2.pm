@@ -148,7 +148,7 @@ Create a dist in plicease style.
             );
             return $answer    if $answer =~ /^5\.[0-9]{3,6}$/;
             return '5.016'    if $answer eq 'min';
-            return '5.020'    if $answer eq 'old';
+            return '5.022'    if $answer eq 'old';
             return '5.042'    if $answer eq 'def';
             if($answer =~ /^5\.([0-9]+)\.([0-9]+)$/)
             {
