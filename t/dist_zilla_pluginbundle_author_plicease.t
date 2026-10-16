@@ -267,8 +267,10 @@ subtest 'unsupported keys' => sub {
 
   foreach my $key (qw( travis_status travis_com travis_base travis_image_base appveyor travis_user appveyor_user ))
   {
-    ok dies { bundle({ $key => 1 }) }, "$key dies";
+    like dies { bundle({ $key => 1 }) }, qr/no longer supports: $key$/, "$key dies";
   }
+
+  like dies { bundle({ travis_user => 1, appveyor => 1 }) }, qr/no longer supports: appveyor travis_user$/, "multiple keys";
 
 };
 
@@ -387,7 +389,7 @@ subtest 'warnings' => sub {
   subtest 'Test2::V0 without -no_srand' => sub {
     my(undef, $stderr) = bundle({}, {
       Changes     => '',
-      't/bad.t'   => "use Test2::V0;\n",
+      't/bad.t'   => 'use ' . "Test2::V0;\n",
       't/good.t'  => "use Test2::V0 -no_srand => 1;\n",
     });
     like   $stderr, qr{t/bad\.t has Test2::V0 without -no_srand}, 'warning for bad.t';

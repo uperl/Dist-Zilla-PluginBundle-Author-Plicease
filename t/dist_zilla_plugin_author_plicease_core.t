@@ -94,7 +94,7 @@ subtest 'guessed starting version' => sub {
   like $content, qr/dnf install perl-core/, 'has install hint';
 
   my $code = $content =~ s/\n}\n.*\z/\n}\n/sr;
-  ok eval "sub { $code }", 'BEGIN block compiles' or diag $@;
+  ok eval "sub { $code }", 'BEGIN block compiles' or diag $@; ## no critic (BuiltinFunctions::ProhibitStringyEval)
 
 };
 

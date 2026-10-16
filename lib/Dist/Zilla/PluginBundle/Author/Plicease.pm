@@ -176,18 +176,9 @@ is a personal preference; I prefer not to release on non-Unixy platforms.
   {
     my($self) = @_;
 
-    foreach my $key (qw( travis_status travis_com travis_base travis_image_base appveyor travis_user appveyor_user ))
+    if(my @bad = grep { defined $self->payload->{$_} } qw( travis_status travis_com travis_base travis_image_base appveyor travis_user appveyor_user ))
     {
-      my $bad = 0;
-      if(defined $self->payload->{$key})
-      {
-        print STDERR Term::ANSIColor::color('bold red') if -t STDERR;
-        print STDERR "dist.ini [\@Author::Plicease] key $key is no longer supported";
-        print STDERR Term::ANSIColor::color('reset') if -t STDERR;
-        print STDERR "\n";
-        $bad = 1;
-      }
-      die "unsuppor" if $bad;
+      die "dist.ini [\@Author::Plicease] no longer supports: @bad\n";
     }
 
     # undocumented for a reason: sometimes I need to release on
