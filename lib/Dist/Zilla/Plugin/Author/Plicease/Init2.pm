@@ -8,6 +8,7 @@ package Dist::Zilla::Plugin::Author::Plicease::Init2 {
   use Moose;
   use Dist::Zilla::File::InMemory;
   use Dist::Zilla::File::FromCode;
+  use Dist::Zilla::Plugin::Author::Plicease;
   use Sub::Exporter::ForMethods qw( method_installer );
   use Data::Section { installer => method_installer }, -setup => { header_re => qr/^@@ (.*?)$/ };
   use Dist::Zilla::MintingProfile::Author::Plicease;
@@ -248,6 +249,16 @@ Create a dist in plicease style.
     $self->gather_file_simple  ('perlcriticrc');
     $self->gather_file_template('t/main_class.t' => 't/' . lc($self->zilla->name =~ s/-/_/gr) . ".t" );
     $self->gather_file_simple  ('xt/author/critic.t');
+
+    if($self->perl_version >= 5.042)
+    {
+      $self->add_file(
+        Dist::Zilla::File::InMemory->new({
+          name    => 'docs/PERLSTYLE.md',
+          content => Dist::Zilla::Plugin::Author::Plicease->dist_dir->child('docs/PERLSTYLE.md')->slurp_utf8,
+        })
+      );
+    }
 
     foreach my $workflow ($self->workflow->@*)
     {
