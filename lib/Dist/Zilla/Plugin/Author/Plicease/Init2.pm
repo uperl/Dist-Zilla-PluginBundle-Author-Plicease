@@ -1,4 +1,4 @@
-use 5.022;
+use 5.024;
 use stable qw( postderef );
 use experimental qw( signatures );
 use true;

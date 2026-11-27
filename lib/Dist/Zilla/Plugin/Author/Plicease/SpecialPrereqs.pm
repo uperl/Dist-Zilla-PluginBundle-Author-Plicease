@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::Author::Plicease::SpecialPrereqs {
 
-  use 5.022;
+  use 5.024;
   use Moose;
   use experimental qw( postderef );
   use Dist::Zilla::Plugin::Author::Plicease;
