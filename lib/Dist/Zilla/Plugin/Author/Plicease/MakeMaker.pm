@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::Author::Plicease::MakeMaker {
 
-  use 5.022;
+  use 5.024;
   use Moose;
   use namespace::autoclean;
   use Perl::Tidy ();

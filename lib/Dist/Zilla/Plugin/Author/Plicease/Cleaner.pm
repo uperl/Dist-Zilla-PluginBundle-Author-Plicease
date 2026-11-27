@@ -1,6 +1,6 @@
 package Dist::Zilla::Plugin::Author::Plicease::Cleaner {
 
-  use 5.022;
+  use 5.024;
   use Moose;
   use Path::Tiny qw( path );
   use Scalar::Util qw( refaddr );
