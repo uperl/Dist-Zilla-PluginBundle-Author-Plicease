@@ -46,6 +46,17 @@ use Test2::V0 -no_srand => 1;
 
 An explicit `use warnings;` is unnecessary in this preamble because `Test2::V0` enables warnings. This follows the Author::Plicease minting profile. Explicitly disable Test2’s automatic random-number generator seeding with `-no_srand => 1`. Declare `Test2::V0` as a test prerequisite rather than a runtime prerequisite.
 
+### Test file organization
+
+Provide at least one `.t` file under `t/` for every Perl module, including internal modules. Derive the test filename from the module name by converting it to lowercase and replacing each namespace separator (`::`) with a single underscore (`_`). For example, `Foo::Bar::Baz` maps to `t/foo_bar_baz.t`.
+
+When a module needs multiple test files, append a descriptive suffix separated from the module-derived name by a double underscore (`__`), for example:
+
+- `t/foo_bar_baz__first.t`
+- `t/foo_bar_baz__second.t`
+
+Use meaningful suffixes that describe the behavior being tested.
+
 ## Object systems
 
 Prefer `Class::Tiny` when a lightweight object system is sufficient. Do not introduce an object system for code that does not need one.
